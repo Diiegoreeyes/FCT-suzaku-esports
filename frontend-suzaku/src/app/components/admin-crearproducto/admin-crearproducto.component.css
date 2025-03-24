@@ -1,0 +1,40 @@
+.admin-formulario {
+    max-width: 600px;
+    margin: auto;
+    padding: 1rem;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  
+  .admin-formulario h2 {
+    margin-bottom: 1rem;
+  }
+  
+  .form-group {
+    margin-bottom: 1rem;
+  }
+  
+  .form-group label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+  
+  .form-group input,
+  .form-group textarea {
+    width: 100%;
+    padding: 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+  }
+  
+  .preview-img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    margin-top: 0.5rem;
+    border-radius: 8px;
+  }
+  

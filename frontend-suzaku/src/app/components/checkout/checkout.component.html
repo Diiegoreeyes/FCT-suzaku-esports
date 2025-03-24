@@ -1,0 +1,107 @@
+<section class="checkout">
+  <h2>Finalizar Compra</h2>
+
+  <!-- Formulario de código de descuento -->
+  <form (ngSubmit)="aplicarDescuento()" class="descuento-form">
+    <label for="descuento">Código de descuento:</label>
+    <input
+      type="text"
+      id="descuento"
+      [(ngModel)]="codigoDescuento"
+      name="descuento"
+      placeholder="Ingresa tu código de descuento"
+    />
+    <button type="button" (click)="aplicarDescuento()">Aplicar descuento</button>
+  </form>
+
+  <!-- Productos en el carrito -->
+  <div *ngIf="productosEnCarrito.length > 0; else noProductos" class="productos-container">
+    <div class="producto-card" *ngFor="let producto of productosEnCarrito">
+      <img [src]="getProductoFoto(producto.foto)" alt="{{ producto.nombre }}" class="producto-img" />
+      <div class="producto-detalles">
+        <h3>{{ producto.nombre }}</h3>
+        <p>Precio: {{ producto.precio | currency:'EUR':'symbol':'1.2-2' }}</p>
+        <p>Cantidad: {{ producto.cantidad }}</p>
+        <p>Subtotal: {{ producto.precio * producto.cantidad | currency:'EUR':'symbol':'1.2-2' }}</p>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #noProductos>
+    <p>El carrito está vacío.</p>
+  </ng-template>
+
+  <!-- Totales -->
+  <div class="total-compra">
+    <ng-container *ngIf="descuento > 0; else sinDescuento">
+      <p>
+        <span class="precio-original">{{ total | currency:'EUR' }}</span>
+        <span class="precio-descuento">{{ total - descuento | currency:'EUR' }}</span>
+      </p>
+    </ng-container>
+    <ng-template #sinDescuento>
+      <p><strong>Total:</strong> {{ total | currency:'EUR' }}</p>
+    </ng-template>
+  </div>
+
+  <!-- Dirección activa -->
+  <div class="direccion-envio">
+    <label>Dirección de envío:</label>
+    <div class="direccion-activa">
+      {{ direccionActivaStr || 'No hay dirección activa' }}
+    </div>
+    <button type="button" (click)="mostrarSelectorDirecciones = !mostrarSelectorDirecciones">
+      Cambiar dirección
+    </button>
+  </div>
+
+  <!-- Selector de direcciones -->
+  <div *ngIf="mostrarSelectorDirecciones">
+    <h4>Selecciona una dirección:</h4>
+    <div *ngFor="let dir of direcciones" class="direccion-card">
+      <p><strong>{{ dir.alias || 'Dirección' }}</strong></p>
+      <p>{{ dir.direccion }}, {{ dir.ciudad }}, {{ dir.provincia }}</p>
+      <p>{{ dir.codigo_postal }} - {{ dir.pais }}</p>
+      <button (click)="seleccionarDireccion(dir)">Usar esta dirección</button>
+    </div>
+
+    <button (click)="toggleFormularioDireccion()">
+      {{ mostrarFormularioDireccion ? 'Cancelar' : 'Agregar nueva dirección' }}
+    </button>
+
+    <!-- Formulario para agregar nueva dirección -->
+    <form *ngIf="mostrarFormularioDireccion" [formGroup]="direccionForm" (ngSubmit)="agregarDireccion()">
+      <div>
+        <label for="alias">Alias:</label>
+        <input formControlName="alias" id="alias" type="text" />
+      </div>
+      <div>
+        <label for="direccion">Dirección:</label>
+        <input formControlName="direccion" id="direccion" type="text" required />
+      </div>
+      <div>
+        <label for="ciudad">Ciudad:</label>
+        <input formControlName="ciudad" id="ciudad" type="text" required />
+      </div>
+      <div>
+        <label for="provincia">Provincia:</label>
+        <input formControlName="provincia" id="provincia" type="text" />
+      </div>
+      <div>
+        <label for="codigo_postal">Código Postal:</label>
+        <input formControlName="codigo_postal" id="codigo_postal" type="text" />
+      </div>
+      <div>
+        <label for="pais">País:</label>
+        <input formControlName="pais" id="pais" type="text" required />
+      </div>
+      <button type="submit">Guardar dirección</button>
+    </form>
+  </div>
+
+  <!-- Acciones -->
+  <div class="acciones">
+    <button (click)="vaciarCarrito()" class="btn btn-secondary">Vaciar carrito</button>
+    <button (click)="confirmarPedido()" class="btn btn-primary">Confirmar Pedido</button>
+  </div>
+</section>

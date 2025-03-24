@@ -1,0 +1,30 @@
+<!-- perfil.component.html -->
+<div *ngIf="usuarioId && perfilForm; else noUser">
+  <h2>Mi Perfil</h2>
+  <form [formGroup]="perfilForm" (ngSubmit)="guardar()">
+    <div class="form-group">
+      <label for="nombre">Nombre:</label>
+      <input formControlName="nombre" id="nombre" type="text" placeholder="Tu nombre" />
+    </div>
+    <div class="form-group">
+      <label for="apellidos">Apellidos:</label>
+      <input formControlName="apellidos" id="apellidos" type="text" placeholder="Tus apellidos" />
+    </div>
+    <div class="form-group">
+      <label for="email">Email:</label>
+      <input formControlName="email" id="email" type="email" placeholder="Tu correo" readonly />
+    </div>
+    <div class="form-group">
+      <label for="foto">Foto de perfil:</label>
+      <input id="foto" type="file" (change)="onFileChange($event)" />
+    </div>
+    <div class="form-group" *ngIf="fotoUrl">
+      <p>Foto actual:</p>
+      <img [src]="fotoUrl" alt="Foto de perfil" width="100" />
+    </div>
+    <button type="submit" [disabled]="perfilForm.invalid">Guardar</button>
+  </form>
+</div>
+<ng-template #noUser>
+  <p>No se encontró usuario logueado. Por favor, inicia sesión.</p>
+</ng-template>

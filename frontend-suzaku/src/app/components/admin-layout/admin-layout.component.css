@@ -1,0 +1,44 @@
+.admin-layout {
+    display: flex;
+    flex-direction: row; /* Esto es clave para poner el contenido a la derecha */
+    min-height: 100vh;
+  }
+  
+  .admin-sidebar {
+    width: 220px;
+    background-color: #f5f5f5;
+    padding: 1rem;
+    border-right: 1px solid #ddd;
+  }
+  
+  .admin-sidebar nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .admin-sidebar nav ul li a {
+    display: block;
+    padding: 10px 14px;
+    border-radius: 6px;
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.2s;
+  }
+  
+  .admin-sidebar nav ul li a:hover,
+  .admin-sidebar nav ul li a.router-link-active {
+    background-color: #e0e0e0;
+    color: #007bff;
+  }
+  
+  .admin-contenido {
+    flex: 1; /* Ocupa el resto del espacio */
+    padding: 2rem;
+    background-color: #f9f9f9;
+  }
+  

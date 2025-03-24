@@ -1,0 +1,23 @@
+<header>
+    <nav>
+      <ul>
+        <li><a routerLink="/">Inicio</a></li>
+        <li><a routerLink="/productos">Productos</a></li>
+        <li><a routerLink="/carrito">Carrito</a></li>
+
+        <li *ngIf="authService.estaAutenticado()">
+          <a href="#" (click)="logout()">Cerrar Sesión</a>
+        </li>
+        <li *ngIf="authService.estaAutenticado()">
+          <a routerLink="/perfil">Mi Perfil</a>
+        </li>
+        <li *ngIf="!authService.estaAutenticado()">
+          <a routerLink="/login">Iniciar Sesión</a>
+        </li>
+        <li *ngIf="!authService.estaAutenticado()">
+          <a routerLink="/crear-usuario">Registro</a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+  

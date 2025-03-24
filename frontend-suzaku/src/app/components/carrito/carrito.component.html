@@ -1,0 +1,34 @@
+<section class="carrito">
+  <h2>Carrito de Compras</h2>
+
+  <div *ngIf="productosEnCarrito.length > 0; else noProductos" class="productos-container">
+    <div class="producto-card" *ngFor="let producto of productosEnCarrito">
+      <img [src]="getProductoFoto(producto.foto)" alt="{{ producto.nombre }}" class="producto-img" />
+      <div class="producto-detalles">
+        <h3>{{ producto.nombre }}</h3>
+        <p>Precio: {{ producto.precio | currency:'EUR':'symbol':'1.2-2' }}</p>
+        <p>Cantidad: {{ producto.cantidad }}</p>
+        <p>Subtotal: {{ producto.precio * producto.cantidad | currency:'EUR':'symbol':'1.2-2' }}</p>
+        <div class="acciones-cantidad">
+          <button (click)="disminuirCantidad(producto.id)">-</button>
+          <button (click)="aumentarCantidad(producto.id)">+</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #noProductos>
+    <p>El carrito está vacío.</p>
+  </ng-template>
+
+  <div class="total-carrito">
+    <p><strong>Total:</strong> {{ total | currency:'EUR':'symbol':'1.2-2' }}</p>
+  </div>
+
+  <div class="acciones-carrito">
+    <button (click)="vaciarCarrito()" class="btn btn-danger">Vaciar carrito</button>
+    <button *ngIf="productosEnCarrito.length > 0" [routerLink]="'/checkout'" class="btn btn-primary">
+      Ir al Checkout
+    </button>
+  </div>
+</section>

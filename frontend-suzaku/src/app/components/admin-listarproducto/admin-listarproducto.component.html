@@ -1,0 +1,17 @@
+<section class="admin-productos">
+  
+    <div class="producto-admin-card" *ngFor="let producto of productos">
+      <img [src]="getFoto(producto.foto)" alt="Foto producto" class="producto-admin-img" />
+  
+      <div class="producto-admin-detalles">
+        <h3>{{ producto.nombre }}</h3>
+        <p>💶 {{ producto.precio }} €</p>
+  
+        <div class="acciones-admin">
+          <button (click)="editarProducto(producto.id)">✏️ Editar</button>
+          <button (click)="eliminarProducto(producto.id)">🗑️ Eliminar</button>
+        </div>
+      </div>
+    </div>
+  </section>
+  

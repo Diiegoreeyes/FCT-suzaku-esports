@@ -1,0 +1,25 @@
+# Evita subir entornos virtuales
+venv/
+env/
+
+# Evita archivos de caché de Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Evita subir la base de datos SQLite (si la usaste antes)
+db.sqlite3
+
+# Evita configuraciones de logs y compilaciones
+*.log
+*.pot
+*.py[cod]
+*.swp
+
+# Evita archivos de configuración de tu editor de código
+.vscode/
+.idea/
+*.sublime-workspace
+
+# Evita subidas de credenciales y variables de entorno
+.env

@@ -1,0 +1,11 @@
+{% extends "./base.html" %}
+
+{% block title %}Inicio | Tienda Suzaku{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h2>Bienvenido a Tienda Suzaku</h2>
+    <p>Explora nuestra colección exclusiva con los mejores productos para ti.</p>
+    <a href="{% url 'lista_productos' %}" class="btn">Ver Productos</a>
+</section>
+{% endblock %}

@@ -1,0 +1,67 @@
+<div class="mis-pedidos">
+  <h2>Mis Pedidos</h2>
+
+  <div *ngIf="pedidos && pedidos.length > 0; else noPedidos">
+    <!-- Iteración de cada pedido -->
+    <div class="pedido-card" *ngFor="let pedido of pedidos">
+      <div class="pedido-header">
+        <h3>Pedido #{{ pedido.id }}</h3>
+        <p class="estado">{{ pedido.estado }}</p>
+      </div>
+
+      <!-- Fecha del pedido -->
+      <p class="fecha">
+        Fecha: {{ pedido.fecha_creacion | date:'short' }}
+      </p>
+
+      <!-- Mostrar código de descuento si existe -->
+      <p class="codigo-descuento" *ngIf="pedido.codigo_descuento_str">
+        Código utilizado: {{ pedido.codigo_descuento_str }}
+      </p>
+
+      <!-- Totales del pedido (con/sin descuento) -->
+      <div class="pedido-totales">
+        <ng-container *ngIf="pedido.descuento_aplicado && pedido.descuento_aplicado > 0; else sinDescuento">
+          <p>
+            <!-- Precio sin descuento en rojo y tachado -->
+            <span class="precio-rojo-tachado">
+              {{ pedido.total | currency:'EUR':'symbol':'1.2-2' }}
+            </span>
+            <!-- Precio con descuento -->
+            <span class="precio-descuento">
+              {{ pedido.total_con_descuento | currency:'EUR':'symbol':'1.2-2' }}
+            </span>
+          </p>
+          <p class="descuento">
+            Descuento aplicado: {{ pedido.descuento_aplicado | currency:'EUR':'symbol':'1.2-2' }}
+          </p>
+        </ng-container>
+        <ng-template #sinDescuento>
+          <p class="precio-simple">
+            {{ pedido.total | currency:'EUR':'symbol':'1.2-2' }}
+          </p>
+        </ng-template>
+      </div>
+
+      <!-- Productos dentro del pedido -->
+      <div class="pedido-productos">
+        <div class="producto-item" *ngFor="let item of pedido.productos">
+          <img
+            [src]="getProductoFoto(item.producto.foto)"
+            alt="{{ item.producto.nombre }}"
+            class="producto-img"
+          />
+          <div class="producto-info">
+            <p class="producto-nombre"><strong>{{ item.producto.nombre }}</strong></p>
+            <p>Cantidad: {{ item.cantidad }}</p>
+            <p>Precio unitario: {{ item.precio | currency:'EUR':'symbol':'1.2-2' }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #noPedidos>
+    <p>No tienes pedidos realizados.</p>
+  </ng-template>
+</div>

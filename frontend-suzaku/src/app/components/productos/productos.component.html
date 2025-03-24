@@ -1,0 +1,51 @@
+<section class="productos-layout">
+  <!-- Filtros a la izquierda -->
+  <aside class="sidebar-filtros">
+    <h3>Filtrar Productos</h3>
+
+    <input
+      type="text"
+      [(ngModel)]="filtroNombre"
+      placeholder="Buscar por nombre"
+      class="input-filtro"
+    />
+
+    <input
+      type="number"
+      [(ngModel)]="precioMin"
+      placeholder="Precio mínimo"
+      class="input-filtro"
+    />
+
+    <input
+      type="number"
+      [(ngModel)]="precioMax"
+      placeholder="Precio máximo"
+      class="input-filtro"
+    />
+
+    <button (click)="aplicarFiltros()" class="btn-filtrar">Aplicar Filtros</button>
+    <button (click)="resetFiltros()" class="btn-reset">Reiniciar</button>
+  </aside>
+
+  <!-- Productos a la derecha -->
+  <div class="contenido-productos">
+    <h2>Lista de Productos</h2>
+
+    <div class="productos-container">
+      <div class="producto-card" *ngFor="let producto of productosFiltrados; trackBy: trackProducto">
+        <img
+          [src]="getProductoFoto(producto.foto)"
+          alt="{{ producto.nombre }}"
+          class="producto-img"
+        />
+        <div class="producto-detalles">
+          <h3>{{ producto.nombre }}</h3>
+          <p class="precio">{{ producto.precio }} €</p>
+          <p class="descripcion">{{ producto.descripcion }}</p>
+          <button (click)="agregarAlCarrito(producto)" class="btn-agregar">Agregar al carrito</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,12 @@
+<!-- metodos-pago.component.html -->
+<div>
+    <h2>Métodos de Pago</h2>
+    <ul>
+      <li *ngFor="let metodo of metodos">
+        {{ metodo.tipo }} - {{ metodo.detalles }}
+        <!-- Agrega botones para editar o eliminar -->
+      </li>
+    </ul>
+    <button>Agregar método de pago</button>
+  </div>
+  

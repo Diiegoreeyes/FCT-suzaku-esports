@@ -1,0 +1,21 @@
+<!-- perfil-layout.component.html -->
+<div class="perfil-container">
+  <!-- Menú de navegación lateral -->
+  <div class="sidebar">
+    <nav>
+      <ul>
+        <li><a routerLink="/perfil" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Mi Perfil</a></li>
+        <li><a routerLink="/perfil/mis-pedidos" routerLinkActive="active">Mis Pedidos</a></li>
+        <li><a routerLink="/perfil/direcciones" routerLinkActive="active">Direcciones</a></li>
+        <li><a routerLink="/perfil/metodos-pago" routerLinkActive="active">Métodos de Pago</a></li>
+        <li><a routerLink="/perfil/configuracion" routerLinkActive="active">Preferencias</a></li>
+        <li><a routerLink="/perfil/seguridad" routerLinkActive="active">Seguridad</a></li>
+      </ul>
+    </nav>
+  </div>
+  
+  <!-- Contenido principal -->
+  <div class="content">
+    <router-outlet></router-outlet>
+  </div>
+</div>

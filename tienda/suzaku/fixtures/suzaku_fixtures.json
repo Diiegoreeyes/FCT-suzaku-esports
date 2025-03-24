@@ -1,0 +1,103 @@
+[
+    {
+      "model": "suzaku.usuario",
+      "pk": 1,
+      "fields": {
+        "nombre": "Juan",
+        "apellidos": "Pérez",
+        "email": "juan@suzaku.com",
+        "password": "pbkdf2_sha256$260000$VS0uTsJmOG62WTWeGkhB4q$5+CPXFQKZkEAgrJ7CxjLWg3UqnFxa0lC4Ow4FtRAsq4=",
+        "direccion": "Calle Gaming 123",
+        "foto": null,
+        "fecha_registro": "2025-03-19T10:00:00Z",
+        "last_login": null,
+        "is_active": true,
+        "is_staff": false,
+        "is_superuser": false
+      }
+    },
+    {
+      "model": "suzaku.codigodescuento",
+      "pk": 1,
+      "fields": {
+        "codigo": "DESC10",
+        "porcentaje": "10.00"
+      }
+    },
+    {
+      "model": "suzaku.codigodescuento",
+      "pk": 2,
+      "fields": {
+        "codigo": "ESPORTS15",
+        "porcentaje": "15.00"
+      }
+    },
+    {
+      "model": "suzaku.producto",
+      "pk": 1,
+      "fields": {
+        "nombre": "Teclado Mecánico",
+        "descripcion": "Teclado mecánico con switches rojos",
+        "precio": "80.00",
+        "stock": 15,
+        "foto": null
+      }
+    },
+    {
+      "model": "suzaku.producto",
+      "pk": 2,
+      "fields": {
+        "nombre": "Ratón Gaming",
+        "descripcion": "Ratón con sensor de alta precisión",
+        "precio": "50.00",
+        "stock": 30,
+        "foto": null
+      }
+    },
+    {
+      "model": "suzaku.producto",
+      "pk": 3,
+      "fields": {
+        "nombre": "Silla eSports",
+        "descripcion": "Silla ergonómica para largas sesiones de juego",
+        "precio": "200.00",
+        "stock": 8,
+        "foto": null
+      }
+    },
+    {
+      "model": "suzaku.pedido",
+      "pk": 1,
+      "fields": {
+        "usuario": 1,
+        "direccion_envio": "Calle Gaming 123",
+        "fecha_creacion": "2025-03-19T12:00:00Z",
+        "estado": "pendiente",
+        "total": "130.00",
+        "total_con_descuento": "117.00",
+        "descuento_aplicado": "13.00",
+        "codigo_descuento": 1
+      }
+    },
+    {
+      "model": "suzaku.productopedido",
+      "pk": 1,
+      "fields": {
+        "pedido": 1,
+        "producto": 1,
+        "cantidad": 1,
+        "precio": "80.00"
+      }
+    },
+    {
+      "model": "suzaku.productopedido",
+      "pk": 2,
+      "fields": {
+        "pedido": 1,
+        "producto": 2,
+        "cantidad": 1,
+        "precio": "50.00"
+      }
+    }
+  ]
+  

@@ -1,0 +1,50 @@
+.admin-productos {
+    display: flex;
+    flex-wrap: wrap;         /* 👈 permite que los elementos salten de línea si no caben */
+    gap: 1rem;
+    padding: 1rem;
+    justify-content: flex-start;  /* 👈 opcional: alinea los elementos a la izquierda */
+  }
+  
+  
+  .producto-admin-card {
+    display: flex;
+    align-items: center;
+    background: #f9f9f9;
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    gap: 1rem;
+  }
+  
+  .producto-admin-img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+  }
+  
+  .producto-admin-detalles h3 {
+    margin: 0;
+  }
+  
+  .acciones-admin {
+    margin-top: 0.5rem;
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  .acciones-admin button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  .acciones-admin button:hover {
+    background-color: #0056b3;
+  }
+  

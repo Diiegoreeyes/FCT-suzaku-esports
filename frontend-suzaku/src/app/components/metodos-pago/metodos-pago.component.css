@@ -1,0 +1,13 @@
+/* metodos-pago.component.css */
+h2 {
+    margin-bottom: 15px;
+  }
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+  li {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+  }
+  

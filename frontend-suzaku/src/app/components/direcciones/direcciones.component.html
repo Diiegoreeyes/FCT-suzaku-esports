@@ -1,0 +1,67 @@
+<div class="perfil-direcciones">
+  <h2>Mis Direcciones</h2>
+
+  <!-- Mensaje de estado -->
+  <p *ngIf="mensaje" style="color: green;">{{ mensaje }}</p>
+
+  <!-- Botón para mostrar/ocultar el formulario de Nueva Dirección -->
+  <button (click)="toggleFormulario()">
+    {{ mostrarFormulario ? 'Cancelar' : 'Agregar Nueva Dirección' }}
+  </button>
+
+  <!-- Formulario de creación de dirección -->
+  <div *ngIf="mostrarFormulario" class="direccion-form">
+    <h3>Agregar Nueva Dirección</h3>
+    <form [formGroup]="direccionForm" (ngSubmit)="agregarDireccion()">
+      <div>
+        <label for="alias">Alias (opcional):</label>
+        <input formControlName="alias" id="alias" type="text" placeholder="Casa, Trabajo, etc." />
+      </div>
+      <div>
+        <label for="direccion">Dirección:</label>
+        <input formControlName="direccion" id="direccion" type="text" placeholder="Calle, número, etc." />
+      </div>
+      <div>
+        <label for="ciudad">Ciudad:</label>
+        <input formControlName="ciudad" id="ciudad" type="text" />
+      </div>
+      <div>
+        <label for="provincia">Provincia:</label>
+        <input formControlName="provincia" id="provincia" type="text" />
+      </div>
+      <div>
+        <label for="codigo_postal">Código Postal:</label>
+        <input formControlName="codigo_postal" id="codigo_postal" type="text" />
+      </div>
+      <div>
+        <label for="pais">País:</label>
+        <input formControlName="pais" id="pais" type="text" />
+      </div>
+      <button type="submit" [disabled]="direccionForm.invalid">Guardar Dirección</button>
+    </form>
+  </div>
+
+  <hr>
+
+  <!-- Listado de direcciones -->
+  <div *ngIf="direcciones && direcciones.length > 0; else sinDirecciones">
+    <div class="direccion-card" *ngFor="let dir of direcciones">
+      <p><strong>{{ dir.alias || 'Dirección' }}</strong></p>
+      <p>{{ dir.direccion }}, {{ dir.ciudad }}{{ dir.provincia ? ', ' + dir.provincia : '' }}</p>
+      <p>{{ dir.codigo_postal ? dir.codigo_post + ' - ' : '' }}{{ dir.pais }}</p>
+
+      <!-- Checkbox (o radio) para marcar activa -->
+      <label>
+        <input type="checkbox" [checked]="dir.activa" (change)="marcarComoActiva(dir)" />
+        Dirección activa
+      </label>
+
+      <!-- Botón para eliminar (opcional) -->
+      <button (click)="eliminarDireccion(dir)">Eliminar</button>
+    </div>
+  </div>
+
+  <ng-template #sinDirecciones>
+    <p>No tienes direcciones registradas.</p>
+  </ng-template>
+</div>
