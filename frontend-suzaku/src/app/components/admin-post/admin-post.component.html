@@ -1,1 +1,61 @@
-<p>admin-post works!</p>
+<div class="admin-post-container">
+    <h2 class="admin-title">Administrar Posts</h2>
+  
+    <!-- Acciones generales: Botón para crear un nuevo post -->
+    <div class="admin-actions">
+      <button class="btn-crear" (click)="nuevoPost()">🆕 Crear Nuevo Post</button>
+    </div>
+  
+    <!-- LISTA DE POSTS -->
+    <div class="admin-post-list">
+      <div class="admin-post-card" *ngFor="let p of posts">
+        <div class="admin-post-header">
+          <h3>{{ p.titulo }}</h3>
+          <span>Orden: {{ p.orden }}</span>
+        </div>
+        <p class="admin-post-descripcion">{{ p.descripcion }}</p>
+  
+        <img *ngIf="p.imagen" [src]="p.imagen" class="admin-post-imagen" alt="Imagen del Post" />
+
+  
+        <div class="admin-post-acciones">
+          <button class="btn-editar" (click)="editarPost(p)">✏️ Editar</button>
+          <button class="btn-eliminar" (click)="eliminarPost(p.id)">❌ Eliminar</button>
+        </div>
+      </div>
+    </div>
+  
+    <!-- FORMULARIO: SOLO SE MUESTRA SI mostrarForm=true -->
+    <div class="admin-post-form" *ngIf="mostrarForm">
+      <h3>{{ modoEdicion ? 'Editar Post' : 'Crear Nuevo Post' }}</h3>
+  
+      <div class="form-group">
+        <label>Título:</label>
+        <input type="text" [(ngModel)]="postSeleccionado.titulo" />
+      </div>
+  
+      <div class="form-group">
+        <label>Descripción:</label>
+        <textarea [(ngModel)]="postSeleccionado.descripcion"></textarea>
+      </div>
+  
+      <div class="form-group">
+        <label>Orden:</label>
+        <input type="number" [(ngModel)]="postSeleccionado.orden" />
+      </div>
+  
+      <div class="form-group">
+        <label>Imagen (opcional):</label>
+        <input type="file" (change)="onFileChange($event)" />
+      </div>
+      
+  
+      <div class="admin-post-form-acciones">
+        <button class="btn-guardar" (click)="guardarPost()">
+          {{ modoEdicion ? '💾 Guardar Cambios' : '✅ Crear Post' }}
+        </button>
+        <button class="btn-cancelar" (click)="cancelar()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+  

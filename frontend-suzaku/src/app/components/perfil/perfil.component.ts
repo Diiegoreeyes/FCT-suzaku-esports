@@ -32,10 +32,8 @@ export class PerfilComponent implements OnInit {
     if (typeof window !== 'undefined' && window.localStorage) {
       storedUserId = localStorage.getItem('usuario_id');
     }
-    console.log('Directamente de localStorage:', storedUserId);
     
     this.usuarioId = storedUserId ? parseInt(storedUserId, 10) : null;
-    console.log('usuarioId en PerfilComponent:', this.usuarioId);
     
     if (!this.usuarioId) {
       console.error('No se encontró usuario logueado.');

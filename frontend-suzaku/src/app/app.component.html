@@ -1,2 +1,7 @@
-<app-navbar></app-navbar>
-<router-outlet></router-outlet>
+<!-- Solo muestro la navbar si showNav = true -->
+<ng-container *ngIf="showNav">
+    <app-navbar></app-navbar>
+  </ng-container>
+  
+  <router-outlet></router-outlet>
+  

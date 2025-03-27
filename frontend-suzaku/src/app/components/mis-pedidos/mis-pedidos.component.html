@@ -47,16 +47,17 @@
       <div class="pedido-productos">
         <div class="producto-item" *ngFor="let item of pedido.productos">
           <img
-            [src]="getProductoFoto(item.producto.foto)"
-            alt="{{ item.producto.nombre }}"
+            [src]="getProductoFoto(item.foto)"
+            alt="{{ item.nombre }}"
             class="producto-img"
           />
           <div class="producto-info">
-            <p class="producto-nombre"><strong>{{ item.producto.nombre }}</strong></p>
+            <p class="producto-nombre"><strong>{{ item.nombre }}</strong></p>
             <p>Cantidad: {{ item.cantidad }}</p>
             <p>Precio unitario: {{ item.precio | currency:'EUR':'symbol':'1.2-2' }}</p>
           </div>
         </div>
+        
       </div>
     </div>
   </div>

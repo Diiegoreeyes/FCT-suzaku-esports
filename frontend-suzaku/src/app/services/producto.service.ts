@@ -46,6 +46,13 @@ export class ProductoService {
   actualizarProducto(id: number, data: any): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}${id}/`, data); // 👈 Este es el que te falta
   }
+  obtenerPedidos(): Observable<any[]> {
+    return this.http.get<any[]>('http://127.0.0.1:8000/api/pedidos/');
+  }
+  
+  actualizarEstadoPedido(pedidoId: number, estado: string): Observable<any> {
+    return this.http.patch(`http://127.0.0.1:8000/api/pedidos/${pedidoId}/`, { estado });
+  }
  }
 
 

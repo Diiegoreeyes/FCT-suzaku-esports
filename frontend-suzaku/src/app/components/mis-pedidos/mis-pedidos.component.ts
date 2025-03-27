@@ -47,12 +47,9 @@ export class MisPedidosComponent implements OnInit {
 
   // Construye la URL completa de la foto si la ruta no viene completa.
   getProductoFoto(foto: string): string {
-    if (!foto) {
-      return 'assets/default-producto.jpg';
-    }
-    if (foto.startsWith('http')) {
-      return foto;
-    }
+    if (!foto) return 'assets/default-producto.jpg';
+    if (foto.startsWith('http')) return foto;
     return `http://127.0.0.1:8000${foto.startsWith('/') ? '' : '/'}${foto}`;
   }
+  
 }

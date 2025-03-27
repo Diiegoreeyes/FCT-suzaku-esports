@@ -7,4 +7,6 @@ admin.site.register(Pedido)
 admin.site.register(ProductoPedido)
 admin.site.register(CodigoDescuento)
 admin.site.register(Usuario)
+admin.site.register(PostEquipo)
+admin.site.register(Equipo)
 

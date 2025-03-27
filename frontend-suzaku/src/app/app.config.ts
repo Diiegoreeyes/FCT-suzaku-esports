@@ -8,10 +8,11 @@ import { interceptor } from './services/interceptor.service'; // Importa la func
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
-    provideHttpClient(withFetch()),
-    provideHttpClient(withFetch()), // ✅ Agregar withFetch para evitar warnings
-    provideHttpClient(withInterceptors([interceptor])) // Ahora usa la función en vez de la clase
 
-  ],
-  
+    // ✅ Usa una única llamada a provideHttpClient
+    provideHttpClient(
+      withFetch(),
+      withInterceptors([interceptor])
+    )
+  ]
 };

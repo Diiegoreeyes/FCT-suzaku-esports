@@ -144,3 +144,45 @@ class ProductoPedido(models.Model):
 
     def __str__(self):
         return f"{self.producto.nombre} - {self.cantidad} unidades en Pedido {self.pedido.id}"
+
+############################################################
+# POSTS
+############################################################
+
+class PostEquipo(models.Model):
+    titulo = models.CharField(max_length=200)
+    descripcion = models.TextField()
+    imagen = models.ImageField(upload_to='equipo_posts/', blank=True, null=True)
+
+    # OPCIONAL: si quieres un orden específico
+    orden = models.PositiveIntegerField(default=0, help_text="Posición para mostrar el post en el equipo.")
+
+    def __str__(self):
+        return f"{self.titulo}"
+    
+
+############################################################
+# EQUIPO
+############################################################
+
+
+class Equipo(models.Model):
+    # Opciones para el campo "tipo"
+    TIPO_CHOICES = [
+        ('jugador', 'Jugador'),
+        ('creador', 'Creador de Contenido'),
+    ]
+
+    nombre = models.CharField(max_length=100)
+    primer_apellido = models.CharField(max_length=100, blank=True, null=True)
+    nickname = models.CharField(max_length=50)
+    descripcion = models.TextField(blank=True, null=True)
+    foto = models.ImageField(upload_to='equipo_integrantes/', blank=True, null=True)
+    tipo = models.CharField(
+        max_length=20,
+        choices=TIPO_CHOICES,
+        default='creador'
+    )
+
+    def __str__(self):
+        return f"{self.nombre} {self.primer_apellido or ''} ({self.nickname})"

@@ -1,0 +1,65 @@
+<div class="equipopublic-container">
+
+  <!-- 1) POSTS en zigzag -->
+  <h2>Últimos Posts del Equipo</h2>
+  <div
+    class="post-zigzag"
+    *ngFor="let post of posts; let i = index"
+    [class.reverse]="i % 2 !== 0"
+  >
+    <div class="post-texto">
+      <h3>{{ post.titulo }}</h3>
+      <p>{{ post.descripcion }}</p>
+    </div>
+    <div class="post-imagen">
+      <img *ngIf="post.imagen" [src]="post.imagen" alt="Imagen del Post" />
+    </div>
+  </div>
+
+  <!-- 2) SEPARADOR -->
+  <hr />
+
+  <!-- 3) EQUIPO: menú para Jugadores / Creadores -->
+  <h2>Nuestro Equipo</h2>
+  <div class="equipo-menu">
+    <button
+      [class.active]="filtroTipo === 'jugador'"
+      (click)="seleccionarFiltro('jugador')"
+    >
+      Jugadores
+    </button>
+    <button
+      [class.active]="filtroTipo === 'creador'"
+      (click)="seleccionarFiltro('creador')"
+    >
+      Creadores
+    </button>
+  </div>
+
+  <!-- NUEVO: 4) Lista de integrantes en layout zigzag, 
+       con nickname grande y foto 300x300 -->  
+  <div class="equipo-list">
+    <div
+      class="integrant-zigzag"
+      *ngFor="let integrante of integrantesFiltrados; let i = index"
+      [class.reverse]="i % 2 !== 0"
+    >
+      <!-- Foto en un lado -->
+      <div class="integrant-foto">
+        <img
+          *ngIf="integrante.foto"
+          [src]="integrante.foto"
+          alt="Foto integrante"
+        />
+      </div>
+
+      <!-- Texto al otro lado -->
+      <div class="integrant-text">
+        <!-- Nickname grande y en mayúsculas -->
+        <h2 class="nickname-titulo">{{ (integrante.nickname || '') | uppercase }}</h2>
+        <h4 class="nombre-apellido">{{ integrante.nombre }} {{ integrante.primer_apellido }}</h4>
+        <p *ngIf="integrante.descripcion">{{ integrante.descripcion }}</p>
+      </div>
+    </div>
+  </div>
+</div>

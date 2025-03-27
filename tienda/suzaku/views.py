@@ -89,7 +89,29 @@ class UsuarioViewSet(viewsets.ModelViewSet):
     queryset = Usuario.objects.all()
     serializer_class = UsuarioSerializer
 
+    def get_queryset(self):
+        # Si no eres superusuario, solo te devuelvo tu propio usuario
+        if not self.request.user.is_staff:
+            return Usuario.objects.filter(pk=self.request.user.pk)
+        return super().get_queryset()
+
+    def retrieve(self, request, *args, **kwargs):
+        print("DEBUG => Entrando a retrieve de UsuarioViewSet")
+        print("DEBUG => request.user.pk:", request.user.pk)
+        print("DEBUG => kwargs['pk']:", kwargs['pk'])
+
+        if not request.user.is_staff:
+            print("DEBUG => user is NOT staff")
+            if int(kwargs['pk']) != request.user.pk:
+                print("DEBUG => pk distinto. Devuelvo 403")
+                return Response({"error": "No puedes ver a otro usuario"}, status=403)
+        else:
+            print("DEBUG => user IS staff")
+
+        return super().retrieve(request, *args, **kwargs)
+    
     def get_permissions(self):
+        print("DEBUG => Entrando a get_permissions de UsuarioViewSet")
         # Permitir el registro (acción 'create') sin autenticación
         if self.action == 'create':
             return [AllowAny()]
@@ -532,11 +554,21 @@ def api_vaciar_carrito(request):
     request.session['carrito'] = {}
     return Response({"mensaje": "Carrito vaciado"}, status=status.HTTP_200_OK)
 
+############################################################
+# SOBRE NOSOTROS
+############################################################
 
+class PostEquipoViewSet(viewsets.ModelViewSet):
+    queryset = PostEquipo.objects.all().order_by('orden')
+    serializer_class = PostEquipoSerializer
+
+class EquipoViewSet(viewsets.ModelViewSet):
+    queryset = Equipo.objects.all()
+    serializer_class = EquipoSerializer
+    
 ############################################################
 # 🔐 CRUD PRODUCTOS (Solo Administradores)
 ############################################################
-
 
 
 # 🛠️ Función para verificar si el usuario es administrador
@@ -607,3 +639,7 @@ def eliminar_producto(request, id):
 def lista_productos(request):
     productos = Producto.objects.all()
     return render(request, 'suzaku/lista_productos.html', {'productos': productos})
+
+class PedidoViewSet(viewsets.ModelViewSet):
+    queryset = Pedido.objects.all()
+    serializer_class = PedidoSerializer

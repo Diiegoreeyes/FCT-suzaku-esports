@@ -1,1 +1,47 @@
-<p>admin-pedidos works!</p>
+<div class="admin-pedidos">
+  <h2>📑 Gestión de Pedidos</h2>
+
+  <div class="pedido-card" *ngFor="let pedido of pedidos">
+    <h3>Pedido #{{ pedido.id }}</h3>
+    <p>📍 Dirección: {{ pedido.direccion_envio }}</p>
+    <p>🗓️ Fecha: {{ pedido.fecha_creacion | date: 'short' }}</p>
+    <p>💸 Total: {{ pedido.total | currency:'EUR' }}</p>
+
+    <p *ngIf="pedido.descuento_aplicado > 0">
+      🏷️ Descuento aplicado: {{ pedido.descuento_aplicado }}€
+      <span *ngIf="pedido.codigo_descuento_str">
+        (<strong>{{ pedido.codigo_descuento_str }}</strong>)
+      </span>
+    </p>
+
+    <p>
+      <strong>Total con descuento:</strong>
+      {{ pedido.total_con_descuento | currency:'EUR' }}
+    </p>
+
+    <!-- Listado de productos en el pedido -->
+    <div class="productos-en-pedido">
+      <div class="producto-pedido" *ngFor="let prod of pedido.productos">
+        <img
+          [src]="getFotoUrl(prod.foto)"
+          alt="{{ prod.nombre }}"
+          class="img-producto"
+        />
+        <div class="detalles">
+          <strong>{{ prod.nombre }}</strong>
+          <p>Cantidad: {{ prod.cantidad }}</p>
+          <p>Precio unitario: {{ prod.price | currency:'EUR' }}</p>
+          <!-- Ojo: asumiendo que en tu serializer se llama 'precio', probablemente sea: prod.precio -->
+          <p>Precio unitario: {{ prod.precio | currency:'EUR' }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actualizar estado del pedido -->
+    <select [(ngModel)]="pedido.estado" (change)="actualizarEstado(pedido)">
+      <option value="pendiente">Pendiente</option>
+      <option value="procesado">Procesado</option>
+      <option value="enviado">Enviado</option>
+    </select>
+  </div>
+</div>

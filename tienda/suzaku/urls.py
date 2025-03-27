@@ -12,6 +12,9 @@ router = DefaultRouter()
 router.register(r'productos', ProductoViewSet)  # 📦 API para productos
 router.register(r'usuarios', UsuarioViewSet)    # 👤 API para usuarios
 router.register(r'direcciones', DireccionViewSet, basename='direccion')
+router.register(r'pedidos', PedidoViewSet)  # 👈 Esto crea automáticamente /api/pedidos/<id>/
+router.register(r'post-equipo', PostEquipoViewSet, basename='post-equipo')
+router.register(r'equipo', EquipoViewSet, basename='equipo')
 
 ############################################################
 # 🌐 DEFINICIÓN DE RUTAS
@@ -36,6 +39,9 @@ urlpatterns = [
 
     # 🎟️ DESCUENTOS
     path('api/verificar_descuento/', verificar_descuento, name='verificar_descuento'),
+
+    #POSTS 
+    path('api/', include(router.urls)),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

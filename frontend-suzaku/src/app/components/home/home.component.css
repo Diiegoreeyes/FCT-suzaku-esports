@@ -1,0 +1,38 @@
+.home-container {
+    display: flex;
+    justify-content: space-between;  /* Espacio entre columnas */
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem;
+    height: 80vh; /* Ajusta la altura a tu gusto */
+  }
+  
+  /* Cada rectángulo (caja) */
+  .home-box {
+    flex: 1; /* Cada uno ocupa el mismo ancho */
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    text-align: center;
+    padding: 2rem;
+    cursor: pointer;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  .home-box:hover {
+    transform: translateY(-5px);
+    background-color: #e8e8e8;
+  }
+  
+  .home-box h2 {
+    margin: 0 0 1rem 0;
+    font-size: 1.5rem;
+  }
+  
+  .home-box p {
+    margin: 0;
+    font-size: 1rem;
+  }
+  

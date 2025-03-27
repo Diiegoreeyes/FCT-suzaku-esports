@@ -72,14 +72,12 @@ class DireccionSerializer(serializers.ModelSerializer):
 ############################################################
 
 class ProductoPedidoSerializer(serializers.ModelSerializer):
-    # Anidar el ProductoSerializer para tener toda la info del producto
-    producto = ProductoSerializer(read_only=True)
+    nombre = serializers.CharField(source='producto.nombre')
+    foto = serializers.ImageField(source='producto.foto')
 
     class Meta:
         model = ProductoPedido
-        fields = ['id', 'producto', 'cantidad', 'precio']
-
-
+        fields = ['nombre', 'foto', 'cantidad', 'precio']
 
 class PedidoSerializer(serializers.ModelSerializer):
     """
@@ -90,21 +88,28 @@ class PedidoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Pedido
-        fields = [
-            'id',
-            'usuario',
-            'direccion_envio',
-            'fecha_creacion',
-            'estado',
-            'total',
-            'total_con_descuento',
-            'descuento_aplicado',
-            'productos',  # 🔗 Relación con los productos pedidos
-            'codigo_descuento_str',
-        ]
+        fields = '__all__'
 
     def get_codigo_descuento_str(self, obj):
         # Devuelve el atributo 'codigo' del objeto codigo_descuento (si existe)
         if obj.codigo_descuento:
             return obj.codigo_descuento.codigo
         return None
+
+
+############################################################
+# SOBRE NOSOTROS
+############################################################
+
+# serializers.py
+
+class PostEquipoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PostEquipo
+        fields = '__all__'
+
+
+class EquipoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Equipo
+        fields = '__all__'

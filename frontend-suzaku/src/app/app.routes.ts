@@ -23,6 +23,9 @@ import { AdminPedidosComponent } from './components/admin-pedidos/admin-pedidos.
 import { AdminCrearproductoComponent } from './components/admin-crearproducto/admin-crearproducto.component';
 import { AdminEditarproductoComponent } from './components/admin-editarproducto/admin-editarproducto.component';
 import { AdminListarproductoComponent } from './components/admin-listarproducto/admin-listarproducto.component';
+import { EquipopublicComponent } from './components/equipopublic/equipopublic.component';
+import { SponsorspublicComponent } from './components/sponsorspublic/sponsorspublic.component';
+import { PublicLayoutComponent } from './components/public-layout/public-layout.component';
 
 const AuthGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
@@ -35,25 +38,20 @@ const AuthGuard: CanActivateFn = (route, state) => {
 };
 
 export const routes: Routes = [
+
+  // 1) RUTAS PÚBLICAS, sin navbar
   { path: '', component: HomeComponent },
-  { path: 'productos', component: ProductosComponent },
-  { path: 'carrito', component: CarritoComponent },
-  { path: 'checkout', component: CheckoutComponent, canActivate: [AuthGuard] },
-  { path: 'crear-usuario', component: CrearUsuarioComponent },
-  { path: 'login', component: LoginComponent },
-  
   {
-    path: 'perfil',
-    canActivate: [AuthGuard],
-    component: PerfilLayoutComponent,
+    // El path 'equipo' primero carga `PublicLayoutComponent`
+    path: 'equipo', component: PublicLayoutComponent,
     children: [
-      { path: '', component: PerfilComponent },             // Mi Perfil
-      { path: 'mis-pedidos', component: MisPedidosComponent }, // Mis Pedidos
-      { path: 'direcciones', component: DireccionesComponent }, // Direcciones
-      { path: 'metodos-pago', component: MetodosPagoComponent },// Métodos de Pago
-      { path: 'configuracion', component: ConfiguracionComponent }, // Preferencias
-      { path: 'seguridad', component: SeguridadComponent },     // Seguridad
-      
+      { path: '', component: EquipopublicComponent },
+    ]
+  },
+  {
+    path: 'sponsors', component: PublicLayoutComponent,
+    children: [
+      { path: '', component: SponsorspublicComponent },
     ]
   },
   {
@@ -70,5 +68,27 @@ export const routes: Routes = [
       { path: 'equipo', component: AdminEquipoComponent },
       { path: 'sponsors', component: AdminSponsorsComponent }
     ]
-  }
+  },
+
+
+  { path: 'productos', component: ProductosComponent },
+  { path: 'carrito', component: CarritoComponent },
+  { path: 'checkout', component: CheckoutComponent, canActivate: [AuthGuard] },
+  { path: 'crear-usuario', component: CrearUsuarioComponent },
+  { path: 'login', component: LoginComponent },
+  {
+    path: 'perfil',
+    canActivate: [AuthGuard],
+    component: PerfilLayoutComponent,
+    children: [
+      { path: '', component: PerfilComponent },             // Mi Perfil
+      { path: 'mis-pedidos', component: MisPedidosComponent }, // Mis Pedidos
+      { path: 'direcciones', component: DireccionesComponent }, // Direcciones
+      { path: 'metodos-pago', component: MetodosPagoComponent },// Métodos de Pago
+      { path: 'configuracion', component: ConfiguracionComponent }, // Preferencias
+      { path: 'seguridad', component: SeguridadComponent },     // Seguridad
+      
+    ]
+  },
+
 ];

@@ -1,67 +1,49 @@
-// admin-editarproducto.component.ts
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ProductoService } from '../../services/producto.service';
+import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-admin-editarproducto',
+  selector: 'app-admin-crearproducto',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './admin-editarproducto.component.html',
+  templateUrl: './admin-crearproducto.component.html',
+  styleUrls: ['./admin-crearproducto.component.css']
 })
 export class AdminCrearproductoComponent implements OnInit {
   formProducto!: FormGroup;
-  productoId!: number;
-  imagenPreview: string | null = null;
-  imagenArchivo: File | null = null;
+  imagenPreview: string | ArrayBuffer | null = null;
 
   constructor(
     private fb: FormBuilder,
-    private route: ActivatedRoute,
-    private router: Router,
-    private productoService: ProductoService
+    private productoService: ProductoService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.productoId = Number(this.route.snapshot.paramMap.get('id'));
-    this.inicializarFormulario();
-    this.cargarProducto();
-  }
-
-  inicializarFormulario(): void {
     this.formProducto = this.fb.group({
       nombre: ['', Validators.required],
       descripcion: [''],
-      precio: ['', Validators.required],
-    });
-  }
-
-  cargarProducto(): void {
-    this.productoService.getProducto(this.productoId).subscribe(producto => {
-      this.formProducto.patchValue({
-        nombre: producto.nombre,
-        descripcion: producto.descripcion,
-        precio: producto.precio
-      });
-      this.imagenPreview = producto.foto ? `http://127.0.0.1:8000${producto.foto}` : null;
+      precio: [null, [Validators.required, Validators.min(0)]],
+      foto: [null]
     });
   }
 
   onFileChange(event: any): void {
     const file = event.target.files[0];
     if (file) {
-      this.imagenArchivo = file;
+      this.formProducto.patchValue({ foto: file });
+
       const reader = new FileReader();
       reader.onload = () => {
-        this.imagenPreview = reader.result as string;
+        this.imagenPreview = reader.result;
       };
       reader.readAsDataURL(file);
     }
   }
 
-  actualizarProducto(): void {
+  crearProducto(): void {
     if (this.formProducto.invalid) return;
 
     const formData = new FormData();
@@ -69,17 +51,16 @@ export class AdminCrearproductoComponent implements OnInit {
     formData.append('descripcion', this.formProducto.get('descripcion')?.value);
     formData.append('precio', this.formProducto.get('precio')?.value);
 
-    if (this.imagenArchivo) {
-      formData.append('foto', this.imagenArchivo);
-    }
+    const foto = this.formProducto.get('foto')?.value;
+    if (foto) formData.append('foto', foto);
 
-    this.productoService.actualizarProducto(this.productoId, formData).subscribe({
+    this.productoService.crearProducto(formData).subscribe({
       next: () => {
-        alert('Producto actualizado correctamente');
+        alert('✅ Producto creado con éxito');
         this.router.navigate(['/administrador/listar-productos']);
       },
       error: () => {
-        alert('Error al actualizar el producto');
+        alert('❌ Error al crear el producto');
       }
     });
   }
