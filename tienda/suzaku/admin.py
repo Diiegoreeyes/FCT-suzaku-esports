@@ -9,4 +9,11 @@ admin.site.register(CodigoDescuento)
 admin.site.register(Usuario)
 admin.site.register(PostEquipo)
 admin.site.register(Equipo)
+admin.site.register(Juego)
+admin.site.register(Competicion)
+admin.site.register(EquipoParticipante)
+admin.site.register(Partido)
+admin.site.register(EquipoCompetitivo)
+
+
 

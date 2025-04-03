@@ -186,3 +186,79 @@ class Equipo(models.Model):
 
     def __str__(self):
         return f"{self.nombre} {self.primer_apellido or ''} ({self.nickname})"
+    
+
+# ------------------------
+# MODELO JUEGO
+# ------------------------
+class Juego(models.Model):
+    nombre = models.CharField(max_length=100)
+    descripcion = models.TextField(blank=True, null=True)
+    logo = models.ImageField(upload_to='juegos/', blank=True, null=True)
+
+    def __str__(self):
+        return self.nombre
+
+
+# ------------------------
+# MODELO COMPETICIÓN
+# ------------------------
+class Competicion(models.Model):
+    nombre = models.CharField(max_length=200)
+    juego = models.ForeignKey(Juego, on_delete=models.CASCADE, related_name='competiciones')
+    descripcion = models.TextField(blank=True, null=True)
+    fecha_inicio = models.DateField(blank=True, null=True)
+    fecha_fin = models.DateField(blank=True, null=True)
+    pais = models.CharField(max_length=100, blank=True, null=True)
+    organizador = models.CharField(max_length=100, blank=True, null=True)
+
+    def __str__(self):
+        return self.nombre
+
+
+class EquipoCompetitivo(models.Model):
+    nombre = models.CharField(max_length=100, null=True)
+    logo = models.ImageField(upload_to='equipos_competitivos/', blank=True, null=True)
+    pais = models.CharField(max_length=50, blank=True, null=True)
+
+    def __str__(self):
+        return self.nombre
+
+
+# ------------------------
+# MODELO EQUIPO PARTICIPANTE EN UNA COMPETICIÓN
+# ------------------------
+class EquipoParticipante(models.Model):
+    equipo_competitivo = models.ForeignKey('EquipoCompetitivo', on_delete=models.CASCADE, related_name='participaciones')
+    competicion = models.ForeignKey(Competicion, on_delete=models.CASCADE, related_name='equipos')
+    posicion_ranking = models.PositiveIntegerField(blank=True, null=True)
+    puntos = models.PositiveIntegerField(default=0,blank=True, null=True)
+    victorias = models.PositiveIntegerField(default=0,blank=True, null=True)
+    derrotas = models.PositiveIntegerField(default=0,blank=True, null=True)
+    empates = models.IntegerField(default=0)  
+
+
+    def __str__(self):
+        return f"{self.equipo_competitivo.nombre} en {self.competicion.nombre}"
+
+
+# ------------------------
+# MODELO PARTIDO
+# ------------------------
+class Partido(models.Model):
+    ESTADO_CHOICES = [
+        ('pendiente', 'Pendiente'),
+        ('finalizado', 'Finalizado'),
+    ]
+
+    competicion = models.ForeignKey(Competicion, on_delete=models.CASCADE, related_name='partidos')
+    equipo1 = models.ForeignKey(EquipoParticipante, on_delete=models.CASCADE, related_name='partidos_como_equipo1')
+    equipo2 = models.ForeignKey(EquipoParticipante, on_delete=models.CASCADE, related_name='partidos_como_equipo2')
+    marcador_equipo1 = models.PositiveIntegerField(default=0)
+    marcador_equipo2 = models.PositiveIntegerField(default=0)
+    fecha_partido = models.DateTimeField()
+    estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='pendiente')
+
+    def __str__(self):
+        return f"{self.equipo1.equipo_competitivo.nombre} vs {self.equipo2.equipo_competitivo.nombre} ({self.competicion.nombre})"
+

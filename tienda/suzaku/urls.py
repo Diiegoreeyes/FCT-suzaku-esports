@@ -15,6 +15,12 @@ router.register(r'direcciones', DireccionViewSet, basename='direccion')
 router.register(r'pedidos', PedidoViewSet)  # 👈 Esto crea automáticamente /api/pedidos/<id>/
 router.register(r'post-equipo', PostEquipoViewSet, basename='post-equipo')
 router.register(r'equipo', EquipoViewSet, basename='equipo')
+router.register(r'juegos', JuegoViewSet)
+router.register(r'competiciones', CompeticionViewSet)
+router.register(r'equipos-participantes', EquipoParticipanteViewSet)
+router.register(r'equipos-competitivos', EquipoCompetitivoViewSet)
+
+router.register(r'partidos', PartidoViewSet)
 
 ############################################################
 # 🌐 DEFINICIÓN DE RUTAS

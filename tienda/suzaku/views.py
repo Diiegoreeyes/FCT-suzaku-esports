@@ -447,6 +447,7 @@ class ProductoViewSet(viewsets.ModelViewSet):
     """
     queryset = Producto.objects.all()
     serializer_class = ProductoSerializer
+    permission_classes = [AllowAny]  # ✅ esto permite acceso sin login
 
 
 ############################################################
@@ -565,7 +566,67 @@ class PostEquipoViewSet(viewsets.ModelViewSet):
 class EquipoViewSet(viewsets.ModelViewSet):
     queryset = Equipo.objects.all()
     serializer_class = EquipoSerializer
-    
+
+class JuegoViewSet(viewsets.ModelViewSet):
+    queryset = Juego.objects.all()
+    serializer_class = JuegoSerializer
+
+
+class CompeticionViewSet(viewsets.ModelViewSet):
+    queryset = Competicion.objects.all()
+    serializer_class = CompeticionSerializer
+
+class EquipoCompetitivoViewSet(viewsets.ModelViewSet):
+    queryset = EquipoCompetitivo.objects.all()
+    serializer_class = EquipoCompetitivoSerializer
+
+
+class EquipoParticipanteViewSet(viewsets.ModelViewSet):
+    queryset = EquipoParticipante.objects.all()
+    serializer_class = EquipoParticipanteSerializer
+
+
+from rest_framework import status
+from rest_framework.response import Response
+
+class PartidoViewSet(viewsets.ModelViewSet):
+    queryset = Partido.objects.all()
+    serializer_class = PartidoSerializer
+
+    def perform_update(self, serializer):
+        partido = serializer.save()
+        self.actualizar_estadisticas(partido)
+
+    def perform_create(self, serializer):
+        partido = serializer.save()
+        self.actualizar_estadisticas(partido)
+
+    def actualizar_estadisticas(self, partido: Partido, original: Partido = None):
+        def ajustar_stats(equipo: EquipoParticipante, delta_puntos=0, delta_v=0, delta_d=0):
+            equipo.puntos = max(0, equipo.puntos + delta_puntos)
+            equipo.victorias = max(0, equipo.victorias + delta_v)
+            equipo.derrotas = max(0, equipo.derrotas + delta_d)
+            equipo.save()
+
+        if original:
+            # Revertimos los cambios anteriores
+            if original.estado == 'finalizado':
+                if original.marcador_equipo1 > original.marcador_equipo2:
+                    ajustar_stats(original.equipo1, delta_puntos=-3, delta_v=-1)
+                    ajustar_stats(original.equipo2, delta_d=-1)
+                elif original.marcador_equipo2 > original.marcador_equipo1:
+                    ajustar_stats(original.equipo2, delta_puntos=-3, delta_v=-1)
+                    ajustar_stats(original.equipo1, delta_d=-1)
+
+        # Aplicamos los nuevos cambios
+        if partido.estado == 'finalizado':
+            if partido.marcador_equipo1 > partido.marcador_equipo2:
+                ajustar_stats(partido.equipo1, delta_puntos=3, delta_v=1)
+                ajustar_stats(partido.equipo2, delta_d=1)
+            elif partido.marcador_equipo2 > partido.marcador_equipo1:
+                ajustar_stats(partido.equipo2, delta_puntos=3, delta_v=1)
+                ajustar_stats(partido.equipo1, delta_d=1)
+
 ############################################################
 # 🔐 CRUD PRODUCTOS (Solo Administradores)
 ############################################################
@@ -639,6 +700,7 @@ def eliminar_producto(request, id):
 def lista_productos(request):
     productos = Producto.objects.all()
     return render(request, 'suzaku/lista_productos.html', {'productos': productos})
+
 
 class PedidoViewSet(viewsets.ModelViewSet):
     queryset = Pedido.objects.all()

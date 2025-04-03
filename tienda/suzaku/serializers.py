@@ -113,3 +113,74 @@ class EquipoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Equipo
         fields = '__all__'
+
+class JuegoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Juego
+        fields = '__all__'
+
+
+class CompeticionSerializer(serializers.ModelSerializer):
+    juego = JuegoSerializer(read_only=True)
+    juego_id = serializers.PrimaryKeyRelatedField(
+        queryset=Juego.objects.all(), source='juego', write_only=True
+    )
+
+    class Meta:
+        model = Competicion
+        fields = ['id', 'nombre', 'descripcion', 'fecha_inicio', 'fecha_fin', 'pais',
+                  'organizador', 'juego', 'juego_id']
+
+
+class EquipoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Equipo
+        fields = ['id', 'nickname', 'foto', 'descripcion', 'tipo']
+
+class EquipoCompetitivoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EquipoCompetitivo
+        fields = '__all__'
+
+class EquipoParticipanteSerializer(serializers.ModelSerializer):
+    equipo_competitivo_id = serializers.PrimaryKeyRelatedField(
+        queryset=EquipoCompetitivo.objects.all(), source='equipo_competitivo', write_only=True
+    )
+    competicion_id = serializers.PrimaryKeyRelatedField(
+        queryset=Competicion.objects.all(), source='competicion', write_only=True
+    )
+    equipo_competitivo = EquipoCompetitivoSerializer(read_only=True)
+    competicion = CompeticionSerializer(read_only=True)
+
+    class Meta:
+        model = EquipoParticipante
+        fields = '__all__'
+
+
+
+
+class PartidoSerializer(serializers.ModelSerializer):
+    competicion = CompeticionSerializer(read_only=True)
+    competicion_id = serializers.PrimaryKeyRelatedField(
+        queryset=Competicion.objects.all(), source='competicion', write_only=True
+    )
+
+    equipo1 = EquipoParticipanteSerializer(read_only=True)
+    equipo1_id = serializers.PrimaryKeyRelatedField(
+        queryset=EquipoParticipante.objects.all(), source='equipo1', write_only=True
+    )
+
+    equipo2 = EquipoParticipanteSerializer(read_only=True)
+    equipo2_id = serializers.PrimaryKeyRelatedField(
+        queryset=EquipoParticipante.objects.all(), source='equipo2', write_only=True
+    )
+
+    class Meta:
+        model = Partido
+        fields = [
+            'id', 'competicion', 'competicion_id',
+            'equipo1', 'equipo1_id',
+            'equipo2', 'equipo2_id',
+            'marcador_equipo1', 'marcador_equipo2',
+            'fecha_partido', 'estado'
+        ]
