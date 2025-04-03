@@ -1,0 +1,473 @@
+<div class="ranking-admin-container">
+  <!-- 🔼 Menú de navegación tipo tabs -->
+  <nav class="ranking-menu">
+    <button [class.activo]="selectedSection === 'participantes'" (click)="cambiarSeccion('participantes')">📊 Tabla de Clasificación</button>
+    <button [class.activo]="selectedSection === 'participantes-crud'" (click)="cambiarSeccion('participantes-crud')">👥 Inscripción de Equipos</button>
+    <button [class.activo]="selectedSection === 'competiciones'" (click)="cambiarSeccion('competiciones')">🏆 Torneos y Ligas</button>
+    <button [class.activo]="selectedSection === 'juegos'" (click)="cambiarSeccion('juegos')">🎮 Catálogo de Juegos</button>
+    <button [class.activo]="selectedSection === 'competitivos'" (click)="cambiarSeccion('competitivos')">🛡️ Clubes registrados</button>
+    <button [class.activo]="selectedSection === 'partidos'" (click)="cambiarSeccion('partidos')">⚔️ Resultados de Partidos</button>
+  </nav>
+
+  <!-- PARTICIPANTES (Ranking) -->
+<!-- PARTICIPANTES (Ranking) -->
+<section *ngIf="selectedSection === 'participantes'">
+  <h2>📊 Tabla de Clasificación</h2>
+
+  <div *ngFor="let torneo of competiciones">
+    <h3>{{ torneo.nombre }}</h3>
+
+    <table class="ranking-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Equipo</th>
+          <th>Puntos</th>
+          <th>Victorias</th>
+          <th>Derrotas</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let equipo of getParticipantesPorCompeticion(torneo.id); index as i">
+          <td>{{ i + 1 }}</td>
+          <td class="club-info">
+            <img 
+              *ngIf="equipo.equipo_competitivo?.logo"
+              [src]="equipo.equipo_competitivo.logo"
+              alt="logo"
+              class="ranking-logo"
+            />
+            <span>{{ equipo.equipo_competitivo?.nombre || 'Sin equipo' }}</span>
+          </td>
+          <td>{{ equipo.puntos }}</td>
+          <td>{{ equipo.victorias }}</td>
+          <td>{{ equipo.derrotas }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+
+  <!-- CRUD PARTICIPANTES -->
+  <section *ngIf="selectedSection === 'participantes-crud'">
+    <h2>👥 Inscripción de Equipos</h2>
+  <!-- FORMULARIO BONITO -->
+  <div class="formulario-inscripcion">
+    <label>
+      🛡️ Club:
+      <select [(ngModel)]="nuevoParticipante.equipo_competitivo_id" name="equipo_competitivo_id" required>
+        <option *ngFor="let eq of equiposCompetitivos" [value]="eq.id">{{ eq.nombre }}</option>
+      </select>
+    </label>
+
+    <label>
+      🏆 Torneo:
+      <select [(ngModel)]="nuevoParticipante.competicion_id" name="competicion_id" required>
+        <option *ngFor="let c of competiciones" [value]="c.id">{{ c.nombre }}</option>
+      </select>
+    </label>
+
+    <label>
+      📈 Puntos:
+      <input type="number" [(ngModel)]="nuevoParticipante.puntos" name="puntos" required>
+    </label>
+
+    <label>
+      ✅ Victorias:
+      <input type="number" [(ngModel)]="nuevoParticipante.victorias" name="victorias" required>
+    </label>
+
+    <label>
+      ❌ Derrotas:
+      <input type="number" [(ngModel)]="nuevoParticipante.derrotas" name="derrotas" required>
+    </label>
+
+    <button class="btn-crear" (click)="crearParticipante()">➕ Inscribir</button>
+  </div>
+    
+    <!-- LISTADO AGRUPADO POR TORNEO -->
+    <div *ngFor="let torneo of competiciones">
+      <h3>{{ torneo.nombre }}</h3>
+      <div class="participantes-grid">
+        <div class="participante-card mejorado" *ngFor="let ep of filtrarParticipantesPorCompeticion(torneo.id)">
+          <img [src]="ep.equipo_competitivo?.logo" alt="Logo" class="participante-logo grande"
+               *ngIf="ep.equipo_competitivo?.logo" />
+  
+          <div class="participante-info" *ngIf="participanteEditando?.id !== ep.id">
+            <strong>{{ ep.equipo_competitivo?.nombre }}</strong>
+            <p>📈 Puntos: {{ ep.puntos }}</p>
+            <p>✅ Victorias: {{ ep.victorias }} | ❌ Derrotas: {{ ep.derrotas }}</p>
+            <div class="acciones">
+              <button class="btn-editar" (click)="editarParticipante(ep)">✏️</button>
+              <button class="btn-eliminar" (click)="eliminarParticipante(ep.id)">❌</button>
+            </div>
+          </div>
+  
+          <div class="participante-info" *ngIf="participanteEditando?.id === ep.id">
+            <div class="campo-edicion">
+              <label>Puntos</label>
+              <input type="number" [(ngModel)]="participanteEditando.puntos" name="puntos">
+            </div>
+            <div class="campo-edicion">
+              <label>Victorias</label>
+              <input type="number" [(ngModel)]="participanteEditando.victorias" name="victorias">
+            </div>
+            <div class="campo-edicion">
+              <label>Derrotas</label>
+              <input type="number" [(ngModel)]="participanteEditando.derrotas" name="derrotas">
+            </div>
+            <div class="acciones">
+              <button (click)="guardarEdicionParticipante()">💾 Guardar</button>
+              <button class="cancelar" (click)="cancelarEdicionParticipante()">Cancelar</button>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+    
+  </section>
+
+  <!-- COMPETICIONES --><!-- 📦 Torneos y Ligas -->
+
+  <section *ngIf="selectedSection === 'competiciones'">
+    <h2>🏆 Torneos y Ligas</h2>
+    
+    <!-- FORMULARIO DE CREACIÓN -->
+    <div class="formulario-inscripcion">
+      <label>
+        📛 Nombre:
+        <input type="text" placeholder="Nombre del torneo" [(ngModel)]="nuevaCompeticion.nombre" name="nombre">
+      </label>
+  
+      <label>
+        📝 Descripción:
+        <input type="text" placeholder="Descripción" [(ngModel)]="nuevaCompeticion.descripcion" name="descripcion">
+      </label>
+  
+      <label>
+        🎮 Juego:
+        <select [(ngModel)]="nuevaCompeticion.juego_id" name="juego_id">
+          <option *ngFor="let juego of juegos" [value]="juego.id">{{ juego.nombre }}</option>
+        </select>
+      </label>
+  
+      <button class="btn-crear" (click)="crearCompeticion()">➕ Crear Torneo</button>
+    </div>
+  
+    <!-- LISTADO DE COMPETICIONES -->
+    <div class="torneos-grid">
+      <div class="torneo-card mejorado" *ngFor="let c of competiciones">
+        <div class="torneo-info" *ngIf="competicionEditando?.id !== c.id">
+          <h3>{{ c.nombre }}</h3>
+          <p>{{ c.descripcion }}</p>
+          <p><strong>🎮 Juego:</strong> {{ c.juego?.nombre || 'No especificado' }}</p>
+          <div class="acciones">
+            <button class="btn-editar" (click)="editarCompeticion(c)">✏️</button>
+            <button class="btn-eliminar" (click)="eliminarCompeticion(c.id)">❌</button>
+          </div>
+        </div>
+  
+        <div class="torneo-edit" *ngIf="competicionEditando?.id === c.id">
+          <p>✏️ Editando: <strong>{{ c.nombre }}</strong></p>
+        
+          <label>
+            Nombre:
+            <input [(ngModel)]="competicionEditando.nombre" name="nombre" placeholder="Nuevo nombre">
+          </label>
+        
+          <label>
+            Descripción:
+            <input [(ngModel)]="competicionEditando.descripcion" name="descripcion" placeholder="Nueva descripción">
+          </label>
+        
+          <div class="acciones-torneo">
+            <button (click)="guardarEdicionCompeticion()">💾 Guardar</button>
+            <button (click)="cancelarEdicionCompeticion()">Cancelar</button>
+          </div>
+        </div>
+        
+        
+      </div>
+    </div>
+  </section>
+  
+
+<!-- JUEGOS -->
+<section *ngIf="selectedSection === 'juegos'">
+  <h2>🎮 Catálogo de Juegos</h2>
+
+  <!-- FORMULARIO -->
+  <form (ngSubmit)="crearJuego()" enctype="multipart/form-data" class="formulario-inscripcion">
+    <label>
+      🎮 Nombre:
+      <input type="text" [(ngModel)]="nuevoJuego.nombre" name="nombre" required>
+    </label>
+
+    <label>
+      📄 Descripción:
+      <input type="text" [(ngModel)]="nuevoJuego.descripcion" name="descripcion">
+    </label>
+
+    <label>
+      🖼️ Imagen:
+      <input type="file" (change)="onJuegoFileSelected($event)" accept="image/*">
+    </label>
+
+    <button class="btn-crear" type="submit">➕ Añadir Juego</button>
+  </form>
+
+  <!-- LISTADO DE JUEGOS -->
+  <div class="juegos-lista">
+    <div class="juego-item" *ngFor="let j of juegos">
+      
+      <img *ngIf="j.logo" [src]="j.logo" alt="Logo del juego" class="juego-logo" />
+
+      <div class="juego-contenido" *ngIf="juegoEditando?.id !== j.id">
+        <h3>{{ j.nombre }}</h3>
+        <p>{{ j.descripcion }}</p>
+        <div class="acciones">
+          <button class="btn-editar" (click)="editarJuego(j)">✏️</button>
+          <button class="btn-eliminar" (click)="eliminarJuego(j.id)">❌</button>
+        </div>
+      </div>
+
+      <div class="juego-contenido" *ngIf="juegoEditando?.id === j.id">
+        <p>✏️ Editando: <strong>{{ j.nombre }}</strong></p>
+        <div class="campo-edicion">
+          <label>Nombre:</label>
+          <input [(ngModel)]="juegoEditando.nombre" name="nombre">
+        </div>
+        <div class="campo-edicion">
+          <label>Descripción:</label>
+          <input [(ngModel)]="juegoEditando.descripcion" name="descripcion">
+        </div>
+        <div class="acciones">
+          <button class="btn-guardar" (click)="guardarEdicionJuego()">💾 Guardar</button>
+          <button class="btn-cancelar" (click)="cancelarEdicionJuego()">Cancelar</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+  <!-- EQUIPOS COMPETITIVOS -->
+<!-- EQUIPOS COMPETITIVOS -->
+<section *ngIf="selectedSection === 'competitivos'">
+  <h2>🛡️ Clubes registrados</h2>
+
+  <!-- FORMULARIO BONITO -->
+  <form (ngSubmit)="crearEquipoCompetitivo()" enctype="multipart/form-data" class="formulario-inscripcion">
+    <label>
+      🏷️ Nombre:
+      <input type="text" placeholder="Nombre del club" [(ngModel)]="nuevoEquipoCompetitivo.nombre" name="nombre" required>
+    </label>
+
+    <label>
+      🌍 País:
+      <input type="text" placeholder="País" [(ngModel)]="nuevoEquipoCompetitivo.pais" name="pais" required>
+    </label>
+
+    <label>
+      🖼️ Logo:
+      <input type="file" (change)="onFileSelected($event)" accept="image/*">
+    </label>
+
+    <button class="btn-crear" type="submit">➕ Registrar Club</button>
+  </form>
+
+  <!-- LISTADO DE CLUBES -->
+  <div class="juegos-lista">
+    <div class="juego-item" *ngFor="let e of equiposCompetitivos">
+      <img *ngIf="e.logo" [src]="e.logo" alt="Logo" class="juego-logo" />
+
+      <div class="juego-contenido" *ngIf="equipoEditando?.id !== e.id">
+        <h3>{{ e.nombre }}</h3>
+        <p>🌍 {{ getBandera(e.pais) }} {{ e.pais }}</p>
+        <div class="acciones">
+          <button class="btn-editar" (click)="editarEquipo(e)">✏️</button>
+          <button class="btn-eliminar" (click)="eliminarEquipoCompetitivo(e.id)">❌</button>
+        </div>
+      </div>
+
+      <div class="juego-contenido" *ngIf="equipoEditando?.id === e.id">
+        <p>✏️ Editando: <strong>{{ e.nombre }}</strong></p>
+        <div class="campo-edicion">
+          <label>Nombre:</label>
+          <input [(ngModel)]="equipoEditando.nombre" name="nombre">
+        </div>
+        <div class="campo-edicion">
+          <label>País:</label>
+          <input [(ngModel)]="equipoEditando.pais" name="pais">
+        </div>
+        <div class="acciones">
+          <button class="btn-guardar" (click)="guardarEdicionEquipo()">💾 Guardar</button>
+          <button class="btn-cancelar" (click)="cancelarEdicionEquipo()">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PARTIDOS -->
+<section *ngIf="selectedSection === 'partidos'">
+  <h2>⚔️ Gestión de Partidos</h2>
+
+  <!-- FORMULARIO DE CREACIÓN -->
+  <form (ngSubmit)="crearPartido()" class="formulario-partido">
+    <label>🏆 Competición:
+      <select 
+      [(ngModel)]="competicionSeleccionadaId" 
+      (ngModelChange)="actualizarEquiposFiltrados($event)" 
+      name="competicion_id"
+      required
+    >
+      <option *ngFor="let c of competiciones" [ngValue]="c.id">{{ c.nombre }}</option>
+    </select>
+    
+    
+    </label>
+    
+
+    <label>🛡️ Equipo 1:
+      <select [(ngModel)]="nuevoPartido.equipo1_id" name="equipo1_id" required>
+        <option *ngFor="let ep of equiposFiltrados" [value]="ep.id">
+          {{ ep.equipo_competitivo.nombre }}
+        </option>
+        
+      </select>
+    </label>
+
+    <label>🛡️ Equipo 2:
+      <select [(ngModel)]="nuevoPartido.equipo2_id" name="equipo2_id" required>
+        <option *ngFor="let ep of equiposFiltrados" [value]="ep.id">
+          {{ ep.equipo_competitivo.nombre }}
+        </option>
+        
+      </select>
+    </label>
+
+    <label>📅 Fecha:
+      <input type="datetime-local" [(ngModel)]="nuevoPartido.fecha_partido" name="fecha_partido" required>
+    </label>
+
+    <label>📌 Estado:
+      <select [(ngModel)]="nuevoPartido.estado" name="estado" required>
+        <option value="pendiente">Pendiente</option>
+        <option value="finalizado">Finalizado</option>
+      </select>
+    </label>
+
+    <label>🔢 Marcador equipo 1:
+      <input type="number" [(ngModel)]="nuevoPartido.marcador_equipo1" name="marcador_equipo1">
+    </label>
+
+    <label>🔢 Marcador equipo 2:
+      <input type="number" [(ngModel)]="nuevoPartido.marcador_equipo2" name="marcador_equipo2">
+    </label>
+
+    <button type="submit" class="btn-crear">➕ Crear Partido</button>
+  </form>
+
+  <h3>🟡 Próximos Partidos</h3>
+  <div class="partidos-grid">
+    <div *ngFor="let p of getPartidosPendientes()" class="partido-card">
+      
+      <ng-container *ngIf="partidoEditando?.id !== p.id; else editForm">
+        <img [src]="p.equipo1.equipo_competitivo.logo" class="club-logo" alt="Equipo 1">
+        <div class="vs-label">VS</div>
+        <img [src]="p.equipo2.equipo_competitivo.logo" class="club-logo" alt="Equipo 2">
+        <div class="partido-info">
+          <p><strong>{{ p.equipo1.equipo_competitivo.nombre }}</strong> vs <strong>{{ p.equipo2.equipo_competitivo.nombre }}</strong></p>
+          <p>⏰ {{ p.fecha_partido | date:'short' }}</p>
+          <div class="acciones">
+            <button class="btn-editar" (click)="editarPartido(p)">✏️</button>
+            <button class="btn-eliminar" (click)="eliminarPartido(p.id)">❌</button>
+          </div>
+        </div>
+      </ng-container>
+  
+      <ng-template #editForm>
+        <div class="partido-edit">
+          <p><strong>Editando: {{ p.equipo1.equipo_competitivo.nombre }} vs {{ p.equipo2.equipo_competitivo.nombre }}</strong></p>
+  
+          <label>Marcador Equipo 1</label>
+          <input type="number" [(ngModel)]="partidoEditando.marcador_equipo1">
+  
+          <label>Marcador Equipo 2</label>
+          <input type="number" [(ngModel)]="partidoEditando.marcador_equipo2">
+  
+          <label>Estado</label>
+          <select [(ngModel)]="partidoEditando.estado">
+            <option value="pendiente">Pendiente</option>
+            <option value="finalizado">Finalizado</option>
+          </select>
+  
+          <div class="acciones">
+            <button (click)="guardarEdicionPartido()">💾 Guardar</button>
+            <button class="cancelar" (click)="cancelarEdicionPartido()">Cancelar</button>
+          </div>
+        </div>
+      </ng-template>
+  
+    </div>
+  </div>
+  
+
+  <!-- PARTIDOS FINALIZADOS -->
+  <h3>✅ Resultados Finales</h3>
+  <div class="partidos-grid">
+    <div *ngFor="let p of getPartidosFinalizados()" class="partido-card">
+  
+      <ng-container *ngIf="partidoEditando?.id !== p.id; else editFinalizado">
+        <img [src]="p.equipo1.equipo_competitivo.logo" class="club-logo" alt="Equipo 1">
+        <div class="vs-label">VS</div>
+        <img [src]="p.equipo2.equipo_competitivo.logo" class="club-logo" alt="Equipo 2">
+        <div class="partido-info">
+          <p>
+            <strong>{{ p.equipo1.equipo_competitivo.nombre }}</strong>
+            {{ p.marcador_equipo1 }} - {{ p.marcador_equipo2 }}
+            <strong>{{ p.equipo2.equipo_competitivo.nombre }}</strong>
+          </p>
+          <p>📆 {{ p.fecha_partido | date:'short' }}</p>
+          <div class="acciones">
+            <button class="btn-editar" (click)="editarPartido(p)">✏️</button>
+            <button class="btn-eliminar" (click)="eliminarPartido(p.id)">❌</button>
+          </div>
+        </div>
+      </ng-container>
+  
+      <ng-template #editFinalizado>
+        <div class="partido-edit">
+          <p><strong>Editando: {{ p.equipo1.equipo_competitivo.nombre }} vs {{ p.equipo2.equipo_competitivo.nombre }}</strong></p>
+  
+          <label>Marcador Equipo 1</label>
+          <input type="number" [(ngModel)]="partidoEditando.marcador_equipo1">
+  
+          <label>Marcador Equipo 2</label>
+          <input type="number" [(ngModel)]="partidoEditando.marcador_equipo2">
+  
+          <label>Estado</label>
+          <select [(ngModel)]="partidoEditando.estado">
+            <option value="pendiente">Pendiente</option>
+            <option value="finalizado">Finalizado</option>
+          </select>
+  
+          <div class="acciones">
+            <button (click)="guardarEdicionPartido()">💾 Guardar</button>
+            <button class="cancelar" (click)="cancelarEdicionPartido()">Cancelar</button>
+          </div>
+        </div>
+      </ng-template>
+  
+    </div>
+  </div>
+  
+</section>
+
+
+
+</div>

@@ -26,6 +26,7 @@ import { AdminListarproductoComponent } from './components/admin-listarproducto/
 import { EquipopublicComponent } from './components/equipopublic/equipopublic.component';
 import { SponsorspublicComponent } from './components/sponsorspublic/sponsorspublic.component';
 import { PublicLayoutComponent } from './components/public-layout/public-layout.component';
+import { AdminRankingComponent } from './components/admin-ranking/admin-ranking.component';
 
 const AuthGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
@@ -66,7 +67,9 @@ export const routes: Routes = [
       { path: 'pedidos', component: AdminPedidosComponent },
       { path: 'post', component: AdminPostComponent },
       { path: 'equipo', component: AdminEquipoComponent },
-      { path: 'sponsors', component: AdminSponsorsComponent }
+      { path: 'sponsors', component: AdminSponsorsComponent },
+      { path: 'ranking', component: AdminRankingComponent },
+
     ]
   },
 
@@ -87,7 +90,7 @@ export const routes: Routes = [
       { path: 'metodos-pago', component: MetodosPagoComponent },// Métodos de Pago
       { path: 'configuracion', component: ConfiguracionComponent }, // Preferencias
       { path: 'seguridad', component: SeguridadComponent },     // Seguridad
-      
+
     ]
   },
 
