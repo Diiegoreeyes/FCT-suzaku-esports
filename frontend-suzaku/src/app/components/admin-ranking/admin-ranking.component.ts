@@ -30,12 +30,14 @@ export class AdminRankingComponent implements OnInit {
   equiposParticipantes: any[] = [];
   nuevoParticipante: any = {};
   participanteEditando: any = null;
+  equiposFiltrados: any[] = [];
 
   partidos: any[] = [];
   nuevoPartido: any = {};
   partidoEditando: any = null;
   juegoLogoSeleccionado: File | null = null;
   competicionSeleccionadaId: number | null = null;
+  partidoOriginal: any = null;
 
 
   constructor(private rankingService: RankingService) {}
@@ -268,16 +270,27 @@ export class AdminRankingComponent implements OnInit {
   }
   editarPartido(p: any) {
     this.partidoEditando = { ...p };
+    this.partidoOriginal = JSON.parse(JSON.stringify(p)); // guarda copia original
   }
+  
   guardarEdicionPartido() {
     const data = {
-      marcador_equipo1: this.partidoEditando.marcador_equipo1,
-      marcador_equipo2: this.partidoEditando.marcador_equipo2,
-      fecha_partido: this.partidoEditando.fecha_partido,
-      estado: this.partidoEditando.estado,
-      equipo1_id: this.partidoEditando.equipo1.id,
-      equipo2_id: this.partidoEditando.equipo2.id,
-      competicion_id: this.partidoEditando.competicion.id
+      nuevo: {
+        marcador_equipo1: this.partidoEditando.marcador_equipo1,
+        marcador_equipo2: this.partidoEditando.marcador_equipo2,
+        fecha_partido: this.partidoEditando.fecha_partido,
+        estado: this.partidoEditando.estado,
+        equipo1_id: this.partidoEditando.equipo1.id,
+        equipo2_id: this.partidoEditando.equipo2.id,
+        competicion_id: this.partidoEditando.competicion.id
+      },
+      original: {
+        marcador_equipo1: this.partidoOriginal.marcador_equipo1,
+        marcador_equipo2: this.partidoOriginal.marcador_equipo2,
+        estado: this.partidoOriginal.estado,
+        equipo1_id: this.partidoOriginal.equipo1.id,
+        equipo2_id: this.partidoOriginal.equipo2.id,
+      }
     };
   
     this.rankingService.actualizarPartido(this.partidoEditando.id, data).subscribe(p => {
@@ -286,7 +299,8 @@ export class AdminRankingComponent implements OnInit {
       this.partidoEditando = null;
     });
   }
-  equiposFiltrados: any[] = [];
+  
+  
 
   actualizarEquiposFiltrados(id: number | string) {
     const idNum = Number(id);
@@ -299,7 +313,6 @@ export class AdminRankingComponent implements OnInit {
       ep => ep.competicion?.id === idNum
     );
   
-    console.log('Equipos filtrados:', this.equiposFiltrados);
   }
   
   onCompeticionChange(id: number) {
@@ -321,6 +334,22 @@ export class AdminRankingComponent implements OnInit {
   
   getPartidosFinalizados() {
     return this.partidos.filter(p => p.estado === 'finalizado');
+  }
+  getPartidosFinalizadosPorCompeticion() {
+    const agrupados: { [key: number]: any[] } = {};
+  
+    this.getPartidosFinalizados().forEach(partido => {
+      const competicionId = partido.competicion.id;
+      if (!agrupados[competicionId]) {
+        agrupados[competicionId] = [];
+      }
+      agrupados[competicionId].push(partido);
+    });
+  
+    return Object.entries(agrupados).map(([id, partidos]) => {
+      const competicion = this.competiciones.find(c => c.id === +id);
+      return { competicion, partidos };
+    });
   }
   
   

@@ -1,23 +1,32 @@
 <header>
-    <nav>
-      <ul>
-        <li><a routerLink="/">Inicio</a></li>
-        <li><a routerLink="/productos">Productos</a></li>
-        <li><a routerLink="/carrito">Carrito</a></li>
+  <nav class="navbar">
+    <!-- IZQUIERDA (vacía por ahora, para mantener espacio si se quiere logo más adelante) -->
+    <div class="nav-left"></div>
 
-        <li *ngIf="authService.estaAutenticado()">
+    <!-- CENTRO: Productos y Carrito -->
+    <ul class="nav-center">
+      <li><a routerLink="/productos">Productos</a></li>
+        <li>
+          <a routerLink="/carrito">
+            <img src="/carrito.png" alt="Carrito" class="carrito-icon" id="carritoIcon" />
+          </a>
+        </li>
+    </ul>
+
+    <!-- DERECHA: usuario -->
+    <ul class="nav-right">
+      <ng-container *ngIf="authService.estaAutenticado(); else noAuth">
+        <li class="perfil-container">
           <a href="#" (click)="logout()">Cerrar Sesión</a>
-        </li>
-        <li *ngIf="authService.estaAutenticado()">
           <a routerLink="/perfil">Mi Perfil</a>
+          <img [src]="authService.getUserFoto()" class="perfil-img" alt="Foto Perfil" />
         </li>
-        <li *ngIf="!authService.estaAutenticado()">
-          <a routerLink="/login">Iniciar Sesión</a>
-        </li>
-        <li *ngIf="!authService.estaAutenticado()">
-          <a routerLink="/crear-usuario">Registro</a>
-        </li>
-      </ul>
-    </nav>
-  </header>
-  
+      </ng-container>
+
+      <ng-template #noAuth>
+        <li><a routerLink="/login">Iniciar Sesión</a></li>
+        <li><a routerLink="/crear-usuario">Registro</a></li>
+      </ng-template>
+    </ul>
+  </nav>
+</header>

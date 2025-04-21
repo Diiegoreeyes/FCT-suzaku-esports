@@ -140,3 +140,119 @@
     height: auto;
   }
 }
+
+/* Contenedor general de la sección de clasificación */
+
+.clasificacion-container {
+  margin: 2rem auto;
+  max-width: 900px;
+  padding: 1rem;
+}
+
+.seccion-titulo {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 3rem;
+  color: #333;
+  font-weight: bold;
+}
+
+.nombre-torneo {
+  text-align: center;
+  margin: 2rem 0 1rem;
+  font-size: 1.8rem;
+  color: #444;
+  font-weight: 600;
+}
+
+/* Estructura de la tabla */
+.tabla-clasificacion {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+}
+
+/* Fila genérica */
+.fila {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+/* Encabezado */
+.fila.encabezado {
+  font-weight: bold;
+  background-color: #f2f2f2;
+  border-radius: 8px;
+  text-align: center;
+}
+
+/* Columnas uniformes */
+.fila > div {
+  flex: 1;
+  text-align: center;
+}
+
+/* Logo redondo */
+.logo-equipo.grande {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto;
+}
+
+/* Espacio visual si Suzaku está fuera del top */
+.fila.espacio {
+  justify-content: center;
+  color: #aaa;
+  font-style: italic;
+  font-size: 1.2rem;
+  padding: 0.5rem;
+  background-color: transparent;
+  border-bottom: none;
+}
+
+/* Estilo para Suzaku */
+.fila.suzaku {
+  background-color: #f0f0f0 !important;
+  font-weight: bold;
+  border-left: 5px solid #ccc;
+  border-radius: 6px;
+}
+
+.ver-mas-container {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.ver-mas-container button {
+  background-color: #f0f0f0;
+  color: #333;
+  border: none;
+  padding: 10px 20px;
+  font-weight: bold;
+  font-size: 15px;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.ver-mas-container button:hover {
+  background-color: #e0e0e0;
+  transform: scale(1.05);
+  color: #000;
+}
+
+
+/* Transición suave (por si agregas animaciones en el futuro) */
+html {
+  scroll-behavior: smooth;
+}

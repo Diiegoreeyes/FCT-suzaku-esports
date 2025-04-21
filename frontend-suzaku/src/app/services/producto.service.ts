@@ -18,7 +18,6 @@ export class ProductoService {
     return this.http.get<any[]>(this.apiUrl).pipe(
       catchError((error) => {
         console.error('Error en la API:', error);
-        alert('Error al cargar los productos. Revisa la consola.');
         return of([]); // Devuelve un array vacío en caso de error
       })
     );
@@ -28,7 +27,6 @@ export class ProductoService {
     return this.http.get<any>(`${this.apiUrl}${id}/`).pipe(
       catchError((error) => {
         console.error(`Error al obtener el producto con ID ${id}:`, error);
-        alert('No se pudo cargar el producto');
         return of(null);
       })
     );

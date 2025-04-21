@@ -3,11 +3,13 @@ import { CommonModule } from '@angular/common';
 import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { NavbarComponent } from './components/navbar/navbar.component';
+import { HeaderGeneralComponent } from './components/header-general/header-general.component';
+import { FooterGeneralComponent } from './components/footer-general/footer-general.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, NavbarComponent],
+  imports: [CommonModule, RouterOutlet, NavbarComponent, HeaderGeneralComponent,FooterGeneralComponent],
   templateUrl: './app.component.html'
 })
 export class AppComponent {

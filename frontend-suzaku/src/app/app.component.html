@@ -1,7 +1,10 @@
+<app-header-general></app-header-general>
+
 <!-- Solo muestro la navbar si showNav = true -->
 <ng-container *ngIf="showNav">
     <app-navbar></app-navbar>
-  </ng-container>
+</ng-container>
   
-  <router-outlet></router-outlet>
+<router-outlet></router-outlet>
   
+<app-footer-general></app-footer-general>

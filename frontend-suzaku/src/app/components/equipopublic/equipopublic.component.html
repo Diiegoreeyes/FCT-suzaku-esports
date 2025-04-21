@@ -62,4 +62,89 @@
       </div>
     </div>
   </div>
+
+  <hr />
+   
+<!-- CLASIFICACIÓN POR TORNEOS -->
+<h2 class="seccion-titulo">🏆 Clasificación por Torneos</h2>
+
+<div class="clasificacion-container" *ngFor="let torneo of clasificacion">
+  <h3 class="nombre-torneo">{{ torneo.nombre }}</h3>
+
+  <div class="tabla-clasificacion">
+    <!-- ENCABEZADOS -->
+    <div class="fila encabezado">
+      <div>#</div>
+      <div>Logo</div>
+      <div>Equipo</div>
+      <div>Puntos</div>
+      <div>Victorias</div>
+      <div>Derrotas</div>
+    </div>
+
+    <!-- TOP 3 -->
+    <div
+      class="fila"
+      *ngFor="let equipo of torneo.equipos.slice(0, 3); let i = index"
+      [ngClass]="{ 'suzaku': equipo.equipo_competitivo.nombre.toLowerCase() === 'suzaku' }"
+    >
+      <div>{{ i + 1 }}</div>
+      <div>
+        <img class="logo-equipo grande" [src]="equipo.equipo_competitivo.logo" />
+      </div>
+      <div>{{ equipo.equipo_competitivo.nombre }}</div>
+      <div>{{ equipo.puntos }}</div>
+      <div>{{ equipo.victorias }}</div>
+      <div>{{ equipo.derrotas }}</div>
+    </div>
+
+    <!-- SUZAKU FUERA DEL TOP 3 -->
+    <ng-container *ngIf="mostrarSuzakuExtra(torneo.equipos)">
+      <div class="fila espacio">...</div>
+      <div class="fila suzaku" *ngIf="suzakuExtra(torneo.equipos) as extra">
+        <div>{{ extra.posicion + 1 }}</div>
+        <div>
+          <img class="logo-equipo grande" [src]="extra.equipo.equipo_competitivo.logo" />
+        </div>
+        <div>{{ extra.equipo.equipo_competitivo.nombre }}</div>
+        <div>{{ extra.equipo.puntos }}</div>
+        <div>{{ extra.equipo.victorias }}</div>
+        <div>{{ extra.equipo.derrotas }}</div>
+      </div>
+    </ng-container>
+
+    <!-- CLASIFICACIÓN COMPLETA -->
+    <ng-container *ngIf="verClasificacion[torneo.id]">
+      <div
+        class="fila"
+        *ngFor="let equipo of getEquiposRestantesSinSuzaku(torneo.equipos); let i = index"
+        [ngClass]="{ 'suzaku': equipo.equipo_competitivo.nombre.toLowerCase() === 'suzaku' }"
+      >
+        <div>{{ i + 4 }}</div>
+        <div>
+          <img class="logo-equipo grande" [src]="equipo.equipo_competitivo.logo" />
+        </div>
+        <div>{{ equipo.equipo_competitivo.nombre }}</div>
+        <div>{{ equipo.puntos }}</div>
+        <div>{{ equipo.victorias }}</div>
+        <div>{{ equipo.derrotas }}</div>
+      </div>
+    </ng-container>
+  </div>
+
+  <!-- BOTÓN VER MÁS / OCULTAR -->
+  <div class="ver-mas-container">
+    <button (click)="toggleClasificacion(torneo.id)">
+      {{ verClasificacion[torneo.id] ? '▲ Ocultar' : '▼ Ver Clasificación Completa' }}
+    </button>
+  </div>
+</div>
+
+
+
+
+
+  
+  
+
 </div>

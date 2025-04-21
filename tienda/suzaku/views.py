@@ -593,9 +593,18 @@ class PartidoViewSet(viewsets.ModelViewSet):
     queryset = Partido.objects.all()
     serializer_class = PartidoSerializer
 
-    def perform_update(self, serializer):
-        partido = serializer.save()
-        self.actualizar_estadisticas(partido)
+    def update(self, request, *args, **kwargs):
+        instance: Partido = self.get_object()
+
+        # Guardamos una copia del estado original antes de actualizar
+        original = Partido.objects.get(pk=instance.pk)
+
+        response = super().update(request, *args, **kwargs)
+
+        # Ya actualizado, aplicamos lógica para restar/sumar estadísticas
+        self.actualizar_estadisticas(self.get_object(), original)
+
+        return response
 
     def perform_create(self, serializer):
         partido = serializer.save()
@@ -609,7 +618,7 @@ class PartidoViewSet(viewsets.ModelViewSet):
             equipo.save()
 
         if original:
-            # Revertimos los cambios anteriores
+            # Revertimos el efecto anterior si estaba finalizado
             if original.estado == 'finalizado':
                 if original.marcador_equipo1 > original.marcador_equipo2:
                     ajustar_stats(original.equipo1, delta_puntos=-3, delta_v=-1)
@@ -618,7 +627,7 @@ class PartidoViewSet(viewsets.ModelViewSet):
                     ajustar_stats(original.equipo2, delta_puntos=-3, delta_v=-1)
                     ajustar_stats(original.equipo1, delta_d=-1)
 
-        # Aplicamos los nuevos cambios
+        # Aplicamos el nuevo resultado
         if partido.estado == 'finalizado':
             if partido.marcador_equipo1 > partido.marcador_equipo2:
                 ajustar_stats(partido.equipo1, delta_puntos=3, delta_v=1)

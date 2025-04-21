@@ -106,28 +106,33 @@ export class CheckoutComponent implements OnInit {
   }
 
   calcularTotal(): void {
-    this.total = this.productosEnCarrito.reduce((acc, producto) => {
+    const subtotal = this.productosEnCarrito.reduce((acc, producto) => {
       return acc + producto.precio * producto.cantidad;
     }, 0);
-    this.total -= this.descuento;
+    this.total = subtotal;
+    this.totalConDescuento = this.total - this.descuento;
   }
+  
 
   aplicarDescuento(): void {
     this.checkoutService.verificarCodigoDescuento(this.codigoDescuento).subscribe({
       next: (response) => {
         if (response.porcentaje_descuento) {
-          const porcentajeDescuento = response.porcentaje_descuento;
-          this.descuento = (this.total * porcentajeDescuento) / 100;
+          const porcentaje = response.porcentaje_descuento;
+          this.descuento = (this.total * porcentaje) / 100;
           this.totalConDescuento = this.total - this.descuento;
         } else {
-          alert('Código de descuento no válido.');
+          alert('Código no válido.');
+          this.descuento = 0;
+          this.totalConDescuento = this.total;
         }
       },
       error: () => {
-        alert('Error al verificar el código de descuento.');
+        alert('Error al verificar el código.');
       }
     });
   }
+  
 
   vaciarCarrito(): void {
     this.carritoService.vaciarCarrito();
@@ -139,7 +144,12 @@ export class CheckoutComponent implements OnInit {
       alert('No se ha detectado un usuario logueado.');
       return;
     }
-
+  
+    if (!this.direccionActivaStr || !this.direccionActivaId) {
+      alert('Debes seleccionar una dirección de envío antes de confirmar el pedido.');
+      return;
+    }
+  
     const pedidoData = {
       user_id: this.usuarioId,
       direccion: this.direccionActivaStr,
@@ -150,18 +160,21 @@ export class CheckoutComponent implements OnInit {
         cantidad: item.cantidad
       }))
     };
-
+    
     this.checkoutService.confirmarPedido(pedidoData).subscribe({
       next: (res) => {
-        alert(`Pedido #${res.pedido_id} creado con total: ${res.total_con_descuento}`);
+        alert(`✅ Pedido #${res.pedido_id} creado con total: ${res.total_con_descuento} €`);
         this.carritoService.vaciarCarrito();
         this.router.navigate(['/perfil/mis-pedidos']);
       },
-      error: () => {
-        alert('Error al confirmar pedido');
+      error: (err) => {
+        console.error('❌ Error al confirmar pedido:', err);
+        alert('Error al confirmar el pedido. Intenta nuevamente.');
       }
     });
   }
+  
+  
 
   cambiarDireccion(): void {
     this.mostrarSelectorDirecciones = !this.mostrarSelectorDirecciones;

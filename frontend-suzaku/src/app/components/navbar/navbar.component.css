@@ -1,0 +1,75 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.7rem 1.5rem;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.nav-left,
+.nav-right,
+.nav-center {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.nav-center {
+  margin: 0 auto;
+}
+.navbar ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+
+.navbar a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.navbar a:hover {
+  color: #e63946;
+}
+
+.perfil-img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ccc;
+}
+
+.perfil-container {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.carrito-icon {
+  margin-right: 0.4rem;
+}
+.carrito-icon {
+  width: 28px;
+  height: 28px;
+  vertical-align: middle;
+  object-fit: contain;
+  margin-left: 8px;
+}
+
+/* 🔁 Animación de zoom del carrito */
+@keyframes carritoZoom {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+
+.carrito-zoom {
+  animation: carritoZoom 0.4s ease-in-out;
+}
+

@@ -88,10 +88,34 @@
 
 .btn-agregar {
   margin-top: 0.5rem;
-  padding: 0.5rem;
-  background-color: #0b8c4c;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(to right, #4CAF50, #2E7D32);
   color: white;
+  font-weight: bold;
   border: none;
-  border-radius: 6px;
+  border-radius: 30px;
   cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.btn-agregar:hover {
+  background: linear-gradient(to right, #66BB6A, #388E3C);
+  transform: scale(1.05);
+}
+
+.producto-img {
+  transition: transform 0.2s ease;
+}
+
+.carrito-link {
+  position: relative;
+  z-index: 1;
+}
+
+.producto-img-clon {
+  transition: all 0.8s ease-in-out;
+  position: fixed;
+  z-index: 9999;
+  border-radius: 8px;
+  pointer-events: none;
 }

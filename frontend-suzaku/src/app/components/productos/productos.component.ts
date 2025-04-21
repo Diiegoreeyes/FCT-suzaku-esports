@@ -61,8 +61,54 @@ export class ProductosComponent implements OnInit {
 
 
  agregarAlCarrito(producto: any): void {
-   this.carritoService.agregarProducto(producto);
- }
+  this.carritoService.agregarProducto(producto);
+
+  const img = document.querySelector(`.producto-img[data-id="${producto.id}"]`) as HTMLImageElement;
+  const carrito = document.getElementById('carritoIcon');
+
+  if (!img || !carrito) {
+    console.warn('❌ No se encontró la imagen o el carrito');
+    return;
+  }
+
+  const imgRect = img.getBoundingClientRect();
+  const carritoRect = carrito.getBoundingClientRect();
+
+  const animImg = img.cloneNode(true) as HTMLImageElement;
+  animImg.classList.add('producto-img-clon');
+  animImg.style.left = `${imgRect.left + window.scrollX}px`;
+  animImg.style.top = `${imgRect.top + window.scrollY}px`;
+  animImg.style.width = `${imgRect.width}px`;
+  animImg.style.height = `${imgRect.height}px`;
+
+  document.body.appendChild(animImg);
+
+  const destinoX = carritoRect.left + carritoRect.width / 2 + window.scrollX - imgRect.width / 2;
+  const destinoY = carritoRect.top + carritoRect.height / 2 + window.scrollY - imgRect.height / 2;
+
+  setTimeout(() => {
+    animImg.style.left = `${destinoX}px`;
+    animImg.style.top = `${destinoY}px`;
+    animImg.style.transform = 'scale(0.2)';
+    animImg.style.opacity = '0';
+  }, 10);
+  
+  // 🕒 Esperamos justo antes del final (800ms de los 900)
+  setTimeout(() => {
+    carrito.classList.add('carrito-zoom');
+    setTimeout(() => carrito.classList.remove('carrito-zoom'), 400); // misma duración que la animación
+  }, 700);
+  
+  setTimeout(() => {
+    animImg.remove();
+  }, 900);
+}
+
+
+
+
+
+
 
 
  trackProducto(index: number, producto: any): number {

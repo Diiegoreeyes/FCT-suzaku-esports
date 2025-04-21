@@ -1,0 +1,35 @@
+.main-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #111;
+    color: white;
+    padding: 1rem;
+    position: relative;
+    border-bottom: 3px solid #444;
+  }
+  
+  .logo-container {
+    position: absolute;
+    left: 1rem;
+    cursor: pointer;
+  }
+  
+  .logo-img {
+    height: 50px;
+    width: auto;
+    transition: transform 0.3s;
+  }
+  
+  .logo-img:hover {
+    transform: scale(1.1);
+  }
+  
+  .main-title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 0;
+    text-align: center;
+    letter-spacing: 2px;
+  }
+  

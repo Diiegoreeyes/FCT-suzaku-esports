@@ -419,52 +419,57 @@
 
   <!-- PARTIDOS FINALIZADOS -->
   <h3>✅ Resultados Finales</h3>
-  <div class="partidos-grid">
-    <div *ngFor="let p of getPartidosFinalizados()" class="partido-card">
-  
-      <ng-container *ngIf="partidoEditando?.id !== p.id; else editFinalizado">
-        <img [src]="p.equipo1.equipo_competitivo.logo" class="club-logo" alt="Equipo 1">
-        <div class="vs-label">VS</div>
-        <img [src]="p.equipo2.equipo_competitivo.logo" class="club-logo" alt="Equipo 2">
-        <div class="partido-info">
-          <p>
-            <strong>{{ p.equipo1.equipo_competitivo.nombre }}</strong>
-            {{ p.marcador_equipo1 }} - {{ p.marcador_equipo2 }}
-            <strong>{{ p.equipo2.equipo_competitivo.nombre }}</strong>
-          </p>
-          <p>📆 {{ p.fecha_partido | date:'short' }}</p>
-          <div class="acciones">
-            <button class="btn-editar" (click)="editarPartido(p)">✏️</button>
-            <button class="btn-eliminar" (click)="eliminarPartido(p.id)">❌</button>
+
+  <div *ngFor="let grupo of getPartidosFinalizadosPorCompeticion()">
+    <h4>🏆 {{ grupo.competicion.nombre }}</h4>
+    <div class="partidos-grid">
+      <div *ngFor="let p of grupo.partidos" class="partido-card">
+        <!-- tu código actual del partido aquí (con ng-container y editFinalizado) -->
+        <ng-container *ngIf="partidoEditando?.id !== p.id; else editFinalizado">
+          <img [src]="p.equipo1.equipo_competitivo.logo" class="club-logo" alt="Equipo 1">
+          <div class="vs-label">VS</div>
+          <img [src]="p.equipo2.equipo_competitivo.logo" class="club-logo" alt="Equipo 2">
+          <div class="partido-info">
+            <p>
+              <strong>{{ p.equipo1.equipo_competitivo.nombre }}</strong>
+              {{ p.marcador_equipo1 }} - {{ p.marcador_equipo2 }}
+              <strong>{{ p.equipo2.equipo_competitivo.nombre }}</strong>
+            </p>
+            <p>📆 {{ p.fecha_partido | date:'short' }}</p>
+            <div class="acciones">
+              <button class="btn-editar" (click)="editarPartido(p)">✏️</button>
+              <button class="btn-eliminar" (click)="eliminarPartido(p.id)">❌</button>
+            </div>
           </div>
-        </div>
-      </ng-container>
+        </ng-container>
   
-      <ng-template #editFinalizado>
-        <div class="partido-edit">
-          <p><strong>Editando: {{ p.equipo1.equipo_competitivo.nombre }} vs {{ p.equipo2.equipo_competitivo.nombre }}</strong></p>
+        <ng-template #editFinalizado>
+          <!-- tu template de edición aquí -->
+          <div class="partido-edit">
+            <p><strong>Editando: {{ p.equipo1.equipo_competitivo.nombre }} vs {{ p.equipo2.equipo_competitivo.nombre }}</strong></p>
   
-          <label>Marcador Equipo 1</label>
-          <input type="number" [(ngModel)]="partidoEditando.marcador_equipo1">
+            <label>Marcador Equipo 1</label>
+            <input type="number" [(ngModel)]="partidoEditando.marcador_equipo1">
   
-          <label>Marcador Equipo 2</label>
-          <input type="number" [(ngModel)]="partidoEditando.marcador_equipo2">
+            <label>Marcador Equipo 2</label>
+            <input type="number" [(ngModel)]="partidoEditando.marcador_equipo2">
   
-          <label>Estado</label>
-          <select [(ngModel)]="partidoEditando.estado">
-            <option value="pendiente">Pendiente</option>
-            <option value="finalizado">Finalizado</option>
-          </select>
+            <label>Estado</label>
+            <select [(ngModel)]="partidoEditando.estado">
+              <option value="pendiente">Pendiente</option>
+              <option value="finalizado">Finalizado</option>
+            </select>
   
-          <div class="acciones">
-            <button (click)="guardarEdicionPartido()">💾 Guardar</button>
-            <button class="cancelar" (click)="cancelarEdicionPartido()">Cancelar</button>
+            <div class="acciones">
+              <button (click)="guardarEdicionPartido()">💾 Guardar</button>
+              <button class="cancelar" (click)="cancelarEdicionPartido()">Cancelar</button>
+            </div>
           </div>
-        </div>
-      </ng-template>
-  
+        </ng-template>
+      </div>
     </div>
   </div>
+  
   
 </section>
 

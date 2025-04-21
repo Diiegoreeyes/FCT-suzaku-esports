@@ -18,13 +18,20 @@ export class AuthService {
           if (response?.token && response?.user_id) {
             localStorage.setItem('token', response.token);
             localStorage.setItem('usuario_id', response.user_id.toString());
-            console.log('Usuario ID guardado:', response.user_id);
+  
+            // 👇 Nueva petición para obtener el usuario completo
+            this.http.get(`http://127.0.0.1:8000/api/usuarios/${response.user_id}/`)
+              .subscribe((usuario) => {
+                localStorage.setItem('usuario', JSON.stringify(usuario));
+                console.log('Usuario completo guardado:', usuario);
+              });
           } else {
             console.error('La respuesta no contiene token o user_id:', response);
           }
         })
       );
   }
+  
   
   
   
@@ -60,6 +67,16 @@ export class AuthService {
     }
     return null;
   }
+  obtenerUsuarioActual(): any {
+    const usuario = localStorage.getItem('usuario');
+    return usuario ? JSON.parse(usuario) : null;
+  }
+  
+  getUserFoto(): string {
+    const user = this.obtenerUsuarioActual(); // <- asegúrate de tener este método o ajusta según lo tengas
+    return user?.foto || '/default-user.png';
+  }
+  
   
   
 }

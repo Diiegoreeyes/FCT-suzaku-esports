@@ -38,14 +38,20 @@
           [src]="getProductoFoto(producto.foto)"
           alt="{{ producto.nombre }}"
           class="producto-img"
+          [attr.data-id]="producto.id"
         />
+      
         <div class="producto-detalles">
           <h3>{{ producto.nombre }}</h3>
           <p class="precio">{{ producto.precio }} €</p>
           <p class="descripcion">{{ producto.descripcion }}</p>
-          <button (click)="agregarAlCarrito(producto)" class="btn-agregar">Agregar al carrito</button>
+          <button (click)="agregarAlCarrito(producto)" class="btn-agregar">
+            Agregar al carrito
+          </button>
         </div>
       </div>
+      
+    
     </div>
   </div>
 </section>
