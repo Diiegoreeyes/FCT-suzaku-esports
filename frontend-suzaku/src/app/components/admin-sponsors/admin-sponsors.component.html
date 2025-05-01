@@ -1,1 +1,31 @@
-<p>admin-sponsors works!</p>
+<div class="admin-sponsors">
+    <h2>🎖️ Sponsors</h2>
+  
+    <div class="admin-actions">
+      <button class="btn-crear" (click)="toggleForm()">🆕 Crear Sponsor</button>
+    </div>
+  
+    <!-- Formulario crear (inline) -->
+    <form *ngIf="showForm" [formGroup]="formSponsor" (ngSubmit)="crearSponsor()" class="form-sponsor">
+      <input formControlName="nombre" placeholder="Nombre del Sponsor" class="input" />
+      <textarea formControlName="descripcion" placeholder="Descripción" class="textarea"></textarea>
+      <input formControlName="sitio_web" placeholder="Sitio Web" class="input" />
+      <input type="file" (change)="onFileChange($event)" />
+      <img *ngIf="preview" [src]="preview" class="preview-img" />
+      <div class="acciones-card">
+        <button type="submit" class="btn btn-primario" [disabled]="formSponsor.invalid">✅ Crear</button>
+        <button type="button" class="btn btn-secundario" (click)="toggleForm()">✖️ Cancelar</button>
+      </div>
+    </form>
+  
+    <!-- Lista de sponsors -->
+    <div class="sponsor-card" *ngFor="let s of sponsors">
+      <img *ngIf="s.logo" [src]="s.logo" class="sponsor-logo" />
+      <div class="sponsor-info">
+        <h3>{{ s.nombre }}</h3>
+        <p>{{ s.descripcion }}</p>
+        <a *ngIf="s.sitio_web" [href]="s.sitio_web" target="_blank">🌐 {{ s.sitio_web }}</a>
+      </div>
+    </div>
+  </div>
+  

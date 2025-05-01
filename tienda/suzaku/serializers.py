@@ -13,9 +13,6 @@ class ProductoSerializer(serializers.ModelSerializer):
         model = Producto
         fields = '__all__'
 
-
-    
-
 class CodigoDescuentoSerializer(serializers.ModelSerializer):
     """
     🎟️ Serializador para los códigos de descuento.
@@ -112,7 +109,16 @@ class PostEquipoSerializer(serializers.ModelSerializer):
 class EquipoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Equipo
-        fields = '__all__'
+        fields = [
+            'id',
+            'nombre',           # asegúrate de que aparece aquí
+            'primer_apellido',  # y también este
+            'nickname',
+            'descripcion',
+            'foto',
+            'tipo',
+        ]
+
 
 class JuegoSerializer(serializers.ModelSerializer):
     class Meta:
@@ -131,11 +137,6 @@ class CompeticionSerializer(serializers.ModelSerializer):
         fields = ['id', 'nombre', 'descripcion', 'fecha_inicio', 'fecha_fin', 'pais',
                   'organizador', 'juego', 'juego_id']
 
-
-class EquipoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Equipo
-        fields = ['id', 'nickname', 'foto', 'descripcion', 'tipo']
 
 class EquipoCompetitivoSerializer(serializers.ModelSerializer):
     class Meta:
@@ -184,3 +185,19 @@ class PartidoSerializer(serializers.ModelSerializer):
             'marcador_equipo1', 'marcador_equipo2',
             'fecha_partido', 'estado'
         ]
+
+# 🎨 Serializador de imágenes asociadas a un sponsor
+class SponsorImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SponsorImage
+        fields = '__all__'
+
+
+# 🧾 Serializador principal del sponsor con imágenes anidadas
+class SponsorSerializer(serializers.ModelSerializer):
+    imagenes = SponsorImageSerializer(many=True, read_only=True)  # ← nombre coincide con related_name
+
+    class Meta:
+        model = Sponsor
+        fields = '__all__'
+

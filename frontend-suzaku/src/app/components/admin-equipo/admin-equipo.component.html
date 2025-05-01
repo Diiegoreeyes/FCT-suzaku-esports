@@ -1,84 +1,121 @@
 <div class="admin-equipo-container">
-    <h2 class="admin-title">Administración de Equipo</h2>
-  
-    <!-- Menú sencillo para filtrar -->
-    <div class="equipo-menu">
-      <button [class.active]="filtroTipo === 'jugador'" (click)="seleccionarFiltro('jugador')">
-        Jugadores
-      </button>
-      <button [class.active]="filtroTipo === 'creador'" (click)="seleccionarFiltro('creador')">
-        Creadores
-      </button>
-    </div>
-  
-    <div class="admin-actions">
-      <button class="btn-crear" (click)="nuevoIntegrante()">🆕 Crear Nuevo Integrante</button>
-    </div>
-  
-    <!-- LISTA FILTRADA -->
-    <div class="equipo-list">
-      <div class="equipo-card" *ngFor="let integrante of integrantesFiltrados">
-        <h3>{{ integrante.nombre }} {{ integrante.primer_apellido }}</h3>
-        <p>Nickname: {{ integrante.nickname }}</p>
-        <p *ngIf="integrante.descripcion">{{ integrante.descripcion }}</p>
-        <p>Tipo: {{ integrante.tipo }}</p>
-        <img
-          *ngIf="integrante.foto"
-          [src]="integrante.foto"
-          class="equipo-foto"
-          alt="Foto integrante"
-        />
-  
-        <div class="acciones">
-          <button class="btn-editar" (click)="editarIntegrante(integrante)">✏️ Editar</button>
-          <button class="btn-eliminar" (click)="eliminarIntegrante(integrante.id)">❌ Eliminar</button>
-        </div>
-      </div>
-    </div>
-  
-    <!-- FORM para crear/editar -->
-    <div class="equipo-form" *ngIf="mostrarForm">
-      <h3>{{ modoEdicion ? 'Editar Integrante' : 'Crear Nuevo Integrante' }}</h3>
-  
-      <div class="form-group">
-        <label>Nombre:</label>
-        <input type="text" [(ngModel)]="integranteSeleccionado.nombre" />
-      </div>
-  
-      <div class="form-group">
-        <label>Primer Apellido:</label>
-        <input type="text" [(ngModel)]="integranteSeleccionado.primer_apellido" />
-      </div>
-  
-      <div class="form-group">
-        <label>Nickname:</label>
-        <input type="text" [(ngModel)]="integranteSeleccionado.nickname" />
-      </div>
-  
-      <div class="form-group">
-        <label>Descripción:</label>
-        <textarea [(ngModel)]="integranteSeleccionado.descripcion"></textarea>
-      </div>
-  
-      <div class="form-group">
-        <label>Tipo:</label>
-        <select [(ngModel)]="integranteSeleccionado.tipo">
-          <option value="jugador">Jugador</option>
-          <option value="creador">Creador de Contenido</option>
-        </select>
-      </div>
-  
-      <div class="form-group">
-        <label>Foto (opcional):</label>
-        <input type="file" (change)="onFileChange($event)" />
-      </div>
-  
-      <div class="equipo-form-acciones">
-        <button class="btn-guardar" (click)="guardarIntegrante()">
-          {{ modoEdicion ? 'Guardar Cambios' : 'Crear Integrante' }}
-        </button>
-        <button class="btn-cancelar" (click)="cancelar()">Cancelar</button>
-      </div>
+  <h2 class="admin-title">Administrar Equipo</h2>
+
+  <!-- Menú filtro -->
+  <div class="equipo-menu">
+    <button [class.active]="filtroTipo === 'jugador'" (click)="seleccionarFiltro('jugador')">
+      Jugadores
+    </button>
+    <button [class.active]="filtroTipo === 'creador'" (click)="seleccionarFiltro('creador')">
+      Creadores
+    </button>
+  </div>
+
+  <!-- Botón NUEVO -->
+  <div class="admin-actions">
+    <button class="btn-crear" (click)="nuevoIntegrante()">🆕 Nuevo Integrante</button>
+  </div>
+
+  <!-- ───── FORMULARIO CREAR (global) ───── -->
+  <div class="equipo-form" *ngIf="mostrarForm">
+    <h3>Nuevo Integrante</h3>
+
+    <input class="input" placeholder="Nombre" [(ngModel)]="integranteSeleccionado.nombre" />
+    <input class="input" placeholder="Primer Apellido" [(ngModel)]="integranteSeleccionado.primer_apellido" />
+    <input class="input" placeholder="Nickname" [(ngModel)]="integranteSeleccionado.nickname" />
+    <textarea class="textarea" rows="3" placeholder="Descripción" [(ngModel)]="integranteSeleccionado.descripcion"></textarea>
+
+    <label>Tipo:</label>
+    <select [(ngModel)]="integranteSeleccionado.tipo">
+      <option value="jugador">Jugador</option>
+      <option value="creador">Creador</option>
+    </select>
+
+    <input type="file" (change)="onFileChange($event)" />
+
+    <div class="acciones-card">
+      <button class="btn btn-primario" (click)="guardarIntegrante()">✅ Crear</button>
+      <button class="btn btn-secundario" (click)="cancelar()">✖️ Cancelar</button>
     </div>
   </div>
-  
+
+  <!-- ───── LISTA DE TARJETAS ───── -->
+  <div class="equipo-list">
+    <div class="equipo-card" *ngFor="let i of integrantesFiltrados; trackBy: trackById">
+
+  <!-- ═══ MODO EDICIÓN INLINE ═══ -->
+  <ng-container *ngIf="editId === i.id; else vista">
+
+    <div class="edit-row">
+      <label>Nombre</label>
+      <input class="input"
+             [(ngModel)]="editNombre"
+             [ngModelOptions]="{standalone:true}" />
+    </div>
+    
+    <div class="edit-row">
+      <label>Primer Apellido</label>
+      <input class="input"
+             [(ngModel)]="editApellido"
+             [ngModelOptions]="{standalone:true}" />
+    </div>
+
+    <div class="edit-row">
+      <label>Nick</label>
+      <input class="input"
+            [(ngModel)]="editNick"
+            [ngModelOptions]="{standalone:true}" />
+    </div>
+
+    <div class="edit-row">
+      <label>Descripción</label>
+      <textarea class="textarea" rows="3"
+                [(ngModel)]="editDescripcion"
+                [ngModelOptions]="{standalone:true}"></textarea>
+    </div>
+
+    <div class="edit-row">
+      <label>Tipo</label>
+      <select [(ngModel)]="editTipo"
+              [ngModelOptions]="{standalone:true}">
+        <option value="jugador">Jugador</option>
+        <option value="creador">Creador</option>
+      </select>
+    </div>
+
+    <div class="edit-row">
+      <label>Foto</label>
+      <input type="file" (change)="onEditFileChange($event)" />
+      <img *ngIf="editPreviewUrl || i.foto"
+          [src]="editPreviewUrl || i.foto"
+          class="equipo-img" />
+    </div>
+
+    <!-- BOTONES -->
+    <div class="acciones-card">
+      <button class="btn btn-success" (click)="guardarIntegrante()">💾 Guardar</button>
+      <button class="btn btn-secundario" (click)="cancelarEdicion_inline()">✖️ Cancelar</button>
+    </div>
+  </ng-container>
+
+      <!-- ═══ VISTA NORMAL ═══ -->
+      <ng-template #vista>
+        <div class="equipo-card-body">
+          <img *ngIf="i.foto" [src]="i.foto" class="equipo-img" />
+          <div class="equipo-info">
+            <h3>{{ i.nombre }} {{ i.primer_apellido }}</h3>
+            <p><strong>Nick:</strong> {{ i.nickname }}</p>
+            <p><strong>{{ i.tipo | titlecase }}</strong></p>
+          </div>
+        </div>
+
+        <p class="equipo-descripcion">{{ i.descripcion }}</p>
+
+        <div class="acciones-card">
+          <button class="btn btn-warning" (click)="editarIntegrante(i)">✏️</button>
+          <button class="btn btn-danger" (click)="eliminarIntegrante(i.id)">🗑️</button>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>

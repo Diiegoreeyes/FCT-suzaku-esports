@@ -1,169 +1,259 @@
+/* Contenedor principal */
 .admin-equipo-container {
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  /* Título principal */
-  .admin-title {
-    margin: 0;
-    font-size: 1.5rem;
-    font-weight: 600;
-  }
-  
-  /* Acciones generales (botón crear) */
-  .admin-actions {
-    display: flex;
-    justify-content: flex-start;
-    gap: 0.5rem;
-  }
-  
-  /* Listado de integrantes */
-  .equipo-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  /* Cada tarjeta de integrante */
-  .equipo-card {
-    background-color: #f9f9f9;
-    border: 1px solid #eee;
-    border-radius: 6px;
-    padding: 1rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  }
-  
-  .equipo-card h3 {
-    margin-top: 0;
-    font-size: 1.2rem;
-    margin-bottom: 0.5rem;
-  }
-  
-  .equipo-card p {
-    margin: 0.3rem 0;
-  }
-  
-  .equipo-foto {
-    width: 60px;
-    height: 60px;
-    object-fit: cover;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    margin-top: 0.5rem;
-  }
-  
-  .acciones {
-    margin-top: 0.75rem;
-    display: flex;
-    gap: 0.5rem;
-  }
-  
-  /* Formulario de creación/edición */
-  .equipo-form {
-    background-color: #fff;
-    border: 1px solid #ddd;
-    padding: 1rem;
-    border-radius: 6px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-  
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-  }
-  
-  .form-group label {
-    font-weight: 600;
-  }
-  
-  .equipo-form-acciones {
-    display: flex;
-    gap: 0.5rem;
-  }
-  
-  /* Botones (similares a otros admin comp) */
-  .btn-crear,
-  .btn-editar,
-  .btn-eliminar,
-  .btn-guardar,
-  .btn-cancelar {
-    padding: 0.4rem 0.8rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .btn-crear {
-    background-color: #007bff;
-    color: #fff;
-  }
-  
-  .btn-crear:hover {
-    background-color: #0056b3;
-  }
-  
-  .btn-editar {
-    background-color: #17a2b8;
-    color: #fff;
-  }
-  
-  .btn-editar:hover {
-    background-color: #138496;
-  }
-  
-  .btn-eliminar {
-    background-color: #dc3545;
-    color: #fff;
-  }
-  
-  .btn-eliminar:hover {
-    background-color: #c82333;
-  }
-  
-  .btn-guardar {
-    background-color: #28a745;
-    color: #fff;
-  }
-  
-  .btn-guardar:hover {
-    background-color: #218838;
-  }
-  
-  .btn-cancelar {
-    background-color: #6c757d;
-    color: #fff;
-  }
-  
-  .btn-cancelar:hover {
-    background-color: #5a6268;
-  }
-  .equipo-menu {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-  }
-  
-  .equipo-menu button {
-    padding: 0.4rem 0.8rem;
-    border: 1px solid #ccc;
-    background-color: #f9f9f9;
-    cursor: pointer;
-    border-radius: 4px;
-  }
-  
-  .equipo-menu button:hover {
-    background-color: #e9e9e9;
-  }
-  
-  .equipo-menu button.active {
-    background-color: #007bff;
-    color: white;
-    border-color: #007bff;
-  }
-  
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Título */
+.admin-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+/* Menú filtro */
+.equipo-menu {
+  display: flex;
+  gap: 0.5rem;
+}
+.equipo-menu button {
+  background: none;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.equipo-menu button.active,
+.equipo-menu button:hover {
+  background-color: #007bff;
+  color: #fff;
+}
+
+/* Botón “Nuevo Integrante” */
+.admin-actions .btn-crear {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 0.45rem 0.9rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.admin-actions .btn-crear:hover {
+  filter: brightness(1.05);
+}
+
+/* Formulario global de “Nuevo Integrante” */
+.equipo-form {
+  background: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+.equipo-form h3 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+.equipo-form .input,
+.equipo-form .textarea,
+.equipo-form select,
+.equipo-form input[type="file"] {
+  width: 100%;
+  padding: 0.5rem 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  background: #fff;
+}
+.equipo-form .acciones-card {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+.equipo-form .acciones-card .btn-primario {
+  background: #007bff;
+  color: #fff;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.equipo-form .acciones-card .btn-primario:hover {
+  filter: brightness(1.05);
+}
+.equipo-form .acciones-card .btn-secundario {
+  background: #6c757d;
+  color: #fff;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.equipo-form .acciones-card .btn-secundario:hover {
+  filter: brightness(1.05);
+}
+
+/* Lista de tarjetas */
+.equipo-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.equipo-card {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Cuerpo de la tarjeta */
+.equipo-card-body {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.equipo-img {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+.equipo-info h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+.equipo-descripcion {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* Filas de edición inline */
+.edit-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.edit-row label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #555;
+}
+
+/* Acciones (botones) dentro de tarjetas */
+.acciones-card {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Botones genéricos */
+.btn {
+  padding: 0.4rem 0.8rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.btn-primario {
+  background: #007bff;
+  color: #fff;
+}
+.btn-secundario {
+  background: #6c757d;
+  color: #fff;
+}
+.btn-warning {
+  background: #ffc107;
+  color: #000;
+}
+.btn-danger {
+  background: #dc3545;
+  color: #fff;
+}
+.btn-success {
+  background: #28a745;
+  color: #fff;
+}
+.btn:hover {
+  filter: brightness(1.05);
+}
+/* ─── Estilos para el formulario de edición inline ─── */
+.edit-row input,
+.edit-row textarea,
+.edit-row select,
+.edit-row input[type="file"] {
+  width: 100%;
+  padding: 0.45rem 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  background: #fff;
+}
+
+.edit-row textarea {
+  resize: vertical;
+}
+
+.edit-row input[type="file"] {
+  padding: 0.3rem;
+}
+
+/* Etiquetas */
+.edit-row label {
+  margin-bottom: 0.25rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #555;
+}
+
+/* Botonera de la edición inline */
+.acciones-card {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+}
+
+.acciones-card .btn-success,
+.acciones-card .btn-secundario {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.9rem;
+}
+/* ─── 1) Alinear los botones “✏️” y “🗑️” a la izquierda ─── */
+.equipo-list .equipo-card .acciones-card {
+  justify-content: flex-start; /* antes podría heredarse flex-end */
+}
+
+/* ─── 2) Evitar que los inputs sobresalgan del contenedor ─── */
+/* aplica box-sizing para que padding se incluya en el 100% */
+.edit-row input,
+.edit-row textarea,
+.edit-row select,
+.edit-row input[type="file"] {
+  box-sizing: border-box;
+  width: 100%;      /* ya estaban al 100%, pero con box-sizing no desbordan */
+  max-width: 100%;  /* adicional por seguridad */
+  overflow-wrap: break-word;
+}
+
+/* opcional: que la tarjeta recorte cualquier exceso */
+.equipo-card {
+  overflow: hidden;
+}

@@ -15,7 +15,8 @@ from rest_framework import viewsets, status  # Viewsets para CRUD y códigos de 
 from rest_framework.decorators import api_view  # Decorador para definir vistas API
 from rest_framework.response import Response  # Para devolver respuestas JSON en API
 from rest_framework.parsers import MultiPartParser, FormParser  # Para manejar archivos en peticiones
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, BasePermission
+
 
 # 📂 Modelos, Formularios y Serializadores de la Aplicación
 from .models import *  # Importar todos los modelos
@@ -454,6 +455,13 @@ class ProductoViewSet(viewsets.ModelViewSet):
 # 🎟️ VERIFICACIÓN DE CÓDIGOS DE DESCUENTO
 ############################################################
 
+
+class CodigoDescuentoViewSet(viewsets.ModelViewSet):
+    queryset = CodigoDescuento.objects.all()
+    serializer_class = CodigoDescuentoSerializer
+    permission_classes = [IsAuthenticated]  # Cambia por permiso personalizado si solo quieres admin
+
+
 def verificar_descuento(request):
     """
     🎟️ Verifica un código de descuento y devuelve su porcentaje.
@@ -635,6 +643,21 @@ class PartidoViewSet(viewsets.ModelViewSet):
             elif partido.marcador_equipo2 > partido.marcador_equipo1:
                 ajustar_stats(partido.equipo2, delta_puntos=3, delta_v=1)
                 ajustar_stats(partido.equipo1, delta_d=1)
+
+
+############################################################
+# 🔐 SPONSORS
+############################################################
+
+# 🧾 ViewSet para Sponsors
+class SponsorViewSet(viewsets.ModelViewSet):
+    queryset = Sponsor.objects.all().order_by('-creado_en')  # Puedes ajustar orden si lo deseas
+    serializer_class = SponsorSerializer
+
+# 🖼️ ViewSet para las imágenes de producto asociadas a un Sponsor
+class SponsorImageViewSet(viewsets.ModelViewSet):
+    queryset = SponsorImage.objects.all()
+    serializer_class = SponsorImageSerializer
 
 ############################################################
 # 🔐 CRUD PRODUCTOS (Solo Administradores)

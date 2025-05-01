@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.utils import timezone
 
 
 ############################################################
@@ -262,3 +263,28 @@ class Partido(models.Model):
     def __str__(self):
         return f"{self.equipo1.equipo_competitivo.nombre} vs {self.equipo2.equipo_competitivo.nombre} ({self.competicion.nombre})"
 
+
+############################################################
+# SPONSORS
+############################################################
+
+class Sponsor(models.Model):
+    nombre = models.CharField(max_length=100)                      # Nombre del sponsor
+    descripcion = models.TextField(blank=True, null=True)          # Descripción opcional
+    sitio_web = models.URLField(blank=True, null=True)             # Web del sponsor
+    email_contacto = models.EmailField(blank=True, null=True)      # Email de contacto
+    imagen_portada = models.ImageField(upload_to='sponsors/', blank=True, null=True)  # Imagen principal del sponsor
+
+    creado_en = models.DateTimeField(default=timezone.now)  # 👈 Este es el campo que faltaba
+
+
+    def __str__(self):
+        return self.nombre
+
+class SponsorImage(models.Model):
+    sponsor = models.ForeignKey(Sponsor, on_delete=models.CASCADE, related_name='imagenes')  # Relación con Sponsor
+    imagen = models.ImageField(upload_to='sponsors/imagenes/')  # Imagen del producto o promocional
+    descripcion = models.CharField(max_length=255, blank=True, null=True)  # Texto opcional para la imagen
+
+    def __str__(self):
+        return f"Imagen de {self.sponsor.nombre}"

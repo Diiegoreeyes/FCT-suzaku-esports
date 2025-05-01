@@ -1,50 +1,210 @@
+/* ───────── Contenedor principal ───────── */
 .admin-productos {
-    display: flex;
-    flex-wrap: wrap;         /* 👈 permite que los elementos salten de línea si no caben */
-    gap: 1rem;
-    padding: 1rem;
-    justify-content: flex-start;  /* 👈 opcional: alinea los elementos a la izquierda */
-  }
-  
-  
-  .producto-admin-card {
-    display: flex;
-    align-items: center;
-    background: #f9f9f9;
-    padding: 1rem;
-    border-radius: 12px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-    gap: 1rem;
-  }
-  
-  .producto-admin-img {
-    width: 60px;
-    height: 60px;
-    object-fit: cover;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-  }
-  
-  .producto-admin-detalles h3 {
-    margin: 0;
-  }
-  
-  .acciones-admin {
-    margin-top: 0.5rem;
-    display: flex;
-    gap: 0.5rem;
-  }
-  
-  .acciones-admin button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-  }
-  
-  .acciones-admin button:hover {
-    background-color: #0056b3;
-  }
-  
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem;
+  justify-content: flex-start;
+}
+
+/* ───────── Botón “Crear Producto” ───────── */
+.admin-actions {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+.admin-actions .btn-crear {
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.admin-actions .btn-crear:hover {
+  filter: brightness(1.1);
+}
+
+/* ───────── Tarjeta de producto ───────── */
+.producto-admin-card {
+  flex: 0 0 220px;
+  max-width: 220px;
+  display: flex;
+  flex-direction: column;
+  background: #f9f9f9;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+/* Imagen superior en tarjeta */
+.producto-admin-img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-bottom: 0.75rem;
+}
+
+/* Detalles dentro de la tarjeta */
+.producto-admin-detalles {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+.producto-admin-detalles h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+.producto-admin-detalles p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+/* Descripción truncada a dos líneas */
+.descripcion {
+  color: #555;
+  font-size: 0.85rem;
+  line-height: 1.2;
+  max-height: 2.4em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Botonera al pie de la tarjeta */
+.acciones-admin {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: auto;
+}
+.acciones-admin button {
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  border: none;
+  cursor: pointer;
+}
+.acciones-admin .btn-warning {
+  background: #ffc107;
+  color: #000;
+}
+.acciones-admin .btn-danger {
+  background: #dc3545;
+  color: #fff;
+}
+.acciones-admin button:hover {
+  filter: brightness(1.05);
+}
+
+/* ───────── Formulario inline (Crear / Editar) ───────── */
+.form-inline {
+  width: 100%;               /* ocupa todo el ancho del contenedor */
+  box-sizing: border-box;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  align-items: flex-start;
+}
+.form-inline.crear {
+  border-left: 4px solid #28a745;
+}
+.form-inline.editar {
+  border-left: 4px solid #ffc107;
+}
+
+/* Inputs y textarea dentro del form inline */
+.form-inline .input,
+.form-inline .textarea {
+  flex: 1 1 100%;
+  padding: 0.5rem 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  background: #fafafa;
+  box-sizing: border-box;
+}
+.form-inline .textarea {
+  resize: vertical;
+}
+
+/* Preview de imagen dentro del form inline */
+.form-inline .preview-img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+/* Botonera del form inline */
+.form-inline .acciones-card {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  width: 100%;
+}
+.form-inline .btn-primario,
+.form-inline .btn-success,
+.form-inline .btn-secundario {
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border: none;
+}
+.form-inline .btn-primario {
+  background: #007bff;
+  color: #fff;
+}
+.form-inline .btn-primario:hover {
+  filter: brightness(1.05);
+}
+.form-inline .btn-success {
+  background: #28a745;
+  color: #fff;
+}
+.form-inline .btn-success:hover {
+  filter: brightness(1.05);
+}
+.form-inline .btn-secundario {
+  background: #6c757d;
+  color: #fff;
+}
+.form-inline .btn-secundario:hover {
+  filter: brightness(1.05);
+}
+
+/* ───────── Ajustes sólo para el form-inline modo “editar” ───────── */
+.form-inline.editar {
+  /* Ocupa todo el ancho del contenedor padre */
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+
+  /* Layout vertical, sin dar wrap a sus hijos */
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+}
+
+/* Cada control dentro del form debe llenar el 100% de ese ancho */
+.form-inline.editar .input,
+.form-inline.editar .textarea,
+.form-inline.editar input[type="file"],
+.form-inline.editar .preview-img,
+.form-inline.editar .acciones-card {
+  width: 100%;
+  box-sizing: border-box;
+}

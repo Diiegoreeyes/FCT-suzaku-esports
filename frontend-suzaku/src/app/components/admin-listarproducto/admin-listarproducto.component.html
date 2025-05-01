@@ -1,17 +1,92 @@
-<section class="admin-productos">
+<div class="admin-productos">
+<!-- botón Crear (siempre visible) -->
+<div class="admin-actions">
+  <button class="btn-crear" (click)="toggleCreate()">🆕 Crear Producto</button>
+</div>
+
+<!-- formulario inline CREAR (solo si showCreateForm === true) -->
+<form
+  *ngIf="showCreateForm"
+  [formGroup]="formCrear"
+  class="form-inline crear"
+  (ngSubmit)="crear()"
+>
+  <input
+    class="input"
+    formControlName="nombre"
+    placeholder="Nombre"
+  />
+  <textarea
+    class="textarea"
+    rows="2"
+    formControlName="descripcion"
+    placeholder="Descripción"
+  ></textarea>
+  <input
+    class="input"
+    type="number"
+    formControlName="precio"
+    placeholder="Precio"
+  />
+  <input type="file" (change)="onFileCreate($event)" />
+  <img
+    *ngIf="previewCrear"
+    [src]="previewCrear"
+    class="preview-img"
+  />
+
+  <div class="acciones-card">
+    <button
+      type="submit"
+      class="btn btn-primario"
+      [disabled]="formCrear.invalid"
+    >✅ Crear</button>
+    <button
+      type="button"
+      class="btn btn-secundario"
+      (click)="toggleCreate()"
+    >✖️ Cancelar</button>
+  </div>
+</form>
+
+
+   <section class="admin-productos">
+    <div class="producto-admin-card" *ngFor="let p of productos">
   
-    <div class="producto-admin-card" *ngFor="let producto of productos">
-      <img [src]="getFoto(producto.foto)" alt="Foto producto" class="producto-admin-img" />
+      <!-- Imagen del producto -->
+      <img [src]="getFoto(p.foto)" class="producto-admin-img" />
   
       <div class="producto-admin-detalles">
-        <h3>{{ producto.nombre }}</h3>
-        <p>💶 {{ producto.precio }} €</p>
   
-        <div class="acciones-admin">
-          <button (click)="editarProducto(producto.id)">✏️ Editar</button>
-          <button (click)="eliminarProducto(producto.id)">🗑️ Eliminar</button>
+        <!-- ── EDITAR INLINE ── -->
+        <div *ngIf="editId === p.id; else vista">
+          <form [formGroup]="formEditar" class="form-inline editar" (ngSubmit)="saveEdit()">
+            <input class="input" formControlName="nombre" placeholder="Nombre" />
+            <textarea class="textarea" rows="2" formControlName="descripcion" placeholder="Descripción"></textarea>
+            <input class="input" type="number" formControlName="precio" placeholder="Precio" />
+            <input type="file" (change)="onFileEdit($event)" />
+            <img *ngIf="previewEditar" [src]="previewEditar" class="preview-img" />
+            <div class="acciones-card">
+              <button type="submit" class="btn btn-success" [disabled]="formEditar.invalid">💾 Guardar</button>
+              <button type="button" class="btn btn-secundario" (click)="cancelEdit()">✖️</button>
+            </div>
+          </form>
         </div>
+  
+        <!-- ── VISTA NORMAL ── -->
+        <ng-template #vista>
+          <h3>{{ p.nombre }}</h3>
+          <p>💶 {{ p.precio }} €</p>
+          <p class="descripcion">{{ p.descripcion }}</p>
+          <div class="acciones-admin">
+            <button class="btn btn-warning" (click)="startEdit(p)">✏️ Editar</button>
+            <button class="btn btn-danger" (click)="eliminar(p.id)">🗑️ Eliminar</button>
+          </div>
+        </ng-template>
+  
       </div>
     </div>
   </section>
   
+  
+</div>

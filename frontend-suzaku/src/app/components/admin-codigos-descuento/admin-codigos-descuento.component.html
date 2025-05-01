@@ -1,0 +1,68 @@
+<div class="admin-descuentos-container">
+    <h2 class="admin-title">🎟️ Gestión de Códigos de Descuento</h2>
+  
+    <!-- Formulario SOLO para crear -->
+    <form
+      class="descuento-form"
+      #form="ngForm"
+      (ngSubmit)="crearCodigo()"
+    >
+      <input
+        type="text"
+        name="codigo"
+        [(ngModel)]="nuevoCodigo.codigo"
+        required
+        placeholder="Código"
+        class="descuento-input"
+      />
+  
+      <input
+        type="number"
+        name="porcentaje"
+        [(ngModel)]="nuevoCodigo.porcentaje"
+        required
+        placeholder="%"
+        min="1"
+        class="descuento-input"
+      />
+  
+      <button type="submit" class="btn btn-primario">Crear</button>
+    </form>
+  
+    <!-- Tarjetas de códigos -->
+    <div class="descuento-card" *ngFor="let cod of codigos">
+      <!-- Si ESTA tarjeta está en edición -->
+      <ng-container *ngIf="editId === cod.id; else vista">
+        <input
+          type="text"
+          [(ngModel)]="editCodigo"
+          class="descuento-input small"
+        />
+        <input
+          type="number"
+          [(ngModel)]="editPorcentaje"
+          min="1"
+          class="descuento-input small"
+        />
+  
+        <div class="descuento-acciones">
+          <button class="btn btn-success" (click)="guardarEdicion()">💾</button>
+          <button class="btn btn-secundario" (click)="cancelarEdicion()">✖️</button>
+        </div>
+      </ng-container>
+  
+      <!-- Vista normal -->
+      <ng-template #vista>
+        <div class="descuento-info">
+          <span class="descuento-codigo">{{ cod.codigo }}</span>
+          <span class="descuento-porcentaje">{{ cod.porcentaje }} %</span>
+        </div>
+  
+        <div class="descuento-acciones">
+            <button class="btn btn-warning" (click)="iniciarEdicion(cod)">✏️</button>
+            <button class="btn btn-danger" (click)="eliminarCodigo(cod.id)">🗑️</button>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+  

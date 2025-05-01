@@ -36,3 +36,46 @@
     font-size: 14px;
   }
   
+  .estado-select {
+    /* Quita el estilo nativo */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+  
+    /* Fondos, bordes y texto */
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    color: #333;
+    font-size: 0.9rem;
+  
+    /* Padding: espaciado interno y espacio para la flecha */
+    padding: 0.5rem 2rem 0.5rem 0.75rem;
+    cursor: pointer;
+  
+    /* Icono de flecha SVG en background */
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg width='10' height='7' viewBox='0 0 10 7' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23666' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 0.65rem 0.45rem;
+  
+    /* Transición suave */
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  
+  .estado-select:hover {
+    border-color: #007bff;
+  }
+  
+  .estado-select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+  }
+  
+  /* Opcional: estilos de las <option> */
+  .estado-select option {
+    background: #fff;
+    color: #333;
+  }
+  

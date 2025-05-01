@@ -38,10 +38,11 @@
     </div>
 
     <!-- Actualizar estado del pedido -->
-    <select [(ngModel)]="pedido.estado" (change)="actualizarEstado(pedido)">
+    <select class="estado-select" [(ngModel)]="pedido.estado" (change)="actualizarEstado(pedido)">
       <option value="pendiente">Pendiente</option>
       <option value="procesado">Procesado</option>
       <option value="enviado">Enviado</option>
     </select>
+    
   </div>
 </div>

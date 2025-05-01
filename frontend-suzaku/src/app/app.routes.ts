@@ -20,13 +20,12 @@ import { AdminEquipoComponent } from './components/admin-equipo/admin-equipo.com
 import { AdminSponsorsComponent } from './components/admin-sponsors/admin-sponsors.component';
 import { AdminPostComponent } from './components/admin-post/admin-post.component';
 import { AdminPedidosComponent } from './components/admin-pedidos/admin-pedidos.component';
-import { AdminCrearproductoComponent } from './components/admin-crearproducto/admin-crearproducto.component';
-import { AdminEditarproductoComponent } from './components/admin-editarproducto/admin-editarproducto.component';
 import { AdminListarproductoComponent } from './components/admin-listarproducto/admin-listarproducto.component';
 import { EquipopublicComponent } from './components/equipopublic/equipopublic.component';
 import { SponsorspublicComponent } from './components/sponsorspublic/sponsorspublic.component';
 import { PublicLayoutComponent } from './components/public-layout/public-layout.component';
 import { AdminRankingComponent } from './components/admin-ranking/admin-ranking.component';
+import { AdminCodigosDescuentoComponent } from './components/admin-codigos-descuento/admin-codigos-descuento.component';
 
 const AuthGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
@@ -62,13 +61,13 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'listar-productos', pathMatch: 'full' },
       { path: 'listar-productos', component: AdminListarproductoComponent },
-      { path: 'crear-producto', component: AdminCrearproductoComponent },
-      { path: 'editar-producto/:id', component: AdminEditarproductoComponent },
       { path: 'pedidos', component: AdminPedidosComponent },
       { path: 'post', component: AdminPostComponent },
       { path: 'equipo', component: AdminEquipoComponent },
       { path: 'sponsors', component: AdminSponsorsComponent },
       { path: 'ranking', component: AdminRankingComponent },
+      { path: 'codigos-descuento', component: AdminCodigosDescuentoComponent }
+
 
     ]
   },

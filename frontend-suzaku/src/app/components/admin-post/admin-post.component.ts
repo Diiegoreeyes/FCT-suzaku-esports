@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-admin-post',
@@ -12,19 +12,29 @@ import { FormsModule } from '@angular/forms';
 })
 export class AdminPostComponent implements OnInit {
 
+  /* ───────── LISTA DE POSTS ───────── */
   posts: any[] = [];
-  modoEdicion = false;
-  
-  // ✅ Nueva variable para mostrar/ocultar el form
-  mostrarForm = false;
 
-  postSeleccionado: any = {
-    id: null,
+  /* ───────── CREAR NUEVO POST ─────── */
+  showCreateForm = false;
+  newPost = {
     titulo: '',
     descripcion: '',
     orden: 0,
-    imagen: null
+    imagen: null as File | null
   };
+
+  /* ───────── EDICIÓN INLINE ───────── */
+  editId: number | null = null;
+  editTitulo = '';
+  editDescripcion = '';
+  editOrden = 0;
+  editImagen: File | null = null;
+  editPreviewUrl: string | null = null;
+
+
+  /* ──────────────── API ───────────── */
+  private api = 'http://127.0.0.1:8000/api/post-equipo/';
 
   constructor(private http: HttpClient) {}
 
@@ -32,113 +42,122 @@ export class AdminPostComponent implements OnInit {
     this.cargarPosts();
   }
 
+  /* ----- ORDENAR POR TÍTULO ----- */
+  private ordenarPorTitulo = (a: any, b: any) =>
+    a.titulo.localeCompare(b.titulo, 'es', { sensitivity: 'base' });
+
+  /* ----- OBTENER POSTS ----- */
   cargarPosts(): void {
-    this.http.get<any[]>('http://127.0.0.1:8000/api/post-equipo/')
-      .subscribe({
-        next: (data) => {
-          this.posts = data;
-        },
-        error: (err) => {
-          console.error('Error al cargar posts:', err);
-        }
-      });
+    this.http.get<any[]>(this.api).subscribe({
+      next: (data) => (this.posts = data.sort(this.ordenarPorTitulo)),
+      error: (err) => console.error('Error al cargar posts:', err)
+    });
   }
 
-  // Para preparar el formulario en modo CREAR:
+  /* ========== CREAR ========== */
   nuevoPost(): void {
-    this.modoEdicion = false;
-    this.mostrarForm = true;  // ✅ Muestra el form
-    this.postSeleccionado = {
-      id: null,
-      titulo: '',
-      descripcion: '',
-      orden: 0,
-      imagen: null
-    };
+    this.showCreateForm = true;
+    this.newPost = { titulo: '', descripcion: '', orden: 0, imagen: null };
   }
 
-  // Para preparar el formulario en modo EDICIÓN:
-  editarPost(post: any): void {
-    this.modoEdicion = true;
-    this.mostrarForm = true;  // ✅ Muestra el form
-    this.postSeleccionado = {
-      id: post.id,
-      titulo: post.titulo,
-      descripcion: post.descripcion,
-      orden: post.orden,
-      imagen: null
-    };
+  onFileChange(ev: any): void {
+    if (ev.target.files.length) this.newPost.imagen = ev.target.files[0];
   }
 
-  onFileChange(event: any): void {
-    const file = event.target.files[0];
-    if (file) {
-      this.postSeleccionado.imagen = file;
-    }
-  }
+  crearPost(): void {
+    const { titulo, descripcion, orden, imagen } = this.newPost;
+    if (!titulo || !descripcion) return;
 
-  guardarPost(): void {
     const formData = new FormData();
-    formData.append('titulo', this.postSeleccionado.titulo);
-    formData.append('descripcion', this.postSeleccionado.descripcion);
-    formData.append('orden', this.postSeleccionado.orden);
-    if (this.postSeleccionado.imagen) {
-      formData.append('imagen', this.postSeleccionado.imagen);
-    }
+    formData.append('titulo', titulo);
+    formData.append('descripcion', descripcion);
+    formData.append('orden', orden.toString());
+    if (imagen) formData.append('imagen', imagen);
 
-    if (this.modoEdicion && this.postSeleccionado.id !== null) {
-      // PUT
-      this.http.put(`http://127.0.0.1:8000/api/post-equipo/${this.postSeleccionado.id}/`, formData)
-        .subscribe({
-          next: () => {
-            alert('Post actualizado correctamente');
-            this.cargarPosts();
-            this.modoEdicion = false;
-            this.mostrarForm = false; // Oculta el form tras guardar
-          },
-          error: (err) => {
-            console.error('Error al actualizar post', err);
-            alert('Error al actualizar post');
-          }
-        });
-    } else {
-      // POST
-      this.http.post('http://127.0.0.1:8000/api/post-equipo/', formData)
-        .subscribe({
-          next: () => {
-            alert('Post creado correctamente');
-            this.cargarPosts();
-            this.mostrarForm = false; // Oculta el form tras guardar
-          },
-          error: (err) => {
-            console.error('Error al crear post', err);
-            alert('Error al crear post');
-          }
-        });
-    }
+    this.http.post<any>(this.api, formData).subscribe({
+      next: (nuevo) => {
+        this.posts.push(nuevo);
+        this.posts.sort(this.ordenarPorTitulo);
+        this.showCreateForm = false;
+      },
+      error: (err) => console.error('Error al crear post', err)
+    });
   }
 
+  /* ========== EDICIÓN INLINE ========== */
+  iniciarEdicion(p: any): void {
+    this.editId = p.id;
+    this.editTitulo = p.titulo;
+    this.editDescripcion = p.descripcion;
+    this.editOrden = p.orden;
+    this.editImagen = null;
+  }
+
+  onEditFileChange(ev: any): void {
+    if (!ev.target.files.length) return;
+  
+    /* archivo seleccionado */
+    const file = ev.target.files[0] as File;   // 👉 ya no puede ser null
+    this.editImagen = file;
+  
+    /* libera preview anterior si existía */
+    if (this.editPreviewUrl) URL.revokeObjectURL(this.editPreviewUrl);
+  
+    /* genera nuevo preview con un File garantizado */
+    this.editPreviewUrl = URL.createObjectURL(file);
+  }
+  
+  guardarEdicion(): void {
+    if (this.editId === null) return;
+  
+    const formData = new FormData();
+    formData.append('titulo', this.editTitulo);
+    formData.append('descripcion', this.editDescripcion);
+    formData.append('orden', this.editOrden.toString());
+    if (this.editImagen) formData.append('imagen', this.editImagen);
+  
+    this.http.put(`${this.api}${this.editId}/`, formData).subscribe({
+      next: () => {
+        /* 1️⃣  Cerramos el modo edición inmediatamente                       */
+        this.cancelarEdicion();
+  
+        /* 2️⃣  Recargamos la lista desde el servidor, ya ordenada y actual   */
+        this.cargarPosts();
+      },
+      error: (err) => console.error('Error al actualizar post', err)
+    });
+  }
+  
+  
+    /* ── trackBy para evitar renders innecesarios ── */
+  trackById(_: number, item: any): number {
+    return item.id;
+  }
+
+
+  cancelarEdicion(): void {
+    /* Libera URL previa si la hubiera */
+    if (this.editPreviewUrl) URL.revokeObjectURL(this.editPreviewUrl);
+  
+    /* 🔄 Resetea todas las variables de edición */
+    this.editPreviewUrl = null;
+    this.editId         = null;
+    this.editTitulo     = '';
+    this.editDescripcion= '';
+    this.editOrden      = 0;
+    this.editImagen     = null;
+  }
+  
+
+  /* ========== ELIMINAR ========== */
   eliminarPost(id: number): void {
-    if (!confirm('¿Seguro que quieres eliminar este post?')) {
-      return;
-    }
-    this.http.delete(`http://127.0.0.1:8000/api/post-equipo/${id}/`)
-      .subscribe({
-        next: () => {
-          alert('Post eliminado');
-          this.cargarPosts();
-        },
-        error: (err) => {
-          console.error('Error al eliminar post', err);
-          alert('Error al eliminar post');
-        }
-      });
-  }
+    if (!confirm('¿Seguro que quieres eliminar este post?')) return;
 
-  // ✅ Método para cancelar y ocultar el form
-  cancelar(): void {
-    this.modoEdicion = false;
-    this.mostrarForm = false;
+    this.http.delete(`${this.api}${id}/`).subscribe({
+      next: () => {
+        this.posts = this.posts.filter(p => p.id !== id);
+      },
+      error: (err) => console.error('Error al eliminar post', err)
+    });
   }
-
 }
