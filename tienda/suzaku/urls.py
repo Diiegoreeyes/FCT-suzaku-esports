@@ -21,6 +21,7 @@ router.register(r'equipos-competitivos', EquipoCompetitivoViewSet)
 router.register(r'partidos', PartidoViewSet)             # ⚔️ API para partidos
 router.register(r'codigos-descuento', CodigoDescuentoViewSet)  # 🎟️ Descuentos
 router.register(r'sponsors', SponsorViewSet)             # 🤝 Sponsors
+router.register(r'sponsorimage', SponsorImageViewSet)
 
 ############################################################
 # 🌐 DEFINICIÓN DE RUTAS

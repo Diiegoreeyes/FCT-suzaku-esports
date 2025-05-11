@@ -269,17 +269,18 @@ class Partido(models.Model):
 ############################################################
 
 class Sponsor(models.Model):
-    nombre = models.CharField(max_length=100)                      # Nombre del sponsor
-    descripcion = models.TextField(blank=True, null=True)          # Descripción opcional
-    sitio_web = models.URLField(blank=True, null=True)             # Web del sponsor
-    email_contacto = models.EmailField(blank=True, null=True)      # Email de contacto
-    imagen_portada = models.ImageField(upload_to='sponsors/', blank=True, null=True)  # Imagen principal del sponsor
+    nombre = models.CharField(max_length=100)
+    descripcion = models.TextField(blank=True, null=True)
+    sitio_web = models.URLField(blank=True, null=True)
+    email_contacto = models.EmailField(blank=True, null=True)
+    imagen_portada = models.ImageField(upload_to='sponsors/', blank=True, null=True)
+    video_url = models.URLField(blank=True, null=True)  # 👈 Nuevo campo
 
-    creado_en = models.DateTimeField(default=timezone.now)  # 👈 Este es el campo que faltaba
-
+    creado_en = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return self.nombre
+
 
 class SponsorImage(models.Model):
     sponsor = models.ForeignKey(Sponsor, on_delete=models.CASCADE, related_name='imagenes')  # Relación con Sponsor

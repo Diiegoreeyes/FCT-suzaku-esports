@@ -1,31 +1,120 @@
 <div class="admin-sponsors">
-    <h2>🎖️ Sponsors</h2>
-  
-    <div class="admin-actions">
-      <button class="btn-crear" (click)="toggleForm()">🆕 Crear Sponsor</button>
-    </div>
-  
-    <!-- Formulario crear (inline) -->
-    <form *ngIf="showForm" [formGroup]="formSponsor" (ngSubmit)="crearSponsor()" class="form-sponsor">
-      <input formControlName="nombre" placeholder="Nombre del Sponsor" class="input" />
-      <textarea formControlName="descripcion" placeholder="Descripción" class="textarea"></textarea>
-      <input formControlName="sitio_web" placeholder="Sitio Web" class="input" />
-      <input type="file" (change)="onFileChange($event)" />
-      <img *ngIf="preview" [src]="preview" class="preview-img" />
-      <div class="acciones-card">
-        <button type="submit" class="btn btn-primario" [disabled]="formSponsor.invalid">✅ Crear</button>
-        <button type="button" class="btn btn-secundario" (click)="toggleForm()">✖️ Cancelar</button>
-      </div>
-    </form>
-  
-    <!-- Lista de sponsors -->
-    <div class="sponsor-card" *ngFor="let s of sponsors">
-      <img *ngIf="s.logo" [src]="s.logo" class="sponsor-logo" />
-      <div class="sponsor-info">
-        <h3>{{ s.nombre }}</h3>
-        <p>{{ s.descripcion }}</p>
-        <a *ngIf="s.sitio_web" [href]="s.sitio_web" target="_blank">🌐 {{ s.sitio_web }}</a>
-      </div>
-    </div>
+  <h2>🎖️ Sponsors</h2>
+
+  <!-- Botón para mostrar/ocultar formulario de creación -->
+  <div class="admin-actions">
+    <button class="btn-crear" (click)="toggleForm()">🆕 Crear Sponsor</button>
   </div>
-  
+
+  <!-- Formulario de CREACIÓN -->
+  <form
+    *ngIf="showForm && !editandoId"
+    [formGroup]="formSponsor"
+    class="form-inline crear"
+    (ngSubmit)="crearSponsor()"
+  >
+    <h3>🆕 Crear Sponsor</h3>
+    <input class="input" formControlName="nombre" placeholder="Nombre del Sponsor" />
+    <input class="input" formControlName="video_url" placeholder="URL del video (YouTube opcional)" />
+    <textarea class="textarea" rows="2" formControlName="descripcion" placeholder="Descripción"></textarea>
+    <input class="input" formControlName="sitio_web" placeholder="Sitio Web" />
+    <input type="file" (change)="onFileChange($event)" />
+    <img *ngIf="preview" [src]="preview" class="preview-img" />
+    <div class="acciones-card">
+      <button type="submit" class="btn btn-primario" [disabled]="formSponsor.invalid">✅ Crear</button>
+      <button type="button" class="btn btn-secundario" (click)="toggleForm()">✖️ Cancelar</button>
+    </div>
+  </form>
+
+  <!-- LISTADO DE SPONSORS -->
+  <section class="sponsors-listado">
+    <div class="sponsor-card" *ngFor="let s of sponsors">
+
+      <!-- MODO EDICIÓN INLINE -->
+      <div *ngIf="editandoId === s.id; else vistaNormal" class="form-inline editar">
+        <h3>✏️ Editar Sponsor</h3>
+        <form [formGroup]="formSponsor" (ngSubmit)="crearSponsor()">
+          <div class="form-group">
+            <label for="nombre">Nombre</label>
+            <input id="nombre" class="input" formControlName="nombre" placeholder="Nombre del Sponsor" />
+          </div>
+
+          <div class="form-group">
+            <label for="video_url">Video (YouTube)</label>
+            <input id="video_url" class="input" formControlName="video_url" placeholder="https://youtube.com/..." />
+          </div>         
+
+          <div class="form-group">
+            <label for="descripcion">Descripción</label>
+            <textarea id="descripcion" class="textarea" rows="2" formControlName="descripcion" placeholder="Descripción"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="sitio_web">Sitio Web</label>
+            <input id="sitio_web" class="input" formControlName="sitio_web" placeholder="https://..." />
+          </div>
+
+          <div class="form-group">
+            <label for="imagen">Imagen de Portada</label>
+            <input id="imagen" type="file" (change)="onFileChange($event)" />
+            <img *ngIf="preview" [src]="preview" class="preview-img" />
+          </div>
+
+          <div class="acciones-card">
+            <button type="submit" class="btn-warning" [disabled]="formSponsor.invalid">💾 Guardar</button>
+            <button type="button" class="btn-danger" (click)="toggleForm()">✖️ Cancelar</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- VISTA NORMAL -->
+      <ng-template #vistaNormal>
+        <img *ngIf="s.imagen_portada" [src]="s.imagen_portada" alt="Logo Sponsor" class="sponsor-img" />
+
+        <div class="sponsor-detalles">
+          <h3>{{ s.nombre }}</h3>
+          <p class="descripcion">{{ s.descripcion }}</p>
+          <a *ngIf="s.sitio_web" [href]="s.sitio_web" target="_blank" class="web-link">
+            🌐 {{ s.sitio_web }}
+          </a>
+
+          <!-- Galería de imágenes del sponsor -->
+          <div class="imagenes-list" *ngIf="s.imagenes?.length">
+            <img
+              *ngFor="let img of s.imagenes"
+              [src]="img.imagen"
+              class="preview-img-sm"
+              [title]="img.descripcion"
+              alt="Imagen sponsor"
+            />
+          </div>
+
+          <!-- Video de YouTube -->
+          <div class="sponsor-video" *ngIf="s.video_url">
+            <iframe
+              width="100%"
+              height="200"
+              [src]="getSafeVideoUrl(s.video_url)"
+              frameborder="0"
+              allowfullscreen
+            ></iframe>
+          </div>
+          
+          <!-- Botones de acción -->
+          <div class="acciones-admin">
+            <button class="btn btn-warning" (click)="editarSponsor(s)">✏️ Editar</button>
+            <button class="btn btn-danger" (click)="eliminarSponsor(s.id)">🗑️ Eliminar</button>
+            <button class="btn btn-imagenes" (click)="seleccionarSponsorParaImagen(s)">📤 Añadir Imágenes</button>
+          </div>
+
+          <!-- Subida de imagen extra -->
+          <div *ngIf="s.id === sponsorSeleccionadoId" class="form-group" style="margin-top: 0.5rem;">
+            <input type="file" (change)="onImagenExtraChange($event, s.id)" multiple />
+            <input type="text" [(ngModel)]="descripcionImagenExtra" placeholder="Descripción (opcional)" class="input" name="desc" />
+            <button (click)="subirImagenExtra(s)" class="btn btn-subir">📤 Subir</button>
+          </div>
+        </div>
+      </ng-template>
+    </div>
+  </section>
+</div>

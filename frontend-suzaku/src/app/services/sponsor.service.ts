@@ -12,4 +12,6 @@ export class SponsorService {
   crear(data: FormData) { return this.http.post(this.api, data); }
   actualizar(id: number, data: FormData) { return this.http.put(`${this.api}${id}/`, data); }
   eliminar(id: number) { return this.http.delete(`${this.api}${id}/`); }
+
+  
 }

@@ -1,0 +1,129 @@
+.sponsors-public {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sponsor-public-card {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 600px;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sponsor-public-card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #333;
+  text-align: center;
+}
+
+.imagen-portada {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+}
+
+.descripcion {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.imagenes-carrusel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.imagenes-carrusel img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.web-link {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 500;
+}
+.web-link:hover {
+  text-decoration: underline;
+}
+
+.video-container {
+  width: 100%;
+  margin-top: 1rem;
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 */
+  height: 0;
+  overflow: hidden;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+.video-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+.video-container {
+  margin-top: 0.75rem;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+.imagenes-carrusel {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  margin: 1rem 0;
+  height: 180px;
+}
+
+.scroll-loop {
+  display: flex;
+  width: 100%;
+}
+
+.loop-track {
+  display: flex;
+  animation: scroll-infinite 30s linear infinite;
+}
+
+.loop-track img {
+  width: 160px;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-right: 1rem;
+  flex-shrink: 0;
+  border: 1px solid #ccc;
+}
+
+@keyframes scroll-infinite {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}

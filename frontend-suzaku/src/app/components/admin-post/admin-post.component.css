@@ -1,76 +1,105 @@
-/* ——— CONTENEDOR GENERAL ——— */
-.admin-post-container {
+.admin-sponsors {
   padding: 1rem;
+}
+
+/* Botón crear */
+.admin-actions {
   display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
 }
-.admin-title { margin: 0; font-size: 1.5rem; font-weight: 600; }
-
-/* ——— BOTÓN NUEVO ——— */
-.admin-actions { margin-bottom: 1rem; }
-.btn-crear {
-  background: #007bff; color: #fff; border: none;
-  padding: 0.45rem 0.9rem; border-radius: 4px; cursor: pointer;
+.admin-actions .btn-crear {
+  background-color: #28a745;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: none;
+  font-size: 0.95rem;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
-.btn-crear:hover { filter: brightness(1.05); }
+.admin-actions .btn-crear:hover {
+  filter: brightness(1.1);
+}
 
-/* ——— FORMULARIO CREAR ——— */
-.admin-post-form,
-.admin-post-card { background: #f9f9f9; border: 1px solid #eee;
-  border-radius: 12px; padding: 1rem; box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-  display: flex; flex-direction: column; gap: 0.75rem; }
-.input, .textarea {
-  width: 100%; padding: 0.5rem 0.8rem; border: 1px solid #ccc;
-  border-radius: 6px; font-size: 0.9rem; }
-.textarea { resize: vertical; }
-
-.acciones-card { display: flex; gap: 0.5rem; }
-
-.btn, .btn-primario, .btn-secundario,
-.btn-warning, .btn-danger, .btn-success {
-  padding: 0.4rem 0.8rem; border: none; border-radius: 4px; cursor: pointer;
+/* Formulario estilo común */
+.form-inline {
+  background: #fff;
+  border: 1px solid #eee;
+  border-left: 4px solid #28a745;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+.form-inline .input,
+.form-inline .textarea {
+  flex: 1 1 250px;
+  padding: 0.5rem 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
   font-size: 0.9rem;
+  background: #fafafa;
 }
-.btn-primario { background: #007bff; color:#fff; }
-.btn-secundario{ background: #6c757d; color:#fff; }
-.btn-warning   { background: #ffc107; color:#000; }
-.btn-danger    { background: #dc3545; color:#fff; }
-.btn-success   { background: #28a745; color:#fff; }
-.btn:hover { filter: brightness(1.05); }
-
-/* ——— TARJETAS POST ——— */
-.admin-post-list { display: flex; flex-direction: column; gap: 1rem; }
-
-.admin-post-header {
-  display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+.form-inline .textarea {
+  resize: vertical;
 }
-.post-header-left { display: flex; align-items: center; gap: 1rem; }
-
-.post-img {
-  width: 64px; height: 64px; object-fit: cover; border-radius: 8px;
+.form-inline .preview-img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
   border: 1px solid #ddd;
 }
+.form-inline .acciones-card {
+  flex: 1 1 100%;
+  display: flex;
+  gap: 0.5rem;
+}
+.form-inline .btn {
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border: none;
+}
+.btn-primario { background: #007bff; color: white; }
+.btn-secundario { background: #6c757d; color: white; }
+.btn:hover { filter: brightness(1.05); }
 
-.admin-post-descripcion { margin: 0.5rem 0 0 0; font-size: 0.9rem; line-height: 1.4; }
-.edit-row {
+/* Grid uniforme */
+.sponsors-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+/* Tarjeta sponsor */
+.sponsor-card {
+  background: #f9f9f9;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  align-items: center;
+  text-align: center;
 }
-
-/* Etiquetas en edición */
-.edit-label {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: #555;
+.sponsor-logo {
+  width: 100%;
+  max-height: 150px;
+  object-fit: contain;
+  margin-bottom: 0.75rem;
 }
-
-.post-info h3 {
-  margin: 0;
+.sponsor-info h3 {
+  margin: 0 0 0.5rem;
   font-size: 1.1rem;
 }
-.post-info span {
-  font-size: 0.85rem;
-  color: #777;
+.descripcion {
+  margin: 0 0 0.5rem;
+  color: #555;
+  font-size: 0.9rem;
 }
