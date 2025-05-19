@@ -39,7 +39,7 @@
    cd tu-repo
 
 2. **Iniciar Proyecto - Backend (Django + DRF)**
-
+    ```bash
     cd backend
     python -m venv venv
     source venv/bin/activate
@@ -48,7 +48,7 @@
     python manage.py runserver
 
 3. **Iniciar Proyecto - Frontend (Angular)**
-
+    ```bash
     cd frontend
     npm install
     ng serve
