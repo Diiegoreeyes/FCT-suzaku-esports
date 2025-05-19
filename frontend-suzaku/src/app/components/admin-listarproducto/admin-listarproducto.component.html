@@ -1,92 +1,173 @@
-<div class="admin-productos">
-<!-- botón Crear (siempre visible) -->
-<div class="admin-actions">
-  <button class="btn-crear" (click)="toggleCreate()">🆕 Crear Producto</button>
-</div>
+<div class="admin-productos-panel">
+  <!-- BARRA DE NAVEGACIÓN -->
+  <nav class="admin-nav">
+    <button (click)="seccion = 'productos'" [class.active]="seccion === 'productos'">🏍️ Productos</button>
+    <button (click)="seccion = 'colores'" [class.active]="seccion === 'colores'">🎨 Colores</button>
+    <button (click)="seccion = 'tallas'" [class.active]="seccion === 'tallas'">📏 Tallas</button>
+    <button (click)="seccion = 'tipos'" [class.active]="seccion === 'tipos'">🡥 Tipos</button>
+    <button (click)="seccion = 'categorias'" [class.active]="seccion === 'categorias'">🏷️ Categorías</button>
+  </nav>
 
-<!-- formulario inline CREAR (solo si showCreateForm === true) -->
-<form
-  *ngIf="showCreateForm"
-  [formGroup]="formCrear"
-  class="form-inline crear"
-  (ngSubmit)="crear()"
->
-  <input
-    class="input"
-    formControlName="nombre"
-    placeholder="Nombre"
-  />
-  <textarea
-    class="textarea"
-    rows="2"
-    formControlName="descripcion"
-    placeholder="Descripción"
-  ></textarea>
-  <input
-    class="input"
-    type="number"
-    formControlName="precio"
-    placeholder="Precio"
-  />
-  <input type="file" (change)="onFileCreate($event)" />
-  <img
-    *ngIf="previewCrear"
-    [src]="previewCrear"
-    class="preview-img"
-  />
-
-  <div class="acciones-card">
-    <button
-      type="submit"
-      class="btn btn-primario"
-      [disabled]="formCrear.invalid"
-    >✅ Crear</button>
-    <button
-      type="button"
-      class="btn btn-secundario"
-      (click)="toggleCreate()"
-    >✖️ Cancelar</button>
-  </div>
-</form>
-
-
-   <section class="admin-productos">
-    <div class="producto-admin-card" *ngFor="let p of productos">
-  
-      <!-- Imagen del producto -->
-      <img [src]="getFoto(p.foto)" class="producto-admin-img" />
-  
-      <div class="producto-admin-detalles">
-  
-        <!-- ── EDITAR INLINE ── -->
-        <div *ngIf="editId === p.id; else vista">
-          <form [formGroup]="formEditar" class="form-inline editar" (ngSubmit)="saveEdit()">
-            <input class="input" formControlName="nombre" placeholder="Nombre" />
-            <textarea class="textarea" rows="2" formControlName="descripcion" placeholder="Descripción"></textarea>
-            <input class="input" type="number" formControlName="precio" placeholder="Precio" />
-            <input type="file" (change)="onFileEdit($event)" />
-            <img *ngIf="previewEditar" [src]="previewEditar" class="preview-img" />
-            <div class="acciones-card">
-              <button type="submit" class="btn btn-success" [disabled]="formEditar.invalid">💾 Guardar</button>
-              <button type="button" class="btn btn-secundario" (click)="cancelEdit()">✖️</button>
-            </div>
-          </form>
-        </div>
-  
-        <!-- ── VISTA NORMAL ── -->
-        <ng-template #vista>
-          <h3>{{ p.nombre }}</h3>
-          <p>💶 {{ p.precio }} €</p>
-          <p class="descripcion">{{ p.descripcion }}</p>
-          <div class="acciones-admin">
-            <button class="btn btn-warning" (click)="startEdit(p)">✏️ Editar</button>
-            <button class="btn btn-danger" (click)="eliminar(p.id)">🗑️ Eliminar</button>
-          </div>
-        </ng-template>
-  
-      </div>
+  <!-- SECCIÓN: PRODUCTOS -->
+  <div *ngIf="seccion === 'productos'">
+    <!-- Botón Crear Producto -->
+    <div class="admin-actions">
+      <button class="btn-crear" (click)="toggleCreate()">🌙5 Crear Producto</button>
     </div>
-  </section>
-  
-  
+
+    <!-- Formulario CREAR -->
+    <form *ngIf="showCreateForm" [formGroup]="formCrear" class="form-inline crear" (ngSubmit)="crear()">
+      <input class="input" formControlName="nombre" placeholder="Nombre del producto" />
+      <textarea class="textarea" rows="2" formControlName="descripcion" placeholder="Descripción"></textarea>
+      <input class="input" type="number" formControlName="precio" placeholder="Precio (€)" />
+    
+      <!-- Tipo de producto -->
+      <select class="input" formControlName="tipo">
+        <option [ngValue]="null">Tipo...</option>
+        <option *ngFor="let t of tipos" [value]="t.id">{{ t.nombre }}</option>
+      </select>
+    
+      <!-- Categoría -->
+      <select class="input" formControlName="categoria">
+        <option [ngValue]="null">Categoría...</option>
+        <option *ngFor="let c of categorias" [value]="c.id">{{ c.nombre }}</option>
+      </select>
+    
+      <!-- Colores (múltiples) -->
+      <label>Colores:</label>
+      <div class="checkbox-group">
+        <label *ngFor="let c of colores">
+          <input type="checkbox" [value]="c.id" (change)="onCheckboxChange($event, 'colores')" [checked]="formCrear.value.colores.includes(c.id)" />
+          {{ c.nombre }}
+        </label>
+      </div>
+    
+      <!-- Tallas (múltiples) -->
+      <label>Tallas:</label>
+      <div class="checkbox-group">
+        <label *ngFor="let t of tallas">
+          <input type="checkbox" [value]="t.id" (change)="onCheckboxChange($event, 'tallas')" [checked]="formCrear.value.tallas.includes(t.id)" />
+          {{ t.nombre }}
+        </label>
+      </div>
+    
+      <!-- Productos relacionados -->
+      <label>Productos relacionados:</label>
+      <div class="checkbox-group">
+        <label *ngFor="let p of productos">
+          <input type="checkbox" [value]="p.id" (change)="onCheckboxChange($event, 'productos_relacionados')" [checked]="formCrear.value.productos_relacionados.includes(p.id)" />
+          {{ p.nombre }}
+        </label>
+      </div>
+    
+      <!-- Datos físicos -->
+      <input class="input" type="number" step="0.01" formControlName="peso_kg" placeholder="Peso (kg)" />
+      <input class="input" type="number" step="0.01" formControlName="alto_cm" placeholder="Alto (cm)" />
+      <input class="input" type="number" step="0.01" formControlName="ancho_cm" placeholder="Ancho (cm)" />
+      <input class="input" type="number" step="0.01" formControlName="largo_cm" placeholder="Largo (cm)" />
+    
+      <!-- Imagen principal -->
+      <input type="file" (change)="onFileCreate($event)" />
+      <img *ngIf="previewCrear" [src]="previewCrear" class="preview-img" />
+    
+      <!-- Botones -->
+      <div class="acciones-card">
+        <button type="submit" class="btn btn-primario" [disabled]="formCrear.invalid">✅ Crear</button>
+        <button type="button" class="btn btn-secundario" (click)="toggleCreate()">✖️ Cancelar</button>
+      </div>
+    </form>
+    
+
+    <!-- Listado de Productos -->
+    <section class="admin-productos">
+      <div class="producto-admin-card" *ngFor="let p of productos">
+        <img [src]="getFoto(p.imagen_principal)" class="producto-admin-img" />
+        <div class="producto-admin-detalles">
+          <div *ngIf="editId === p.id; else vista">
+            <form [formGroup]="formEditar" class="form-inline editar" (ngSubmit)="saveEdit()">
+              <input class="input" formControlName="nombre" placeholder="Nombre" />
+              <textarea class="textarea" rows="2" formControlName="descripcion" placeholder="Descripción"></textarea>
+              <input class="input" type="number" formControlName="precio" placeholder="Precio" />
+              <input type="file" (change)="onFileEdit($event)" />
+              <img *ngIf="previewEditar" [src]="previewEditar" class="preview-img" />
+              <div class="acciones-card">
+                <button type="submit" class="btn btn-success" [disabled]="formEditar.invalid">📏 Guardar</button>
+                <button type="button" class="btn btn-secundario" (click)="cancelEdit()">✖️</button>
+              </div>
+            </form>
+          </div>
+          <ng-template #vista>
+            <h3>{{ p.nombre }}</h3>
+            <p>💶 {{ p.precio }} €</p>
+            <p class="descripcion">{{ p.descripcion }}</p>
+            <div class="acciones-admin">
+              <button class="btn btn-warning" (click)="startEdit(p)">✏️ Editar</button>
+              <button class="btn btn-danger" (click)="eliminar(p.id)">🗑️ Eliminar</button>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- SECCIÓN: COLORES -->
+  <div *ngIf="seccion === 'colores'">
+    <h3>🎨 Gestión de Colores</h3>
+    <form (ngSubmit)="crearColor()" class="form-inline crear">
+      <input [(ngModel)]="nuevoColor.nombre" name="colorNombre" class="input" placeholder="Nombre del color" required />
+      <input [(ngModel)]="nuevoColor.codigo_hex" name="colorHex" class="input" placeholder="#Código HEX" />
+      <button type="submit" class="btn btn-success">➕ Añadir</button>
+    </form>
+    <ul class="lista-admin">
+      <li *ngFor="let c of colores">
+        <span>{{ c.nombre }} ({{ c.codigo_hex || 'sin código' }})</span>
+        <button class="btn btn-danger btn-sm" (click)="eliminarColor(c.id)">🗑️</button>
+      </li>
+    </ul>
+  </div>
+
+  <!-- SECCIÓN: TALLAS -->
+  <div *ngIf="seccion === 'tallas'">
+    <h3>📏 Gestión de Tallas</h3>
+    <form (ngSubmit)="crearTalla()" class="form-inline crear">
+      <input [(ngModel)]="nuevaTalla.nombre" name="tallaNombre" class="input" placeholder="Nombre de la talla" required />
+      <button type="submit" class="btn btn-success">➕ Añadir</button>
+    </form>
+    <ul class="lista-admin">
+      <li *ngFor="let t of tallas">
+        <span>{{ t.nombre }}</span>
+        <button class="btn btn-danger btn-sm" (click)="eliminarTalla(t.id)">🗑️</button>
+      </li>
+    </ul>
+  </div>
+
+  <!-- SECCIÓN: TIPOS -->
+  <div *ngIf="seccion === 'tipos'">
+    <h3>🡥 Gestión de Tipos</h3>
+    <form (ngSubmit)="crearTipo()" class="form-inline crear">
+      <input [(ngModel)]="nuevoTipo.nombre" name="tipoNombre" class="input" placeholder="Nombre del tipo de producto" required />
+      <button type="submit" class="btn btn-success">➕ Añadir</button>
+    </form>
+    <ul class="lista-admin">
+      <li *ngFor="let t of tipos">
+        <span>{{ t.nombre }}</span>
+        <button class="btn btn-danger btn-sm" (click)="eliminarTipo(t.id)">🗑️</button>
+      </li>
+    </ul>
+  </div>
+
+  <!-- SECCIÓN: CATEGORÍAS -->
+  <div *ngIf="seccion === 'categorias'">
+    <h3>🏷️ Gestión de Categorías</h3>
+    <form (ngSubmit)="crearCategoria()" class="form-inline crear">
+      <input [(ngModel)]="nuevaCategoria.nombre" name="categoriaNombre" class="input" placeholder="Nombre de la categoría" required />
+      <button type="submit" class="btn btn-success">➕ Añadir</button>
+    </form>
+    <ul class="lista-admin">
+      <li *ngFor="let c of categorias">
+        <span>{{ c.nombre }}</span>
+        <button class="btn btn-danger btn-sm" (click)="eliminarCategoria(c.id)">🗑️</button>
+      </li>
+    </ul>
+  </div>
 </div>

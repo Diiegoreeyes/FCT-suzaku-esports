@@ -36,11 +36,10 @@ class UsuarioForm(forms.ModelForm):
 ############################################################
 
 class ProductoForm(forms.ModelForm):
-    """ Formulario para la creación y edición de productos """
-    
     class Meta:
         model = Producto
-        fields = ['nombre', 'descripcion', 'precio', 'stock']
+        fields = ['nombre', 'descripcion', 'precio', 'tipo', 'categoria', 'colores', 'tallas', 'sponsor', 'imagen_principal', 'activo']
+
 
 ############################################################
 # FORMULARIO DE REGISTRO DE USUARIOS

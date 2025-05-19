@@ -67,7 +67,75 @@ class DireccionSerializer(serializers.ModelSerializer):
 ############################################################
 # 🛒 SERIALIZADORES DE PEDIDOS Y PRODUCTOS EN PEDIDOS
 ############################################################
+# 🎨 Serializador para colores
+class ColorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Color
+        fields = '__all__'
 
+# 📏 Serializador para tallas
+class TallaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Talla
+        fields = '__all__'
+
+# 🏷️ Serializador para tipos de producto
+class ProductoTipoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductoTipo
+        fields = '__all__'
+
+# 🧢 Serializador para categorías
+class CategoriaProductoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CategoriaProducto
+        fields = '__all__'
+
+# 🖼️ Serializador para galería de imágenes
+class ProductoImagenSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductoImagen
+        fields = '__all__'
+
+# 📦 Serializador para stock (talla + color)
+class StockSerializer(serializers.ModelSerializer):
+    talla = TallaSerializer(read_only=True)
+    color = ColorSerializer(read_only=True)
+    talla_id = serializers.PrimaryKeyRelatedField(
+        queryset=Talla.objects.all(), source='talla', write_only=True
+    )
+    color_id = serializers.PrimaryKeyRelatedField(
+        queryset=Color.objects.all(), source='color', write_only=True
+    )
+
+    class Meta:
+        model = Stock
+        fields = ['id', 'producto', 'talla', 'color', 'cantidad', 'talla_id', 'color_id']
+
+# ⭐ Serializador para valoraciones de productos
+class ValoracionSerializer(serializers.ModelSerializer):
+    usuario_nombre = serializers.CharField(source='usuario.nombre', read_only=True)
+
+    class Meta:
+        model = Valoracion
+        fields = ['id', 'producto', 'usuario', 'usuario_nombre', 'puntuacion', 'comentario', 'creado_en']
+
+# 🛍️ Serializador principal del producto
+class ProductoSerializer(serializers.ModelSerializer):
+    tipo = ProductoTipoSerializer(read_only=True)
+    categoria = CategoriaProductoSerializer(read_only=True)
+    colores = ColorSerializer(many=True, read_only=True)
+    tallas = TallaSerializer(many=True, read_only=True)
+    galeria = ProductoImagenSerializer(many=True, read_only=True)
+    stock_items = StockSerializer(many=True, read_only=True)
+    valoraciones = ValoracionSerializer(many=True, read_only=True)
+    productos_relacionados = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+
+    class Meta:
+        model = Producto
+        fields = '__all__'
+
+        
 class ProductoPedidoSerializer(serializers.ModelSerializer):
     nombre = serializers.CharField(source='producto.nombre')
     foto = serializers.ImageField(source='producto.foto')

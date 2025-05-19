@@ -8,6 +8,7 @@ import { Observable, catchError, of } from 'rxjs';
 })
 export class ProductoService {
  private apiUrl = 'http://127.0.0.1:8000/api/productos/'; // 👈 Ajusta la URL si es diferente
+ private api = 'http://127.0.0.1:8000/api';
 
 
  constructor(private http: HttpClient) {}
@@ -51,6 +52,75 @@ export class ProductoService {
   actualizarEstadoPedido(pedidoId: number, estado: string): Observable<any> {
     return this.http.patch(`http://127.0.0.1:8000/api/pedidos/${pedidoId}/`, { estado });
   }
+  
+  /* ──────── COLORES ──────── */
+  getColores(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.api}/colores/`);
+  }
+
+  crearColor(data: any): Observable<any> {
+    return this.http.post<any>(`${this.api}/colores/`, data);
+  }
+
+  actualizarColor(id: number, data: any): Observable<any> {
+    return this.http.put<any>(`${this.api}/colores/${id}/`, data);
+  }
+
+  eliminarColor(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.api}/colores/${id}/`);
+  }
+
+  /* ──────── TALLAS ──────── */
+  getTallas(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.api}/tallas/`);
+  }
+
+  crearTalla(data: any): Observable<any> {
+    return this.http.post<any>(`${this.api}/tallas/`, data);
+  }
+
+  actualizarTalla(id: number, data: any): Observable<any> {
+    return this.http.put<any>(`${this.api}/tallas/${id}/`, data);
+  }
+
+  eliminarTalla(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.api}/tallas/${id}/`);
+  }
+
+  /* ──────── TIPOS ──────── */
+  getTipos(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.api}/tipos/`);
+  }
+
+  crearTipo(data: any): Observable<any> {
+    return this.http.post<any>(`${this.api}/tipos/`, data);
+  }
+
+  actualizarTipo(id: number, data: any): Observable<any> {
+    return this.http.put<any>(`${this.api}/tipos/${id}/`, data);
+  }
+
+  eliminarTipo(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.api}/tipos/${id}/`);
+  }
+
+  /* ──────── CATEGORÍAS ──────── */
+  getCategorias(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.api}/categorias/`);
+  }
+
+  crearCategoria(data: any): Observable<any> {
+    return this.http.post<any>(`${this.api}/categorias/`, data);
+  }
+
+  actualizarCategoria(id: number, data: any): Observable<any> {
+    return this.http.put<any>(`${this.api}/categorias/${id}/`, data);
+  }
+
+  eliminarCategoria(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.api}/categorias/${id}/`);
+  }
+  
  }
 
 

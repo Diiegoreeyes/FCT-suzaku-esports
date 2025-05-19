@@ -737,3 +737,34 @@ def lista_productos(request):
 class PedidoViewSet(viewsets.ModelViewSet):
     queryset = Pedido.objects.all()
     serializer_class = PedidoSerializer
+
+
+# Vistas tipo ViewSet para cada modelo
+
+class ProductoTipoViewSet(viewsets.ModelViewSet):
+    queryset = ProductoTipo.objects.all()
+    serializer_class = ProductoTipoSerializer
+
+class ColorViewSet(viewsets.ModelViewSet):
+    queryset = Color.objects.all()
+    serializer_class = ColorSerializer
+
+class TallaViewSet(viewsets.ModelViewSet):
+    queryset = Talla.objects.all()
+    serializer_class = TallaSerializer
+
+class CategoriaProductoViewSet(viewsets.ModelViewSet):
+    queryset = CategoriaProducto.objects.all()
+    serializer_class = CategoriaProductoSerializer
+
+class ProductoImagenViewSet(viewsets.ModelViewSet):
+    queryset = ProductoImagen.objects.all()
+    serializer_class = ProductoImagenSerializer
+
+class StockViewSet(viewsets.ModelViewSet):
+    queryset = Stock.objects.all()
+    serializer_class = StockSerializer
+
+class ValoracionViewSet(viewsets.ModelViewSet):
+    queryset = Valoracion.objects.all()
+    serializer_class = ValoracionSerializer

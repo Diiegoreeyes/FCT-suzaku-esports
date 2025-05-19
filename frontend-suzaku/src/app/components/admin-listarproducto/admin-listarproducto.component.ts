@@ -12,7 +12,20 @@ import { ProductoService } from '../../services/producto.service';
 })
 export class AdminListarproductoComponent implements OnInit {
 
+  seccion: string = 'productos';  // Valor inicial por defecto
   productos: any[] = [];
+  vista: string = 'productos';
+  // Colores
+  formColor!: FormGroup;
+
+  // Tallas
+  formTalla!: FormGroup;
+
+  // Tipos
+  formTipo!: FormGroup;
+
+  // Categorías
+  formCategoria!: FormGroup;
 
   // Estado crear inline
   showCreateForm = false;
@@ -31,9 +44,161 @@ export class AdminListarproductoComponent implements OnInit {
 
   ngOnInit(): void {
     this.cargarProductos();
+  
+    // Formularios auxiliares para las secciones
+    this.formColor = this.fb.group({ nombre: [''], codigo_hex: [''] });
+    this.formTalla = this.fb.group({ nombre: [''] });
+    this.formTipo = this.fb.group({ nombre: [''] });
+    this.formCategoria = this.fb.group({ nombre: [''] });
+  
+    // Carga de datos auxiliares
+    this.cargarColores();
+    this.cargarTallas();
+    this.cargarTipos();
+    this.cargarCategorias();
+  
+    // Inicializa formularios principales de productos (crear y editar)
     this.initForms();
   }
+  
+  
+  
+// ------------------ COLORES ------------------
+colores: any[] = [];
+nuevoColor: any = { nombre: '', codigo_hex: '' };
+cambiarSeccion(nombre: string): void {
+  this.seccion = nombre;
+}
+cargarColores(): void {
+  this.productoService.getColores().subscribe({
+    next: data => this.colores = data,
+    error: err => console.error('Error al cargar colores:', err)
+  });
+}
 
+crearColor(): void {
+  if (!this.nuevoColor.nombre) return;
+  this.productoService.crearColor(this.nuevoColor).subscribe({
+    next: color => {
+      this.colores.push(color);
+      this.nuevoColor = { nombre: '', codigo_hex: '' };
+    },
+    error: err => console.error('Error al crear color:', err)
+  });
+}
+
+eliminarColor(id: number): void {
+  if (!confirm('¿Eliminar este color?')) return;
+  this.productoService.eliminarColor(id).subscribe({
+    next: () => this.colores = this.colores.filter(c => c.id !== id),
+    error: err => console.error('Error al eliminar color:', err)
+  });
+}
+
+// ------------------ TALLAS ------------------
+tallas: any[] = [];
+nuevaTalla: any = { nombre: '' };
+
+cargarTallas(): void {
+  this.productoService.getTallas().subscribe({
+    next: data => this.tallas = data,
+    error: err => console.error('Error al cargar tallas:', err)
+  });
+}
+
+crearTalla(): void {
+  if (!this.nuevaTalla.nombre) return;
+  this.productoService.crearTalla(this.nuevaTalla).subscribe({
+    next: talla => {
+      this.tallas.push(talla);
+      this.nuevaTalla = { nombre: '' };
+    },
+    error: err => console.error('Error al crear talla:', err)
+  });
+}
+
+eliminarTalla(id: number): void {
+  if (!confirm('¿Eliminar esta talla?')) return;
+  this.productoService.eliminarTalla(id).subscribe({
+    next: () => this.tallas = this.tallas.filter(t => t.id !== id),
+    error: err => console.error('Error al eliminar talla:', err)
+  });
+}
+
+// ------------------ TIPOS ------------------
+tipos: any[] = [];
+nuevoTipo: any = { nombre: '' };
+
+cargarTipos(): void {
+  this.productoService.getTipos().subscribe({
+    next: data => this.tipos = data,
+    error: err => console.error('Error al cargar tipos:', err)
+  });
+}
+
+crearTipo(): void {
+  if (!this.nuevoTipo.nombre) return;
+  this.productoService.crearTipo(this.nuevoTipo).subscribe({
+    next: tipo => {
+      this.tipos.push(tipo);
+      this.nuevoTipo = { nombre: '' };
+    },
+    error: err => console.error('Error al crear tipo:', err)
+  });
+}
+
+eliminarTipo(id: number): void {
+  if (!confirm('¿Eliminar este tipo?')) return;
+  this.productoService.eliminarTipo(id).subscribe({
+    next: () => this.tipos = this.tipos.filter(t => t.id !== id),
+    error: err => console.error('Error al eliminar tipo:', err)
+  });
+}
+
+// ------------------ CATEGORÍAS ------------------
+categorias: any[] = [];
+nuevaCategoria: any = { nombre: '' };
+
+cargarCategorias(): void {
+  this.productoService.getCategorias().subscribe({
+    next: data => this.categorias = data,
+    error: err => console.error('Error al cargar categorías:', err)
+  });
+}
+
+crearCategoria(): void {
+  if (!this.nuevaCategoria.nombre) return;
+  this.productoService.crearCategoria(this.nuevaCategoria).subscribe({
+    next: cat => {
+      this.categorias.push(cat);
+      this.nuevaCategoria = { nombre: '' };
+    },
+    error: err => console.error('Error al crear categoría:', err)
+  });
+}
+
+eliminarCategoria(id: number): void {
+  if (!confirm('¿Eliminar esta categoría?')) return;
+  this.productoService.eliminarCategoria(id).subscribe({
+    next: () => this.categorias = this.categorias.filter(c => c.id !== id),
+    error: err => console.error('Error al eliminar categoría:', err)
+  });
+}
+
+  
+stockList: { color: any, talla: any, cantidad: number }[] = [];
+
+agregarStock(color: any, talla: any, cantidad: number) {
+  this.stockList.push({ color, talla, cantidad });
+}
+
+imagenesGaleria: File[] = [];
+onGaleriaChange(event: any) {
+  this.imagenesGaleria = Array.from(event.target.files);
+}
+
+  
+  
   private cargarProductos(): void {
     this.productoService.getProductos().subscribe({
       next: data => this.productos = data,
@@ -78,20 +243,68 @@ export class AdminListarproductoComponent implements OnInit {
 
   crear(): void {
     if (this.formCrear.invalid) return;
+  
     const fd = new FormData();
     fd.append('nombre', this.formCrear.value.nombre);
     fd.append('descripcion', this.formCrear.value.descripcion);
     fd.append('precio', this.formCrear.value.precio);
-    const f = this.formCrear.get('foto')!.value;
-    if (f) fd.append('foto', f);
-
+    fd.append('tipo', this.formCrear.value.tipo);
+    fd.append('categoria', this.formCrear.value.categoria);
+    fd.append('peso_kg', this.formCrear.value.peso_kg);
+    fd.append('alto_cm', this.formCrear.value.alto_cm);
+    fd.append('ancho_cm', this.formCrear.value.ancho_cm);
+    fd.append('largo_cm', this.formCrear.value.largo_cm);
+  
+    // Imagen principal
+    const imagen = this.formCrear.get('imagen_principal')?.value;
+    if (imagen) {
+      fd.append('imagen_principal', imagen);
+    }
+  
+    // Colores (array de IDs)
+    for (const colorId of this.formCrear.value.colores) {
+      fd.append('colores', colorId);
+    }
+  
+    // Tallas (array de IDs)
+    for (const tallaId of this.formCrear.value.tallas) {
+      fd.append('tallas', tallaId);
+    }
+  
+    // Productos relacionados (array de IDs)
+    for (const relId of this.formCrear.value.productos_relacionados) {
+      fd.append('productos_relacionados', relId);
+    }
+  
     this.productoService.crearProducto(fd).subscribe({
       next: prod => {
         this.productos.push(prod);
         this.toggleCreate();
-      }, error: e => console.error('Error crear', e)
+      },
+      error: err => {
+        console.error('Error al crear producto:', err);
+      }
     });
   }
+  onCheckboxChange(event: any, controlName: string): void {
+    const selectedValues: number[] = this.formCrear.get(controlName)?.value || [];
+  
+    if (event.target.checked) {
+      // Añadir el valor si está marcado y no está ya incluido
+      if (!selectedValues.includes(+event.target.value)) {
+        selectedValues.push(+event.target.value);
+      }
+    } else {
+      // Quitar el valor si se desmarca
+      const index = selectedValues.indexOf(+event.target.value);
+      if (index > -1) {
+        selectedValues.splice(index, 1);
+      }
+    }
+  
+    this.formCrear.get(controlName)?.setValue(selectedValues);
+  }
+  
 
   /* ── Editar inline ── */
   startEdit(p: any): void {
