@@ -37,12 +37,11 @@
    ```bash
    git clone https://github.com/Diiegoreeyes/FCT-suzaku-esports
    cd FCT-suzaku-esports
-
+   python -m venv venv
+   source venv/bin/activate
 2. **Iniciar Proyecto - Backend (Django + DRF)**
     ```bash
     cd tienda
-    python -m venv venv
-    source venv/bin/activate
     pip install -r requirements.txt
     python manage.py migrate
     python manage.py runserver
