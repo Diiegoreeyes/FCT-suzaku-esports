@@ -36,11 +36,11 @@
 1. **Clonar el repositorio**
    ```bash
    git clone https://github.com/Diiegoreeyes/FCT-suzaku-esports
-   cd tu-repo
+   cd FCT-suzaku-esports
 
 2. **Iniciar Proyecto - Backend (Django + DRF)**
     ```bash
-    cd backend
+    cd tienda
     python -m venv venv
     source venv/bin/activate
     pip install -r requirements.txt
@@ -49,6 +49,6 @@
 
 3. **Iniciar Proyecto - Frontend (Angular)**
     ```bash
-    cd frontend
+    cd frontend-suzaku
     npm install
-    ng serve
+    ng serve --open

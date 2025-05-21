@@ -57,15 +57,9 @@ export class CarritoComponent implements OnInit {
   }
 
   getProductoFoto(foto: string): string {
-    if (!foto) {
-      return 'assets/default-producto.jpg';
-    }
-    if (foto.startsWith('http://') || foto.startsWith('https://')) {
-      return foto;
-    }
-    if (foto.startsWith('/media/')) {
-      return `http://127.0.0.1:8000${foto}`;
-    }
-    return `http://127.0.0.1:8000/media/${foto}`;
+    if (!foto) return 'assets/default-producto.jpg';
+    if (foto.startsWith('http')) return foto;
+    return `http://127.0.0.1:8000${foto}`;
   }
+  
 }

@@ -1,0 +1,19 @@
+# 🐍 Django y dependencias clave
+Django==5.1.6
+djangorestframework==3.15.1
+djangorestframework-simplejwt==5.3.1
+
+# 🖼️ Para manejo de imágenes
+Pillow==10.2.0
+
+# ⚙️ Soporte para CORS si lo usas en local con frontend separado
+django-cors-headers==4.3.1
+
+# 📦 Otras utilidades comunes en proyectos Django
+python-dotenv==1.0.1
+
+# 🗃️ Si usas PostgreSQL en lugar de SQLite
+# psycopg2-binary==2.9.9
+
+# 🧪 (Opcional) Testing o herramientas adicionales
+# coverage==7.4.4

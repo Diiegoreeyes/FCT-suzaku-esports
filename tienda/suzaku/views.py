@@ -369,11 +369,11 @@ def confirmar_pedido_view(request):
             precio=prod.precio
         )
 
-        if prod.stock >= cantidad:
-            prod.stock -= cantidad
-            prod.save()
-        else:
-            return JsonResponse({"error": f"Stock insuficiente para {prod.nombre}"}, status=400)
+        #if prod.stock >= cantidad:
+        #    prod.stock -= cantidad
+        #    prod.save()
+        #else:
+        #    return JsonResponse({"error": f"Stock insuficiente para {prod.nombre}"}, status=400)
 
     pedido.total = total_calculado
     pedido.total_con_descuento = total_calculado - Decimal(descuento)
@@ -443,13 +443,14 @@ def verificar_descuento(request):
 ############################################################
 
 class ProductoViewSet(viewsets.ModelViewSet):
-    """
-    📦 API para gestionar productos (CRUD)
-    """
     queryset = Producto.objects.all()
     serializer_class = ProductoSerializer
     permission_classes = [AllowAny]  # ✅ esto permite acceso sin login
 
+
+class StockViewSet(viewsets.ModelViewSet):
+    queryset = Stock.objects.all()
+    serializer_class = StockSerializer
 
 ############################################################
 # 🎟️ VERIFICACIÓN DE CÓDIGOS DE DESCUENTO

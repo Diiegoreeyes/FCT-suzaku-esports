@@ -67,6 +67,7 @@ class DireccionSerializer(serializers.ModelSerializer):
 ############################################################
 # 🛒 SERIALIZADORES DE PEDIDOS Y PRODUCTOS EN PEDIDOS
 ############################################################
+
 # 🎨 Serializador para colores
 class ColorSerializer(serializers.ModelSerializer):
     class Meta:
@@ -126,23 +127,39 @@ class ProductoSerializer(serializers.ModelSerializer):
     categoria = CategoriaProductoSerializer(read_only=True)
     colores = ColorSerializer(many=True, read_only=True)
     tallas = TallaSerializer(many=True, read_only=True)
-    galeria = ProductoImagenSerializer(many=True, read_only=True)
-    stock_items = StockSerializer(many=True, read_only=True)
-    valoraciones = ValoracionSerializer(many=True, read_only=True)
-    productos_relacionados = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+
+    tipo_id = serializers.PrimaryKeyRelatedField(queryset=ProductoTipo.objects.all(), source='tipo', write_only=True)
+    categoria_id = serializers.PrimaryKeyRelatedField(queryset=CategoriaProducto.objects.all(), source='categoria', write_only=True)
+    colores_id = serializers.PrimaryKeyRelatedField(queryset=Color.objects.all(), many=True, source='colores', write_only=True)
+    tallas_id = serializers.PrimaryKeyRelatedField(queryset=Talla.objects.all(), many=True, source='tallas', write_only=True)
 
     class Meta:
         model = Producto
         fields = '__all__'
-
         
 class ProductoPedidoSerializer(serializers.ModelSerializer):
-    nombre = serializers.CharField(source='producto.nombre')
-    foto = serializers.ImageField(source='producto.foto')
+    imagen_principal = serializers.ImageField(source='producto.imagen_principal', read_only=True)
+    nombre = serializers.CharField(source='producto.nombre', read_only=True)
+    precio = serializers.DecimalField(source='producto.precio', max_digits=10, decimal_places=2, read_only=True)
+    tipo = ProductoTipoSerializer(source='producto.tipo', read_only=True)
+    categoria = CategoriaProductoSerializer(source='producto.categoria', read_only=True)
+    colores = ColorSerializer(source='producto.colores', many=True, read_only=True)
+    tallas = TallaSerializer(source='producto.tallas', many=True, read_only=True)
 
     class Meta:
         model = ProductoPedido
-        fields = ['nombre', 'foto', 'cantidad', 'precio']
+        fields = ['id', 'producto', 'cantidad', 'imagen_principal', 'nombre', 'precio', 'tipo', 'categoria', 'colores', 'tallas']
+
+
+class StockSerializer(serializers.ModelSerializer):
+    color = ColorSerializer(read_only=True)
+    talla = TallaSerializer(read_only=True)
+    color_id = serializers.PrimaryKeyRelatedField(source='color', queryset=Color.objects.all(), write_only=True)
+    talla_id = serializers.PrimaryKeyRelatedField(source='talla', queryset=Talla.objects.all(), write_only=True)
+
+    class Meta:
+        model = Stock
+        fields = ['id', 'producto', 'talla', 'color', 'cantidad', 'color_id', 'talla_id']
 
 class PedidoSerializer(serializers.ModelSerializer):
     """

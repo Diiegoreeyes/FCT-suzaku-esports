@@ -6,6 +6,7 @@
     <button (click)="seccion = 'tallas'" [class.active]="seccion === 'tallas'">📏 Tallas</button>
     <button (click)="seccion = 'tipos'" [class.active]="seccion === 'tipos'">🡥 Tipos</button>
     <button (click)="seccion = 'categorias'" [class.active]="seccion === 'categorias'">🏷️ Categorías</button>
+    <button (click)="seccion = 'stock'" [class.active]="seccion === 'stock'">📦 Stock</button>
   </nav>
 
   <!-- SECCIÓN: PRODUCTOS -->
@@ -37,7 +38,7 @@
       <label>Colores:</label>
       <div class="checkbox-group">
         <label *ngFor="let c of colores">
-          <input type="checkbox" [value]="c.id" (change)="onCheckboxChange($event, 'colores')" [checked]="formCrear.value.colores.includes(c.id)" />
+          <input type="checkbox" [value]="c.id" (change)="onCheckboxChange($event, 'colores')" [checked]="formCrear.value.colores?.includes(c.id)" />
           {{ c.nombre }}
         </label>
       </div>
@@ -46,7 +47,7 @@
       <label>Tallas:</label>
       <div class="checkbox-group">
         <label *ngFor="let t of tallas">
-          <input type="checkbox" [value]="t.id" (change)="onCheckboxChange($event, 'tallas')" [checked]="formCrear.value.tallas.includes(t.id)" />
+          <input type="checkbox" [value]="t.id" (change)="onCheckboxChange($event, 'tallas')" [checked]="formCrear.value.tallas?.includes(t.id)" />
           {{ t.nombre }}
         </label>
       </div>
@@ -83,28 +84,94 @@
       <div class="producto-admin-card" *ngFor="let p of productos">
         <img [src]="getFoto(p.imagen_principal)" class="producto-admin-img" />
         <div class="producto-admin-detalles">
+
+          <!-- EDITAR -->
+
           <div *ngIf="editId === p.id; else vista">
             <form [formGroup]="formEditar" class="form-inline editar" (ngSubmit)="saveEdit()">
+              <h4>✏️ Editar Producto</h4>
+            
+              <h5>Información básica</h5>
               <input class="input" formControlName="nombre" placeholder="Nombre" />
               <textarea class="textarea" rows="2" formControlName="descripcion" placeholder="Descripción"></textarea>
               <input class="input" type="number" formControlName="precio" placeholder="Precio" />
+            
+              <h5>Categoría y tipo</h5>
+              <select class="input" formControlName="tipo">
+                <option [ngValue]="null">Tipo...</option>
+                <option *ngFor="let t of tipos" [value]="t.id">{{ t.nombre }}</option>
+              </select>
+              <select class="input" formControlName="categoria">
+                <option [ngValue]="null">Categoría...</option>
+                <option *ngFor="let c of categorias" [value]="c.id">{{ c.nombre }}</option>
+              </select>
+            
+              <h5>Colores</h5>
+              <div class="checkbox-group">
+                <label *ngFor="let c of colores">
+                  <input type="checkbox" [value]="c.id" (change)="onCheckboxChangeEditar($event, 'colores')" [checked]="formEditar.value.colores.includes(c.id)" />
+                  {{ c.nombre }}
+                </label>
+              </div>
+            
+              <h5>Tallas</h5>
+              <div class="checkbox-group">
+                <label *ngFor="let t of tallas">
+                  <input type="checkbox" [value]="t.id" (change)="onCheckboxChangeEditar($event, 'tallas')" [checked]="formEditar.value.tallas.includes(t.id)" />
+                  {{ t.nombre }}
+                </label>
+              </div>
+            
+              <h5>Productos relacionados</h5>
+              <div class="checkbox-group">
+                <label *ngFor="let pr of productos">
+                  <input type="checkbox" [value]="pr.id" (change)="onCheckboxChangeEditar($event, 'productos_relacionados')" [checked]="formEditar.value.productos_relacionados.includes(pr.id)" />
+                  {{ pr.nombre }}
+                </label>
+              </div>
+            
+              <h5>Dimensiones y peso</h5>
+              <input class="input" type="number" step="0.01" formControlName="peso_kg" placeholder="Peso (kg)" />
+              <input class="input" type="number" step="0.01" formControlName="alto_cm" placeholder="Alto (cm)" />
+              <input class="input" type="number" step="0.01" formControlName="ancho_cm" placeholder="Ancho (cm)" />
+              <input class="input" type="number" step="0.01" formControlName="largo_cm" placeholder="Largo (cm)" />
+            
+              <h5>Imagen principal</h5>
               <input type="file" (change)="onFileEdit($event)" />
               <img *ngIf="previewEditar" [src]="previewEditar" class="preview-img" />
+            
               <div class="acciones-card">
-                <button type="submit" class="btn btn-success" [disabled]="formEditar.invalid">📏 Guardar</button>
-                <button type="button" class="btn btn-secundario" (click)="cancelEdit()">✖️</button>
+                <button type="submit" class="btn btn-success" [disabled]="formEditar.invalid">💾 Guardar</button>
+                <button type="button" class="btn btn-secundario" (click)="cancelEdit()">✖️ Cancelar</button>
               </div>
             </form>
+            
           </div>
+          
           <ng-template #vista>
             <h3>{{ p.nombre }}</h3>
             <p>💶 {{ p.precio }} €</p>
-            <p class="descripcion">{{ p.descripcion }}</p>
+            <p *ngIf="p.tipo">🧥 Tipo: <strong>{{ p.tipo.nombre }}</strong></p>
+            <p *ngIf="p.categoria">🏷️ Categoría: <strong>{{ p.categoria.nombre }}</strong></p>
+            
+            <p *ngIf="p.colores?.length">
+              🎨 Colores:
+              <span *ngFor="let c of p.colores" class="badge-color" [style.backgroundColor]="c.codigo_hex || '#ddd'">
+                {{ c.nombre }}
+              </span>
+            </p>
+            
+            <p *ngIf="p.tallas?.length">
+              📏 Tallas:
+              <span *ngFor="let t of p.tallas" class="badge-talla">{{ t.nombre }}</span>
+            </p>
+            
             <div class="acciones-admin">
               <button class="btn btn-warning" (click)="startEdit(p)">✏️ Editar</button>
               <button class="btn btn-danger" (click)="eliminar(p.id)">🗑️ Eliminar</button>
             </div>
           </ng-template>
+          
         </div>
       </div>
     </section>
@@ -170,4 +237,53 @@
       </li>
     </ul>
   </div>
+
+<!-- SECCIÓN: STOCK -->
+<div *ngIf="seccion === 'stock'" class="stock-panel">
+  <h3>📦 Gestión de Stock</h3>
+
+  <div *ngFor="let p of productos" class="stock-producto-container">
+    <div class="stock-header">
+      <img [src]="getFoto(p.imagen_principal)" alt="imagen" class="stock-img" />
+      <h4>{{ p.nombre }}</h4>
+    </div>
+
+    <div class="stock-tabla-scroll">
+      <table class="tabla-stock">
+        <thead>
+          <tr>
+            <th>Color / Talla</th>
+            <th *ngFor="let t of tallas">{{ t.nombre }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let c of colores">
+            <td>
+              <span class="badge-color" [style.backgroundColor]="c.codigo_hex || '#ccc'">{{ c.nombre }}</span>
+            </td>
+            <td *ngFor="let t of tallas">
+              <!-- Editar stock -->
+              <form *ngIf="editandoStock(producto_id, talla_id, color_id, p.id, t.id, c.id)" 
+                    (ngSubmit)="guardarStock(stockForm.producto_id, stockForm.talla_id, stockForm.color_id, stockForm.cantidad)" 
+                    class="form-stock-inline">
+                <input type="number" [(ngModel)]="stockForm.cantidad" name="cantidad_{{p.id}}_{{t.id}}_{{c.id}}" />
+                <button type="submit">💾</button>
+                <button type="button" (click)="cancelarEdicionStock()">✖️</button>
+              </form>
+
+              <!-- Mostrar stock -->
+              <div *ngIf="!editandoStock(producto_id, talla_id, color_id, p.id, t.id, c.id)">
+                <span class="stock-cantidad">
+                  {{ getStockCantidad(p.id, t.id, c.id) ?? '—' }}
+                </span>
+                <button class="btn-editar" (click)="abrirStockForm(p.id, t.id, c.id)">✏️</button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
 </div>

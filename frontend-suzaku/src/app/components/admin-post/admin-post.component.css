@@ -1,105 +1,81 @@
-.admin-sponsors {
-  padding: 1rem;
-}
+/* ================= ADMIN POSTS ================= */
 
-/* Botón crear */
-.admin-actions {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 1rem;
-}
-.admin-actions .btn-crear {
-  background-color: #28a745;
-  color: #fff;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  border: none;
-  font-size: 0.95rem;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-.admin-actions .btn-crear:hover {
-  filter: brightness(1.1);
-}
-
-/* Formulario estilo común */
-.form-inline {
+.admin-post-card {
   background: #fff;
   border: 1px solid #eee;
-  border-left: 4px solid #28a745;
   border-radius: 12px;
   padding: 1rem;
+  margin-bottom: 1rem;
   box-shadow: 0 2px 6px rgba(0,0,0,0.05);
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
+  flex-direction: column;
+  gap: 1rem;
 }
-.form-inline .input,
-.form-inline .textarea {
-  flex: 1 1 250px;
+
+/* Modo edición */
+.edit-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.edit-label {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.input, .textarea {
   padding: 0.5rem 0.8rem;
   border: 1px solid #ccc;
   border-radius: 6px;
   font-size: 0.9rem;
   background: #fafafa;
 }
-.form-inline .textarea {
+.textarea {
   resize: vertical;
 }
-.form-inline .preview-img {
-  width: 60px;
-  height: 60px;
-  object-fit: cover;
-  border-radius: 8px;
+
+/* Imagen */
+.post-img {
+  width: 100%;
+  max-height: 180px;
+  object-fit: contain;
   border: 1px solid #ddd;
+  border-radius: 8px;
 }
-.form-inline .acciones-card {
-  flex: 1 1 100%;
+
+/* Vista normal */
+.post-header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.post-info h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #333;
+}
+.post-info span {
+  font-size: 0.85rem;
+  color: #666;
+}
+.admin-post-descripcion {
+  color: #555;
+  font-size: 0.95rem;
+}
+
+/* Botones */
+.acciones-card {
   display: flex;
   gap: 0.5rem;
 }
-.form-inline .btn {
+.btn {
   padding: 0.4rem 0.8rem;
   border-radius: 4px;
   font-size: 0.9rem;
   cursor: pointer;
   border: none;
 }
-.btn-primario { background: #007bff; color: white; }
+.btn-success { background: #28a745; color: white; }
+.btn-warning { background: #ffc107; color: black; }
+.btn-danger { background: #dc3545; color: white; }
 .btn-secundario { background: #6c757d; color: white; }
 .btn:hover { filter: brightness(1.05); }
-
-/* Grid uniforme */
-.sponsors-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1rem;
-}
-
-/* Tarjeta sponsor */
-.sponsor-card {
-  background: #f9f9f9;
-  padding: 1rem;
-  border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-.sponsor-logo {
-  width: 100%;
-  max-height: 150px;
-  object-fit: contain;
-  margin-bottom: 0.75rem;
-}
-.sponsor-info h3 {
-  margin: 0 0 0.5rem;
-  font-size: 1.1rem;
-}
-.descripcion {
-  margin: 0 0 0.5rem;
-  color: #555;
-  font-size: 0.9rem;
-}

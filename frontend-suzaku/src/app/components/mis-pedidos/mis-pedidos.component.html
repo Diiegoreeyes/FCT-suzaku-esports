@@ -9,25 +9,18 @@
         <p class="estado">{{ pedido.estado }}</p>
       </div>
 
-      <!-- Fecha del pedido -->
-      <p class="fecha">
-        Fecha: {{ pedido.fecha_creacion | date:'short' }}
-      </p>
+      <p class="fecha">Fecha: {{ pedido.fecha_creacion | date:'short' }}</p>
 
-      <!-- Mostrar código de descuento si existe -->
       <p class="codigo-descuento" *ngIf="pedido.codigo_descuento_str">
         Código utilizado: {{ pedido.codigo_descuento_str }}
       </p>
 
-      <!-- Totales del pedido (con/sin descuento) -->
       <div class="pedido-totales">
         <ng-container *ngIf="pedido.descuento_aplicado && pedido.descuento_aplicado > 0; else sinDescuento">
           <p>
-            <!-- Precio sin descuento en rojo y tachado -->
             <span class="precio-rojo-tachado">
               {{ pedido.total | currency:'EUR':'symbol':'1.2-2' }}
             </span>
-            <!-- Precio con descuento -->
             <span class="precio-descuento">
               {{ pedido.total_con_descuento | currency:'EUR':'symbol':'1.2-2' }}
             </span>
@@ -43,22 +36,37 @@
         </ng-template>
       </div>
 
-      <!-- Productos dentro del pedido -->
+      <!-- 🔁 Productos dentro de este pedido -->
       <div class="pedido-productos">
         <div class="producto-item" *ngFor="let item of pedido.productos">
           <img
-            [src]="getProductoFoto(item.foto)"
+            [src]="getProductoFoto(item.imagen_principal)"
             alt="{{ item.nombre }}"
             class="producto-img"
           />
           <div class="producto-info">
             <p class="producto-nombre"><strong>{{ item.nombre }}</strong></p>
             <p>Cantidad: {{ item.cantidad }}</p>
-            <p>Precio unitario: {{ item.precio | currency:'EUR':'symbol':'1.2-2' }}</p>
+            <p>Precio unitario: {{ item.precio | currency:'EUR' }}</p>
+
+            <p *ngIf="item.tipo">🧥 Tipo: <strong>{{ item.tipo.nombre }}</strong></p>
+            <p *ngIf="item.categoria">🏷️ Categoría: <strong>{{ item.categoria.nombre }}</strong></p>
+
+            <div *ngIf="item.colores?.length">
+              🎨 Colores:
+              <span *ngFor="let c of item.colores" class="badge-color" [style.backgroundColor]="c.codigo_hex || '#ddd'">
+                {{ c.nombre }}
+              </span>
+            </div>
+
+            <div *ngIf="item.tallas?.length">
+              📏 Tallas:
+              <span *ngFor="let t of item.tallas" class="badge-talla">{{ t.nombre }}</span>
+            </div>
           </div>
         </div>
-        
       </div>
+
     </div>
   </div>
 

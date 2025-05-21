@@ -120,6 +120,19 @@ export class ProductoService {
   eliminarCategoria(id: number): Observable<any> {
     return this.http.delete<any>(`${this.api}/categorias/${id}/`);
   }
+
+  getStock(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.api}/stock/`);
+  }
+  crearStock(data: any): Observable<any> {
+    return this.http.post<any>(`${this.api}/stock/`, data);
+  }
+  actualizarStock(id: number, data: any): Observable<any> {
+    return this.http.put<any>(`${this.api}/stock/${id}/`, data);
+  }
+  eliminarStock(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.api}/stock/${id}/`);
+  }
   
  }
 

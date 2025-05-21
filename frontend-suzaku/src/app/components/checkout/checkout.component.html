@@ -16,7 +16,7 @@
   <!-- Lista de Productos -->
   <div *ngIf="productosEnCarrito.length > 0; else noProductos" class="productos-container">
     <div class="producto-card" *ngFor="let producto of productosEnCarrito">
-      <img [src]="getProductoFoto(producto.foto)" class="producto-img" alt="{{ producto.nombre }}" />
+      <img [src]="getProductoFoto(producto.imagen_principal)" class="producto-img" alt="{{ producto.nombre }}" />
       <div class="producto-detalles">
         <h3>{{ producto.nombre }}</h3>
         <p>Precio: {{ producto.precio }} €</p>

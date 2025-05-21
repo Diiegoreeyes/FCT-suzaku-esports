@@ -46,18 +46,11 @@ export class ProductosComponent implements OnInit {
  }
 
 
- getProductoFoto(foto: string): string {
-   if (!foto) {
-     return 'assets/default-producto.jpg';
-   }
-   if (foto.startsWith('http://') || foto.startsWith('https://')) {
-     return foto;
-   }
-   if (foto.startsWith('/media/')) {
-     return `http://127.0.0.1:8000${foto}`;
-   }
-   return `http://127.0.0.1:8000/media/${foto}`;
- }
+ getProductoFoto(url: string): string {
+  if (!url) return 'assets/default-producto.jpg';
+  return url.startsWith('http') ? url : `http://127.0.0.1:8000${url}`;
+}
+
 
 
  agregarAlCarrito(producto: any): void {

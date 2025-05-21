@@ -175,3 +175,28 @@
   background: linear-gradient(to right, #e0e0e0, #bdbdbd);
   color: #333;
 }
+.producto-tags {
+  margin-top: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.producto-colores .color-circle {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1px solid #999;
+  margin-right: 0.3rem;
+}
+
+.producto-tallas .badge-talla {
+  display: inline-block;
+  background-color: #eee;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  border: 1px solid #ccc;
+}

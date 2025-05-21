@@ -110,4 +110,24 @@
     font-size: 1rem;
     color: #333;
   }
+  .badge-color {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    margin: 0.2rem 0.3rem 0 0;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    color: #000;
+    background: #ddd;
+    border: 1px solid #ccc;
+  }
+  
+  .badge-talla {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    margin: 0.2rem 0.3rem 0 0;
+    border-radius: 6px;
+    background: #efefef;
+    font-size: 0.75rem;
+    border: 1px solid #ccc;
+  }
   

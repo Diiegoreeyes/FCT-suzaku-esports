@@ -48,46 +48,110 @@
 /* Contenido de productos */
 .contenido-productos {
   flex: 1;
+  margin-bottom: 4rem; /* Espacio respecto al footer */
 }
 
 .productos-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 1.5rem;
 }
 
+/* Tarjeta general */
 .producto-card {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   padding: 1rem;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  max-height: 440px;
 }
 
-.producto-img {
-  width: 100%;
-  height: 150px;
-  object-fit: contain;
+/* Título arriba */
+.producto-titulo {
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-align: center;
   margin-bottom: 0.5rem;
 }
 
-.producto-detalles h3 {
-  font-size: 1.1rem;
-  margin: 0.5rem 0;
+/* Imagen del producto */
+.producto-img {
+  width: 100%;
+  height: 160px;
+  object-fit: contain;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  transition: transform 0.2s ease;
 }
 
+.producto-img:hover {
+  transform: scale(1.05);
+}
+
+/* Precio debajo de la imagen */
 .precio {
-  color: green;
+  font-size: 1.05rem;
   font-weight: bold;
+  color: #4CAF50;
+  text-align: center;
+  margin-bottom: 0.5rem;
 }
 
+/* Descripción */
 .descripcion {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: #555;
+  margin-bottom: 0.75rem;
+  text-align: center;
+  min-height: 2.4em;
 }
 
-.btn-agregar {
+/* Extra info: colores y tallas */
+.producto-info-extra {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
   margin-top: 0.5rem;
+}
+
+.color-group {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.circle-color {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1px solid #999;
+  display: inline-block;
+}
+
+.talla-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  justify-content: center;
+}
+
+.badge-talla {
+  background: #eee;
+  border: 1px solid #ccc;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+}
+
+/* Botón Agregar */
+.btn-agregar {
+  margin-top: auto;
   padding: 0.5rem 1rem;
   background: linear-gradient(to right, #4CAF50, #2E7D32);
   color: white;
@@ -118,4 +182,62 @@
   z-index: 9999;
   border-radius: 8px;
   pointer-events: none;
+}
+.producto-titulo {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+/* Contenedor que organiza imagen + info a la derecha */
+.producto-card-content {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+/* Ajusta imagen */
+.producto-img {
+  width: 130px;
+  height: 130px;
+  object-fit: contain;
+  border: 1px solid #eee;
+  border-radius: 8px;
+}
+
+/* Colores y tallas */
+.producto-info-extra {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  justify-content: flex-start;
+}
+
+/* Círculos de color */
+.color-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.circle-color {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid #ccc;
+}
+
+/* Tallas como etiquetas */
+.talla-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.badge-talla {
+  background: #f3f3f3;
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  border: 1px solid #ccc;
 }

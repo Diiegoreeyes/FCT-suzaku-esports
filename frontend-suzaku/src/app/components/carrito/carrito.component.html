@@ -7,8 +7,23 @@
   <div *ngIf="productosEnCarrito.length > 0; else noProductos" class="productos-container">
     <div class="producto-card" *ngFor="let producto of productosEnCarrito">
       <div class="producto-img-wrapper">
-        <img [src]="getProductoFoto(producto.foto)" alt="{{ producto.nombre }}" class="producto-img" />
-      </div>
+        <img [src]="getProductoFoto(producto.imagen_principal)" alt="{{ producto.nombre }}" class="producto-img" />
+
+        <div class="producto-tags">
+          <!-- Mostrar colores -->
+          <div class="producto-colores" *ngIf="producto.colores?.length">
+            <span *ngFor="let c of producto.colores"
+                  class="color-circle"
+                  [style.backgroundColor]="c.codigo_hex || '#ddd'"
+                  [title]="c.nombre"></span>
+          </div>
+        
+          <!-- Mostrar tallas -->
+          <div class="producto-tallas" *ngIf="producto.tallas?.length">
+            <span class="badge-talla" *ngFor="let t of producto.tallas">{{ t.nombre }}</span>
+          </div>
+        </div>
+              </div>
       <div class="producto-detalles">
         <h3>{{ producto.nombre }}</h3>
         <p class="precio">Precio: {{ producto.precio | currency:'EUR':'symbol':'1.2-2' }}</p>
