@@ -3,12 +3,13 @@ import { ProductoService } from '../../services/producto.service';
 import { CarritoService } from '../../services/carrito.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 
 @Component({
  selector: 'app-productos',
  standalone: true,
- imports: [CommonModule, FormsModule],
+ imports: [CommonModule, FormsModule,RouterModule],
  templateUrl: './productos.component.html',
  styleUrls: ['./productos.component.css']
 })

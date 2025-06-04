@@ -33,9 +33,14 @@
     <h2>Lista de Productos</h2>
 
     <div class="productos-container">
-      <div class="producto-card" *ngFor="let p of productosFiltrados; trackBy: trackProducto">
+      <a
+        *ngFor="let p of productosFiltrados; trackBy: trackProducto"
+        [routerLink]="['/producto', p.id]"
+        class="producto-card"
+        style="text-decoration: none; color: inherit;"
+      >
         <h3 class="producto-titulo">{{ p.nombre }}</h3>
-    
+
         <div class="producto-card-content">
           <!-- Imagen -->
           <img
@@ -44,11 +49,11 @@
             class="producto-img"
             [attr.data-id]="p.id"
           />
-    
+
           <!-- Info derecha -->
           <div class="producto-info-extra">
             <p class="precio">{{ p.precio }} €</p>
-    
+
             <!-- Colores -->
             <div class="color-group" *ngIf="p.colores?.length">
               <span
@@ -57,21 +62,20 @@
                 [style.backgroundColor]="c.codigo_hex || '#ccc'"
               ></span>
             </div>
-    
+
             <!-- Tallas -->
             <div class="talla-group" *ngIf="p.tallas?.length">
               <span class="badge-talla" *ngFor="let t of p.tallas">{{ t.nombre }}</span>
             </div>
           </div>
         </div>
-    
+
         <p class="descripcion">{{ p.descripcion }}</p>
-    
-        <button (click)="agregarAlCarrito(p)" class="btn-agregar">
+
+        <button class="btn-agregar" (click)="$event.preventDefault(); agregarAlCarrito(p)">
           Agregar al carrito
         </button>
-      </div>
+      </a>
     </div>
-    
   </div>
 </section>

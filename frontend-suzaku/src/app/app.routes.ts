@@ -26,6 +26,7 @@ import { SponsorspublicComponent } from './components/sponsorspublic/sponsorspub
 import { PublicLayoutComponent } from './components/public-layout/public-layout.component';
 import { AdminRankingComponent } from './components/admin-ranking/admin-ranking.component';
 import { AdminCodigosDescuentoComponent } from './components/admin-codigos-descuento/admin-codigos-descuento.component';
+import { ProductoDetalleComponent } from './components/producto-detalle/producto-detalle.component';
 
 const AuthGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
@@ -72,7 +73,7 @@ export const routes: Routes = [
     ]
   },
 
-
+  { path: 'producto/:id', component: ProductoDetalleComponent },
   { path: 'productos', component: ProductosComponent },
   { path: 'carrito', component: CarritoComponent },
   { path: 'checkout', component: CheckoutComponent, canActivate: [AuthGuard] },

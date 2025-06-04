@@ -13,6 +13,9 @@ export class ProductoService {
 
  constructor(private http: HttpClient) {}
 
+ obtenerProducto(id: number): Observable<any> {
+  return this.http.get(`${this.apiUrl}${id}/`);
+ }
 
   getProductos(): Observable<any[]> {
     console.log('Llamando a la API:', this.apiUrl);
@@ -133,6 +136,7 @@ export class ProductoService {
   eliminarStock(id: number): Observable<any> {
     return this.http.delete<any>(`${this.api}/stock/${id}/`);
   }
+ 
   
  }
 

@@ -1,0 +1,70 @@
+<div *ngIf="producto" class="producto-detalle-container">
+  <!-- Imagen principal -->
+  <div class="imagen-principal">
+    <img [src]="imagenActual" alt="Imagen del producto" class="imagen-grande" />
+  </div>
+
+  <!-- Miniaturas -->
+  <div class="miniaturas">
+    <img
+      *ngFor="let img of galeriaImagenes"
+      [src]="img"
+      class="miniatura"
+      (click)="cambiarImagen(img)"
+      [class.activa]="imagenActual === img"
+    />
+  </div>
+
+  <!-- Info del producto -->
+  <div class="producto-info">
+    <h1>{{ producto.nombre }}</h1>
+    <p class="descripcion">{{ producto.descripcion }}</p>
+    <p class="precio">{{ producto.precio }} €</p>
+
+    <!-- Selector de color -->
+    <div class="selector">
+      <label>Color:</label>
+      <div class="circle-color-group">
+        <span
+          *ngFor="let color of coloresDisponibles"
+          class="circle-color"
+          [style.backgroundColor]="obtenerColorHex(color)"
+          [class.activo]="color === colorSeleccionado"
+          (click)="colorSeleccionado = color; actualizarStock()"
+        ></span>
+      </div>
+    </div>
+
+    <!-- Selector de talla -->
+    <div class="talla-group">
+      <span
+        class="badge-talla"
+        *ngFor="let talla of tallasDisponibles"
+        [class.seleccionado]="talla === tallaSeleccionada"
+        (click)="tallaSeleccionada = talla; actualizarStock()"
+      >
+        {{ talla }}
+      </span>
+    </div>
+
+    <!-- Stock -->
+    <div class="stock-info">
+      <p *ngIf="stockSeleccionado">Stock disponible: {{ stockSeleccionado.cantidad }}</p>
+      <p *ngIf="!stockSeleccionado">Selecciona una combinación válida</p>
+
+      <button
+        [disabled]="!stockSeleccionado?.cantidad"
+        class="add-to-cart"
+        (click)="agregarAlCarrito()"
+      >
+        Añadir al carrito 🛒
+      </button>
+    </div>
+
+    <!-- Info extra -->
+    <div class="info-extra">
+      <p><strong>Tipo:</strong> {{ producto.tipo?.nombre }}</p>
+      <p><strong>Categoría:</strong> {{ producto.categoria?.nombre }}</p>
+    </div>
+  </div>
+</div>

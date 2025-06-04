@@ -1,0 +1,170 @@
+.producto-detalle-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 2rem;
+    padding: 2rem;
+    flex-wrap: wrap;
+    font-family: Arial, sans-serif;
+  }
+  
+  .imagen-principal {
+    flex: 1;
+    max-width: 400px;
+  }
+  
+  .imagen-grande {
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    object-fit: cover;
+  }
+  
+  .miniaturas {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+  
+  .miniatura {
+    width: 60px;
+    height: 60px;
+    border-radius: 6px;
+    object-fit: cover;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: border 0.2s ease;
+  }
+  
+  .miniatura.activa {
+    border: 2px solid #007bff;
+  }
+  
+  .producto-info {
+    flex: 1;
+    min-width: 280px;
+    max-width: 400px;
+  }
+  
+  .producto-info h1 {
+    margin: 0.5rem 0 0.2rem 0;
+  }
+  
+  .descripcion {
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+  }
+  
+  .precio {
+    font-size: 1.4rem;
+    color: #b12704;
+    font-weight: bold;
+    margin-bottom: 0.8rem;
+  }
+  
+  .selector {
+    margin-bottom: 1rem;
+  }
+  
+  .selector label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 0.3rem;
+  }
+  
+  /* Círculos de color */
+  .circle-color-group {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+  
+  .circle-color {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+    cursor: pointer;
+  }
+  
+  .circle-color.activo {
+    border: 3px solid black;
+  }
+  
+  /* Botones de tallas */
+  .talla-group {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  
+  .btn-talla {
+    padding: 6px 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #f9f9f9;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .btn-talla:hover {
+    background-color: #eaeaea;
+  }
+  
+  .btn-talla.activa {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+  }
+  
+  /* Stock y botón */
+  .stock-info {
+    margin: 1rem 0;
+  }
+  
+  .add-to-cart {
+    padding: 0.5rem 1rem;
+    background-color: #f0c14b;
+    border: 1px solid #a88734;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .add-to-cart:hover:enabled {
+    background-color: #ddb347;
+  }
+  
+  .add-to-cart:disabled {
+    background-color: #ddd;
+    cursor: not-allowed;
+  }
+  
+  /* Información adicional */
+  .info-extra p {
+    font-size: 0.95rem;
+    margin: 0.3rem 0;
+  }
+  
+  .info-extra strong {
+    font-weight: bold;
+  }
+  .badge-talla {
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #f9f9f9;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .badge-talla:hover {
+    background-color: #eaeaea;
+  }
+  
+  .badge-talla.seleccionado {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+  }
+  

@@ -286,3 +286,24 @@ class SponsorSerializer(serializers.ModelSerializer):
         model = Sponsor
         fields = '__all__'
 
+
+from rest_framework import serializers
+from .models import Producto
+
+class ProductoDetalleSerializer(serializers.ModelSerializer):
+    colores = ColorSerializer(many=True, read_only=True)
+    galeria = ProductoImagenSerializer(many=True, read_only=True)
+    stock_items = StockSerializer(many=True, read_only=True)
+
+    #  ➜ tallas calculadas dinámicamente
+    tallas = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Producto
+        fields = '__all__'
+
+    def get_tallas(self, obj):
+        # nombres únicos (o cambia a id-nombre si prefieres)
+        return (obj.stock_items
+                   .values_list('talla__nombre', flat=True)
+                   .distinct())

@@ -444,8 +444,19 @@ def verificar_descuento(request):
 
 class ProductoViewSet(viewsets.ModelViewSet):
     queryset = Producto.objects.all()
-    serializer_class = ProductoSerializer
-    permission_classes = [AllowAny]  # ✅ esto permite acceso sin login
+    permission_classes = [AllowAny]
+
+    # 👉 1.  Seleccionamos serializer según acción
+    def get_serializer_class(self):
+        if self.action in ['retrieve', 'detalle']:
+            return ProductoDetalleSerializer
+        return ProductoSerializer
+    # 👉 2.  (opcional) conserva la acción /detalle/ si la usas en otro sitio
+    @action(detail=True, methods=['get'])
+    def detalle(self, request, pk=None):
+        producto = self.get_object()
+        serializer = self.get_serializer(producto)
+        return Response(serializer.data)
 
 
 class StockViewSet(viewsets.ModelViewSet):
@@ -769,3 +780,4 @@ class StockViewSet(viewsets.ModelViewSet):
 class ValoracionViewSet(viewsets.ModelViewSet):
     queryset = Valoracion.objects.all()
     serializer_class = ValoracionSerializer
+
