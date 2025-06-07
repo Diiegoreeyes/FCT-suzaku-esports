@@ -21,6 +21,16 @@ export class ProductoDetalleComponent implements OnInit {
   galeriaImagenes: string[] = [];
   imagenActual: string = '';
   stockSeleccionado: any = null;
+  imagenesPorColor: { [color: string]: string[] } = {};
+  actualizarGaleria(): void {
+    const imagenesColor = this.imagenesPorColor[this.colorSeleccionado] || [];
+    this.galeriaImagenes = imagenesColor;
+  
+    this.imagenActual = imagenesColor.length
+      ? imagenesColor[0]
+      : this.producto.imagen_principal;  // fallback
+  }
+  
 
   constructor(
     private route: ActivatedRoute,
@@ -30,26 +40,43 @@ export class ProductoDetalleComponent implements OnInit {
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.productoService.obtenerProducto(id).subscribe(data => {
+  
+    this.productoService.obtenerProductoDetalle(id).subscribe((data: any) => {
       this.producto = data;
-      this.stock = data.stock_items || [];
-
-      this.galeriaImagenes = [this.producto.imagen_principal];
-      if (this.producto.galeria && Array.isArray(this.producto.galeria)) {
-        this.galeriaImagenes.push(...this.producto.galeria.map((img: any) => img.imagen));
-      }
-      this.imagenActual = this.galeriaImagenes[0];
-
-      this.coloresDisponibles = [...new Set(this.stock.map(item => item.color.nombre))];
-      this.tallasDisponibles = [...new Set(this.stock.map(item => item.talla.nombre))];
-
-      this.colorSeleccionado = this.coloresDisponibles[0];
-      this.tallaSeleccionada = this.tallasDisponibles[0];
-
+      this.stock    = data.stock_items || [];
+    
+      this.imagenesPorColor = data.imagenes_por_color || {};
+    
+      this.coloresDisponibles = [...new Set(this.stock.map((s: any) => s.color.nombre))];
+      this.tallasDisponibles  = [...new Set(this.stock.map((s: any) => s.talla.nombre))];
+    
+      this.colorSeleccionado = this.coloresDisponibles[0]
+                            || Object.keys(this.imagenesPorColor)[0]
+                            || '';
+    
+      this.tallaSeleccionada = this.tallasDisponibles[0] || '';
+    
+      this.actualizarGaleria();
       this.actualizarStock();
     });
+    
   }
-
+  
+  
+  
+  hayStockPara(talla: string): boolean {
+    return this.stock.some(
+      s => s.color.nombre === this.colorSeleccionado &&
+           s.talla.nombre === talla &&
+           s.cantidad > 0
+    );
+  }
+  
+  seleccionarTalla(talla: string): void {
+    this.tallaSeleccionada = talla;
+    this.actualizarStock();
+  }
+  
   actualizarStock(): void {
     this.stockSeleccionado = this.stock.find(
       s => s.color.nombre === this.colorSeleccionado && s.talla.nombre === this.tallaSeleccionada

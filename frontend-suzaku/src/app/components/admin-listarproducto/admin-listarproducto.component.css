@@ -325,3 +325,60 @@
   font-weight: bold;
   display: inline-block;
 }
+/* ── Tarjeta expandida cuando está en modo edición ──────────────── */
+.producto-admin-card.editando {
+  flex: 1 1 100%;          /* ocupa todo el ancho disponible      */
+  max-width: 100%;
+}
+
+/* El formulario de edición necesita envolverse, no hacer scroll-x */
+.producto-admin-card.editando .form-inline.editar {
+  overflow-x: visible;     /* deja que los campos fluyan           */
+  display: grid;           /* grid responsive                     */
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+}
+.galeria-color-bloque {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 15px;
+}
+
+.galeria-color-bloque p {
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.miniaturas-por-color {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.miniatura-con-borrar {
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+
+.miniatura-con-borrar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.miniatura-con-borrar button {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #dc3545;
+  border: none;
+  color: white;
+  font-size: 12px;
+  padding: 2px 5px;
+  border-radius: 50%;
+  cursor: pointer;
+}

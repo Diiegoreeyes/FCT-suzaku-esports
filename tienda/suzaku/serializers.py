@@ -94,9 +94,16 @@ class CategoriaProductoSerializer(serializers.ModelSerializer):
 
 # 🖼️ Serializador para galería de imágenes
 class ProductoImagenSerializer(serializers.ModelSerializer):
+    color = ColorSerializer(read_only=True)
+    color_id = serializers.PrimaryKeyRelatedField(
+        queryset=Color.objects.all(), source='color',
+        write_only=True, allow_null=True, required=False)
+
     class Meta:
         model = ProductoImagen
-        fields = '__all__'
+        fields = ['id', 'producto', 'imagen', 'descripcion',
+                  'color', 'color_id']
+
 
 # 📦 Serializador para stock (talla + color)
 class StockSerializer(serializers.ModelSerializer):
@@ -289,21 +296,28 @@ class SponsorSerializer(serializers.ModelSerializer):
 
 from rest_framework import serializers
 from .models import Producto
+from rest_framework.request import Request
 
 class ProductoDetalleSerializer(serializers.ModelSerializer):
     colores = ColorSerializer(many=True, read_only=True)
     galeria = ProductoImagenSerializer(many=True, read_only=True)
     stock_items = StockSerializer(many=True, read_only=True)
-
-    #  ➜ tallas calculadas dinámicamente
     tallas = serializers.SerializerMethodField()
+    imagenes_por_color = serializers.SerializerMethodField()
 
     class Meta:
         model = Producto
         fields = '__all__'
 
+    def get_imagenes_por_color(self, obj):
+        request: Request = self.context.get('request')  # 👈 necesario para URL absolutas
+        resultado = {}
+        for img in obj.galeria.all():
+            if img.color:
+                nombre = img.color.nombre
+                url = request.build_absolute_uri(img.imagen.url) if request else img.imagen.url
+                resultado.setdefault(nombre, []).append(url)
+        return resultado
+
     def get_tallas(self, obj):
-        # nombres únicos (o cambia a id-nombre si prefieres)
-        return (obj.stock_items
-                   .values_list('talla__nombre', flat=True)
-                   .distinct())
+        return obj.stock_items.values_list('talla__nombre', flat=True).distinct()

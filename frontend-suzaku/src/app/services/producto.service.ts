@@ -14,8 +14,9 @@ export class ProductoService {
  constructor(private http: HttpClient) {}
 
  obtenerProducto(id: number): Observable<any> {
-  return this.http.get(`${this.apiUrl}${id}/`);
- }
+  return this.http.get(`/api/productos/${id}`); // ← SIN barra al final
+}
+
 
   getProductos(): Observable<any[]> {
     console.log('Llamando a la API:', this.apiUrl);
@@ -136,7 +137,28 @@ export class ProductoService {
   eliminarStock(id: number): Observable<any> {
     return this.http.delete<any>(`${this.api}/stock/${id}/`);
   }
- 
+  subirImagenGaleria(fd: FormData) {
+    return this.http.post('http://127.0.0.1:8000/api/productoimagen/', fd);
+  }
+
+  eliminarImagenGaleria(id: number) {
+    return this.http.delete(`${this.api}/imagenes/${id}/`);
+  }
+
+  obtenerProductoDetalle(id: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}${id}/detalle/`);
+  }
+  
+  listar(): Observable<any[]> {
+    return this.http.get<any[]>(this.apiUrl); 
+  }
+  
+  // producto.service.ts
+  borrarImagenPorId(id: number) {
+    return this.http.delete(`http://127.0.0.1:8000/api/productoimagen/${id}/`);
+  }
+
+
   
  }
 

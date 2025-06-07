@@ -1,5 +1,5 @@
 // Importación del decorador Component y la interfaz OnInit de Angular
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef,Component, OnInit } from '@angular/core';
 
 // Importaciones necesarias para construir formularios reactivos
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
@@ -16,6 +16,7 @@ import { ProductoService } from '../../services/producto.service';
   imports: [CommonModule, ReactiveFormsModule, FormsModule], // Módulos importados para que el HTML funcione correctamente
   templateUrl: './admin-listarproducto.component.html', // Ruta del archivo HTML del componente
   styleUrls: ['./admin-listarproducto.component.css'] // Ruta del archivo CSS del componente
+  
 })
 export class AdminListarproductoComponent implements OnInit {
 
@@ -58,10 +59,19 @@ export class AdminListarproductoComponent implements OnInit {
   // 🖼️ Vista previa de imagen al editar producto
   previewEditar: string | null = null;
 
+  galeriaColorId: number | null = null;
+  galeriaFiles: File[] = [];
+  colorGaleriaSeleccionado: number | null = null;   // 👈 nueva propiedad
+  imagenesPorColor: { [color: string]: string[] } = {};
+  productoSeleccionado: any = null;
+
+  
+
   // 🧠 Constructor del componente: inyecta el servicio de productos y el constructor de formularios
   constructor(
     private productoService: ProductoService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private cdr: ChangeDetectorRef          // 👈 inyectamos
   ) {}
 
   // ⚙️ Método que se ejecuta al iniciar el componente
@@ -82,7 +92,9 @@ export class AdminListarproductoComponent implements OnInit {
       imagen_principal: [null],
       colores: [[]], // array de IDs de colores
       tallas: [[]], // array de IDs de tallas
-      productos_relacionados: [[]] // array de IDs de productos relacionados
+      productos_relacionados: [[]], // array de IDs de productos relacionados
+      color_galeria: [null],
+
     });
 
     // Inicializa los formularios auxiliares (para secciones de gestión de colores, tallas, etc.)
@@ -97,12 +109,88 @@ export class AdminListarproductoComponent implements OnInit {
     this.cargarTipos();
     this.cargarCategorias();
 
+
     // Inicializa los formularios principales (crear/editar) de forma segura
     this.initForms();
 
     this.cargarStock();
 
   }
+
+  onGaleriaFilesPorColor(event: any, color: any): void {
+    const archivos = Array.from(event.target.files) as File[];
+    this.galeriaArchivosPorColor[color.nombre] = archivos;
+  }
+  
+
+  filesGaleria: File[] = [];
+  galeriaArchivosPorColor: { [colorNombre: string]: File[] } = {};
+
+  subirGaleriaPorColor(color: any): void {
+    const archivos = this.galeriaArchivosPorColor[color.nombre];
+    if (!archivos || !archivos.length || !this.productoSeleccionado) return;
+  
+    for (const archivo of archivos) {
+      const fd = new FormData();
+      fd.append('imagen', archivo);
+      fd.append('color_id', color.id.toString());
+      fd.append('producto', this.productoSeleccionado.id);
+  
+      this.productoService.subirImagenGaleria(fd).subscribe({
+        next: () => {
+          // Recargamos el producto tras subir cada imagen
+          this.productoService.obtenerProductoDetalle(this.productoSeleccionado.id).subscribe((productoActualizado: any) => {
+            this.startEdit(productoActualizado);
+          });
+        },
+        error: () => {
+          alert(`❌ Error al subir imagen para el color ${color.nombre}`);
+        }
+      });
+    }
+  
+    // Limpiamos después de subir
+    this.galeriaArchivosPorColor[color.nombre] = [];
+  }
+  
+  borrarImagen(id: number): void {
+    if (!confirm('¿Estás seguro de que quieres borrar esta imagen?')) return;
+  
+    this.productoService.borrarImagenPorId(id).subscribe({
+      next: () => {
+        this.productoService.obtenerProductoDetalle(this.productoSeleccionado.id).subscribe((productoActualizado: any) => {
+          this.startEdit(productoActualizado);
+        });
+      },
+      error: () => {
+        alert('Error al borrar la imagen');
+      }
+    });
+  }
+  borrarImagenPorRuta(ruta: string): void {
+    const imgEncontrada = this.productoSeleccionado?.galeria?.find((img: any) => img.imagen === ruta);
+  
+    if (!imgEncontrada) {
+      alert('❌ Imagen no encontrada para eliminar.');
+      return;
+    }
+  
+    const id = imgEncontrada.id;
+  
+    if (!confirm('¿Quieres borrar esta imagen?')) return;
+  
+    this.productoService.borrarImagenPorId(id).subscribe({
+      next: () => {
+        this.productoService.obtenerProductoDetalle(this.productoSeleccionado.id).subscribe((productoActualizado: any) => {
+          this.startEdit(productoActualizado);
+        });
+      },
+      error: () => {
+        alert('❌ Error al borrar imagen');
+      }
+    });
+  }
+  
 
 // ------------------ COLORES ------------------
 colores: any[] = [];
@@ -118,15 +206,23 @@ cargarColores(): void {
 }
 
 crearColor(): void {
-  if (!this.nuevoColor.nombre) return;
-  this.productoService.crearColor(this.nuevoColor).subscribe({
+  // Si el formulario es inválido, detenemos
+  if (this.formColor.invalid) return;
+
+  // Obtenemos los valores directamente del formGroup
+  const payload = this.formColor.value; 
+  // payload = { nombre: '...', codigo_hex: '...' }
+
+  this.productoService.crearColor(payload).subscribe({
     next: color => {
       this.colores.push(color);
-      this.nuevoColor = { nombre: '', codigo_hex: '' };
+      // Reiniciamos el formulario reactivo
+      this.formColor.reset({ nombre: '', codigo_hex: '' });
     },
     error: err => console.error('Error al crear color:', err)
   });
 }
+
 
 eliminarColor(id: number): void {
   if (!confirm('¿Eliminar este color?')) return;
@@ -148,15 +244,17 @@ cargarTallas(): void {
 }
 
 crearTalla(): void {
-  if (!this.nuevaTalla.nombre) return;
-  this.productoService.crearTalla(this.nuevaTalla).subscribe({
+  if (this.formTalla.invalid) return;
+  const payload = this.formTalla.value; // { nombre: '...' }
+  this.productoService.crearTalla(payload).subscribe({
     next: talla => {
       this.tallas.push(talla);
-      this.nuevaTalla = { nombre: '' };
+      this.formTalla.reset({ nombre: '' });
     },
     error: err => console.error('Error al crear talla:', err)
   });
 }
+
 
 eliminarTalla(id: number): void {
   if (!confirm('¿Eliminar esta talla?')) return;
@@ -178,11 +276,12 @@ cargarTipos(): void {
 }
 
 crearTipo(): void {
-  if (!this.nuevoTipo.nombre) return;
-  this.productoService.crearTipo(this.nuevoTipo).subscribe({
+  if (this.formTipo.invalid) return;
+  const payload = this.formTipo.value; // { nombre: '...' }
+  this.productoService.crearTipo(payload).subscribe({
     next: tipo => {
       this.tipos.push(tipo);
-      this.nuevoTipo = { nombre: '' };
+      this.formTipo.reset({ nombre: '' });
     },
     error: err => console.error('Error al crear tipo:', err)
   });
@@ -208,11 +307,12 @@ cargarCategorias(): void {
 }
 
 crearCategoria(): void {
-  if (!this.nuevaCategoria.nombre) return;
-  this.productoService.crearCategoria(this.nuevaCategoria).subscribe({
+  if (this.formCategoria.invalid) return;
+  const payload = this.formCategoria.value; // { nombre: '...' }
+  this.productoService.crearCategoria(payload).subscribe({
     next: cat => {
       this.categorias.push(cat);
-      this.nuevaCategoria = { nombre: '' };
+      this.formCategoria.reset({ nombre: '' });
     },
     error: err => console.error('Error al crear categoría:', err)
   });
@@ -274,7 +374,8 @@ onGaleriaChange(event: any) {
       imagen_principal: [null],
       colores: [[]],
       tallas: [[]],
-      productos_relacionados: [[]]
+      productos_relacionados: [[]],
+      color_galeria: [null],
     });
   }
 
@@ -316,38 +417,47 @@ onGaleriaChange(event: any) {
     if (this.formCrear.invalid) return;
   
     const fd = new FormData();
+    // Campos básicos
     fd.append('nombre', this.formCrear.value.nombre);
     fd.append('descripcion', this.formCrear.value.descripcion);
     fd.append('precio', this.formCrear.value.precio);
   
-    // Solo añadir si tienen valor
+    // Relación Tipo → campo write-only “tipo_id”
     if (this.formCrear.value.tipo) {
-      fd.append('tipo', this.formCrear.value.tipo);
-    }
-    if (this.formCrear.value.categoria) {
-      fd.append('categoria', this.formCrear.value.categoria);
+      fd.append('tipo_id', this.formCrear.value.tipo.toString());
     }
   
+    // Relación Categoría → campo write-only “categoria_id”
+    if (this.formCrear.value.categoria) {
+      fd.append('categoria_id', this.formCrear.value.categoria.toString());
+    }
+  
+    // Datos físicos
     fd.append('peso_kg', this.formCrear.value.peso_kg);
     fd.append('alto_cm', this.formCrear.value.alto_cm);
     fd.append('ancho_cm', this.formCrear.value.ancho_cm);
     fd.append('largo_cm', this.formCrear.value.largo_cm);
   
+    // Imagen principal
     const file = this.formCrear.get('imagen_principal')?.value;
     if (file) {
       fd.append('imagen_principal', file);
     }
   
+    // ManyToMany “colores” → campo write-only “colores_id” (uno por cada color)
     for (const id of this.formCrear.value.colores || []) {
-      fd.append('colores', id);
+      fd.append('colores_id', id.toString());
     }
   
+    // ManyToMany “tallas” → campo write-only “tallas_id” (uno por cada talla)
     for (const id of this.formCrear.value.tallas || []) {
-      fd.append('tallas', id);
+      fd.append('tallas_id', id.toString());
     }
   
+    // ManyToMany “productos_relacionados” → el campo público es “productos_relacionados”
+    // (en el serializer no hay write-only con sufijo “_id”, así que usamos el nombre de campo tal cual)
     for (const id of this.formCrear.value.productos_relacionados || []) {
-      fd.append('productos_relacionados', id);
+      fd.append('productos_relacionados', id.toString());
     }
   
     this.productoService.crearProducto(fd).subscribe({
@@ -357,6 +467,7 @@ onGaleriaChange(event: any) {
       },
       error: err => {
         console.error('Error al crear producto:', err);
+        alert('No se pudo crear el producto. Revisa consola para más detalles.');
       }
     });
   }
@@ -388,9 +499,20 @@ onGaleriaChange(event: any) {
   
     this.formEditar.get(controlName)?.setValue(selected);
   }
-  
-  /* ── Editar inline ── */
+    
   startEdit(p: any): void {
+    // Si el producto ya trae galería (viene de /detalle), no hace falta pedirlo de nuevo
+    if (p.galeria) {
+      this._cargarProductoEditable(p);
+    } else {
+      // Si no trae galería, lo obtenemos desde el endpoint /detalle/
+      this.productoService.obtenerProductoDetalle(p.id).subscribe((productoDetallado) => {
+        this._cargarProductoEditable(productoDetallado);
+      });
+    }
+  }
+ 
+  private _cargarProductoEditable(p: any): void {
     this.editId = p.id;
     this.showCreateForm = false;
   
@@ -398,19 +520,42 @@ onGaleriaChange(event: any) {
       nombre: p.nombre,
       descripcion: p.descripcion,
       precio: p.precio,
-      tipo: p.tipo?.id || null,
-      categoria: p.categoria?.id || null,
+      tipo: typeof p.tipo === 'object' ? p.tipo?.id : p.tipo ?? null,
+      categoria: typeof p.categoria === 'object' ? p.categoria?.id : p.categoria ?? null,
       peso_kg: p.peso_kg,
       alto_cm: p.alto_cm,
       ancho_cm: p.ancho_cm,
       largo_cm: p.largo_cm,
-      colores: p.colores?.map((c: any) => c.id) || [],
-      tallas: p.tallas?.map((t: any) => t.id) || [],
-      productos_relacionados: p.productos_relacionados || []
+      colores: p.colores?.map((c: any) => c.id) ?? [],
+      tallas: p.tallas?.map((t: any) => t.id) ?? [],
+      productos_relacionados: p.productos_relacionados ?? []
     });
   
-    this.previewEditar = p.imagen_principal || null;
+    this.previewEditar = p.imagen_principal ?? null;
+    this.productoSeleccionado = p;
+  
+    // 🎨 Mapeamos imágenes principales por color
+    this.imagenesPorColor = {};
+    (p.galeria || []).forEach((img: any) => {
+      const nombreColor = img.color?.nombre;
+      if (nombreColor) {
+        if (!this.imagenesPorColor[nombreColor]) {
+          this.imagenesPorColor[nombreColor] = [];
+        }
+        this.imagenesPorColor[nombreColor].push(img.imagen);
+      }
+    });
+  
+    // ✅ Filtrar los colores que realmente están en stock
+    const idsConStock = new Set(p.stock_items?.map((s: any) => s.color.id));
+    this.colores = p.colores?.filter((c: any) => idsConStock.has(c.id)) ?? [];
+  
+    console.log('🎨 Imágenes por color:', this.imagenesPorColor);
+  
+    this.cdr.detectChanges();
   }
+  
+
   
   onFileEdit(evt: any): void {
     const file = evt.target.files[0];
@@ -420,7 +565,10 @@ onGaleriaChange(event: any) {
   }
 
   saveEdit(): void {
-    if (this.editId === null || this.formEditar.invalid) return;
+    const productoId = this.productoSeleccionado?.id ?? this.editId;
+    if (!productoId || this.formEditar.invalid) return;
+  
+    console.log('🔍 formEditar values:', this.formEditar.value); // 🧪 Útil para ver posibles "undefined"
   
     const fd = new FormData();
     fd.append('nombre', this.formEditar.value.nombre);
@@ -432,36 +580,40 @@ onGaleriaChange(event: any) {
     fd.append('largo_cm', this.formEditar.value.largo_cm);
   
     if (this.formEditar.value.tipo) {
-      fd.append('tipo_id', this.formEditar.value.tipo);
+      fd.append('tipo_id', this.formEditar.value.tipo.toString());
     }
     if (this.formEditar.value.categoria) {
-      fd.append('categoria_id', this.formEditar.value.categoria);
+      fd.append('categoria_id', this.formEditar.value.categoria.toString());
     }
   
-    for (const id of this.formEditar.value.colores || []) {
-      fd.append('colores_id', id);
-    }
-    for (const id of this.formEditar.value.tallas || []) {
-      fd.append('tallas_id', id);
-    }
-    for (const id of this.formEditar.value.productos_relacionados || []) {
-      fd.append('productos_relacionados', id);
-    }
+    // ✅ Función auxiliar para evitar valores undefined
+    const appendIDs = (key: string, arr: any[]) => {
+      for (const id of arr || []) {
+        if (id != null) {
+          fd.append(key, id.toString());
+        }
+      }
+    };
+  
+    appendIDs('colores_id', this.formEditar.value.colores);
+    appendIDs('tallas_id', this.formEditar.value.tallas);
+    appendIDs('productos_relacionados', this.formEditar.value.productos_relacionados);
   
     const file = this.formEditar.get('imagen_principal')?.value;
     if (file) {
       fd.append('imagen_principal', file);
     }
   
-    this.productoService.actualizarProducto(this.editId, fd).subscribe({
+    this.productoService.actualizarProducto(productoId, fd).subscribe({
       next: updated => {
-        const idx = this.productos.findIndex(x => x.id === this.editId);
+        const idx = this.productos.findIndex(x => x.id === productoId);
         if (idx > -1) this.productos[idx] = updated;
         this.cancelEdit();
       },
       error: err => console.error('Error al editar producto:', err)
     });
   }
+  
   
   cancelEdit(): void {
     this.editId = null;
@@ -594,8 +746,6 @@ guardarStock(productoId: number, tallaId: number, colorId: number, cantidad: num
   }
 }
 
-
-
 cancelarEdicionStock(): void {
   this.producto_id = null;
   this.talla_id = null;
@@ -607,5 +757,48 @@ cancelarEdicionStock(): void {
     cantidad: null
   };
 }
+get galeriaActual(): any[] {
+  const producto = this.productos.find(p => p.id === this.editId);
+  return producto?.galeria || [];
+}
+
+obtenerProductos(): void {
+  this.productoService.listar().subscribe((data: any[]) => {
+    this.productos = data;
+  });
+}
+
+subirImagenPrincipalPorColor(event: any, color: any): void {
+  const archivo = event.target.files[0];
+  if (!archivo || !this.productoSeleccionado) return;
+
+  const fd = new FormData();
+  fd.append('imagen', archivo);
+  fd.append('color_id', color.id.toString());  // ✅ esto sí lo detectará Django
+  fd.append('producto', this.productoSeleccionado.id);
+
+  this.productoService.subirImagenGaleria(fd).subscribe({
+    next: () => {
+      alert(`Imagen para ${color.nombre} subida correctamente`);
+
+      // ✅ Recarga los productos y solo después vuelve a entrar en edición
+      this.productoService.obtenerProductoDetalle(this.productoSeleccionado.id).subscribe((productoActualizado: any) => {
+        this.startEdit(productoActualizado);
+      });
+      
+    },
+    error: () => {
+      alert('Error al subir la imagen');
+    }
+  });
+}
+
+seleccionarColorGaleria(id: number): void {
+  this.colorGaleriaSeleccionado = id;
+}
+
+
+
+
 
 }

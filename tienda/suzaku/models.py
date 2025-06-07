@@ -133,12 +133,17 @@ class CategoriaProducto(models.Model):
         return self.nombre
 
 class ProductoImagen(models.Model):
-    producto = models.ForeignKey('Producto', on_delete=models.CASCADE, related_name='galeria')
+    producto = models.ForeignKey(
+        'Producto', on_delete=models.CASCADE, related_name='galeria')
+    color = models.ForeignKey(             #  👈  nuevo
+        Color, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='imagenes_color')
     imagen = models.ImageField(upload_to='productos/galeria/')
-    descripcion = models.CharField(max_length=255, blank=True, null=True)  # 🖼️ Descripción opcional
+    descripcion = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
-        return f"Imagen de {self.producto.nombre}"
+        color = f' [{self.color.nombre}]' if self.color else ''
+        return f"Img {self.id} de {self.producto.nombre}{color}"
 
 class Stock(models.Model):
     producto = models.ForeignKey('Producto', on_delete=models.CASCADE, related_name='stock_items')

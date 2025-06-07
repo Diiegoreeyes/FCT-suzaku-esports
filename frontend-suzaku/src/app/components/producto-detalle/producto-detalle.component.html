@@ -30,8 +30,8 @@
           class="circle-color"
           [style.backgroundColor]="obtenerColorHex(color)"
           [class.activo]="color === colorSeleccionado"
-          (click)="colorSeleccionado = color; actualizarStock()"
-        ></span>
+          (click)="colorSeleccionado = color; actualizarGaleria(); actualizarStock()"
+          ></span>
       </div>
     </div>
 
@@ -41,11 +41,13 @@
         class="badge-talla"
         *ngFor="let talla of tallasDisponibles"
         [class.seleccionado]="talla === tallaSeleccionada"
-        (click)="tallaSeleccionada = talla; actualizarStock()"
+        [class.sin-stock]="!hayStockPara(talla)"
+        (click)="hayStockPara(talla) && seleccionarTalla(talla)"
       >
-        {{ talla }}
+        {{ talla }} <span *ngIf="!hayStockPara(talla)">❌</span>
       </span>
     </div>
+
 
     <!-- Stock -->
     <div class="stock-info">

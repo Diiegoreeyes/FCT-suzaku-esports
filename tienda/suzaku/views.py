@@ -455,8 +455,9 @@ class ProductoViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['get'])
     def detalle(self, request, pk=None):
         producto = self.get_object()
-        serializer = self.get_serializer(producto)
+        serializer = self.get_serializer(producto, context={'request': request})  # 👈 este es clave
         return Response(serializer.data)
+
 
 
 class StockViewSet(viewsets.ModelViewSet):

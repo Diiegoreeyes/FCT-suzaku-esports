@@ -20,24 +20,45 @@
     object-fit: cover;
   }
   
+/* Contenedor conjunto imagen principal + galería */
+.galeria-vertical {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+/* Imagen principal con tamaño fijo y bordes suaves */
+.imagen-principal img {
+  width: 400px;
+  height: 400px;
+  object-fit: cover;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
   .miniaturas {
     display: flex;
-    gap: 0.5rem;
-    margin-top: 1rem;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 400px;
+    overflow-y: auto;
   }
   
+  /* Miniaturas cuadradas con bordes suaves */
   .miniatura {
-    width: 60px;
-    height: 60px;
-    border-radius: 6px;
+    width: 80px;
+    height: 80px;
     object-fit: cover;
-    cursor: pointer;
+    border-radius: 10px;
     border: 2px solid transparent;
-    transition: border 0.2s ease;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
   }
   
+  /* Borde azul para miniatura activa */
   .miniatura.activa {
-    border: 2px solid #007bff;
+    border-color: #007bff;
   }
   
   .producto-info {
@@ -166,5 +187,12 @@
     background-color: #007bff;
     color: white;
     border-color: #007bff;
+  }
+  .badge-talla.sin-stock {
+    background-color: #f8d7da;
+    border: 1px solid #dc3545;
+    color: #dc3545;
+    cursor: not-allowed;
+    opacity: 0.6;
   }
   
