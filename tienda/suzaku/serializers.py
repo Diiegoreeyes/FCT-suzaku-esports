@@ -5,13 +5,6 @@ from .models import *
 # 📦 SERIALIZADORES DE PRODUCTOS
 ############################################################
 
-class ProductoSerializer(serializers.ModelSerializer):
-    """
-    📦 Serializador para el modelo de Producto.
-    """
-    class Meta:
-        model = Producto
-        fields = '__all__'
 
 class CodigoDescuentoSerializer(serializers.ModelSerializer):
     """
@@ -130,20 +123,55 @@ class ValoracionSerializer(serializers.ModelSerializer):
 
 # 🛍️ Serializador principal del producto
 class ProductoSerializer(serializers.ModelSerializer):
-    tipo = ProductoTipoSerializer(read_only=True)
+    tipo      = ProductoTipoSerializer(read_only=True)
     categoria = CategoriaProductoSerializer(read_only=True)
-    colores = ColorSerializer(many=True, read_only=True)
-    tallas = TallaSerializer(many=True, read_only=True)
+    colores   = ColorSerializer(many=True, read_only=True)
+    tallas    = TallaSerializer(many=True,  read_only=True)
 
-    tipo_id = serializers.PrimaryKeyRelatedField(queryset=ProductoTipo.objects.all(), source='tipo', write_only=True)
-    categoria_id = serializers.PrimaryKeyRelatedField(queryset=CategoriaProducto.objects.all(), source='categoria', write_only=True)
-    colores_id = serializers.PrimaryKeyRelatedField(queryset=Color.objects.all(), many=True, source='colores', write_only=True)
-    tallas_id = serializers.PrimaryKeyRelatedField(queryset=Talla.objects.all(), many=True, source='tallas', write_only=True)
+    # campos write-only
+    tipo_id      = serializers.PrimaryKeyRelatedField(queryset=ProductoTipo.objects.all(),
+                                                      source='tipo',      write_only=True)
+    categoria_id = serializers.PrimaryKeyRelatedField(queryset=CategoriaProducto.objects.all(),
+                                                      source='categoria', write_only=True)
+    colores_id   = serializers.PrimaryKeyRelatedField(queryset=Color.objects.all(),
+                                                      many=True, source='colores', write_only=True)
+    tallas_id    = serializers.PrimaryKeyRelatedField(queryset=Talla.objects.all(),
+                                                      many=True, source='tallas',  write_only=True)
 
     class Meta:
-        model = Producto
+        model  = Producto
         fields = '__all__'
-        
+
+    # 🔐  Sobrescribimos create / update para asignar las M2M
+    def create(self, validated_data):
+        colores = validated_data.pop('colores', [])
+        tallas  = validated_data.pop('tallas',  [])
+        relacionados = validated_data.pop('productos_relacionados', [])
+
+        producto = super().create(validated_data)
+        producto.colores.set(colores)
+        producto.tallas.set(tallas)
+        producto.productos_relacionados.set(relacionados)
+        print('🎨 Colores recibidos:', colores)
+
+        return producto
+
+    def update(self, instance, validated_data):
+        colores = validated_data.pop('colores', None)
+        tallas  = validated_data.pop('tallas',  None)
+        relacionados = validated_data.pop('productos_relacionados', None)
+
+        producto = super().update(instance, validated_data)
+
+        if colores is not None:
+            producto.colores.set(colores)
+        if tallas is not None:
+            producto.tallas.set(tallas)
+        if relacionados is not None:
+            producto.productos_relacionados.set(relacionados)
+        return producto
+
+
 class ProductoPedidoSerializer(serializers.ModelSerializer):
     imagen_principal = serializers.ImageField(source='producto.imagen_principal', read_only=True)
     nombre = serializers.CharField(source='producto.nombre', read_only=True)
@@ -304,6 +332,8 @@ class ProductoDetalleSerializer(serializers.ModelSerializer):
     stock_items = StockSerializer(many=True, read_only=True)
     tallas = serializers.SerializerMethodField()
     imagenes_por_color = serializers.SerializerMethodField()
+    
+    tallas = TallaSerializer(many=True, read_only=True)   # 👈 cámbialo así
 
     class Meta:
         model = Producto

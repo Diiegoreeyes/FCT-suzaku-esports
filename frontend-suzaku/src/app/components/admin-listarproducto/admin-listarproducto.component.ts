@@ -64,6 +64,8 @@ export class AdminListarproductoComponent implements OnInit {
   colorGaleriaSeleccionado: number | null = null;   // 👈 nueva propiedad
   imagenesPorColor: { [color: string]: string[] } = {};
   productoSeleccionado: any = null;
+  coloresProducto: any[] = [];   // 👉 solo los colores asociados al producto
+  coloresConStock: any[] = [];          // (opcional, para la tabla de stock)
 
   
 
@@ -116,6 +118,16 @@ export class AdminListarproductoComponent implements OnInit {
     this.cargarStock();
 
   }
+
+  getColoresDelProducto(p: any): any[] {
+    return this.colores.filter(c => p.colores?.some((pc: any) => pc.id === c.id));
+  }
+  
+  getTallasDelProducto(p: any): any[] {
+    return this.tallas.filter(t => p.tallas?.some((pt: any) => pt.id === t.id));
+  }
+  
+  
 
   onGaleriaFilesPorColor(event: any, color: any): void {
     const archivos = Array.from(event.target.files) as File[];
@@ -382,6 +394,7 @@ onGaleriaChange(event: any) {
   /* ── Crear inline ── */
   toggleCreate(): void {
     this.showCreateForm = !this.showCreateForm;
+  
     if (this.showCreateForm) {
       this.formCrear.reset({
         nombre: '',
@@ -398,10 +411,14 @@ onGaleriaChange(event: any) {
         tallas: [],
         productos_relacionados: []
       });
+  
       this.previewCrear = null;
       this.editId = null;
+  
+      this.cargarColores(); 
     }
   }
+  
 
   onFileCreate(event: any): void {
     const file = event.target.files[0];
@@ -413,10 +430,25 @@ onGaleriaChange(event: any) {
     }
   }
   
+  onCheckboxChangeCrear(event: any, controlName: string): void {
+    const selected = this.formCrear.value[controlName] || [];
+    const value = parseInt(event.target.value, 10);
+  
+    if (event.target.checked) {
+      if (!selected.includes(value)) selected.push(value);
+    } else {
+      const index = selected.indexOf(value);
+      if (index > -1) selected.splice(index, 1);
+    }
+  
+    this.formCrear.get(controlName)?.setValue([...selected]);
+  }
+  
   crear(): void {
     if (this.formCrear.invalid) return;
   
     const fd = new FormData();
+  
     // Campos básicos
     fd.append('nombre', this.formCrear.value.nombre);
     fd.append('descripcion', this.formCrear.value.descripcion);
@@ -444,26 +476,30 @@ onGaleriaChange(event: any) {
       fd.append('imagen_principal', file);
     }
   
-    // ManyToMany “colores” → campo write-only “colores_id” (uno por cada color)
-    for (const id of this.formCrear.value.colores || []) {
+    // ManyToMany “colores” → write-only “colores_id”
+    const colores = this.formCrear.value.colores || [];
+    for (const id of colores) {
       fd.append('colores_id', id.toString());
     }
-  
-    // ManyToMany “tallas” → campo write-only “tallas_id” (uno por cada talla)
-    for (const id of this.formCrear.value.tallas || []) {
+    // ✅ ManyToMany “tallas” → write-only “tallas_id” (corregido)
+    const tallas = this.formCrear.value.tallas || [];
+    for (const id of tallas) {
       fd.append('tallas_id', id.toString());
     }
   
-    // ManyToMany “productos_relacionados” → el campo público es “productos_relacionados”
-    // (en el serializer no hay write-only con sufijo “_id”, así que usamos el nombre de campo tal cual)
-    for (const id of this.formCrear.value.productos_relacionados || []) {
+    // ManyToMany “productos_relacionados”
+    const relacionados = this.formCrear.value.productos_relacionados || [];
+    for (const id of relacionados) {
       fd.append('productos_relacionados', id.toString());
     }
-  
+ 
+    console.log('🎨 Valores seleccionados en colores:', this.formCrear.value.colores);
+
+    // Enviar al backend
     this.productoService.crearProducto(fd).subscribe({
       next: prod => {
         this.productos.push(prod);
-        this.toggleCreate();
+        this.toggleCreate(); // Cierra el formulario
       },
       error: err => {
         console.error('Error al crear producto:', err);
@@ -513,47 +549,49 @@ onGaleriaChange(event: any) {
   }
  
   private _cargarProductoEditable(p: any): void {
-    this.editId = p.id;
+    this.editId         = p.id;
     this.showCreateForm = false;
   
+    /* ─── Parcheamos el formulario ─── */
     this.formEditar.patchValue({
-      nombre: p.nombre,
+      nombre:      p.nombre,
       descripcion: p.descripcion,
-      precio: p.precio,
-      tipo: typeof p.tipo === 'object' ? p.tipo?.id : p.tipo ?? null,
-      categoria: typeof p.categoria === 'object' ? p.categoria?.id : p.categoria ?? null,
-      peso_kg: p.peso_kg,
-      alto_cm: p.alto_cm,
-      ancho_cm: p.ancho_cm,
-      largo_cm: p.largo_cm,
-      colores: p.colores?.map((c: any) => c.id) ?? [],
-      tallas: p.tallas?.map((t: any) => t.id) ?? [],
+      precio:      p.precio,
+      tipo:        typeof p.tipo      === 'object' ? p.tipo?.id      : p.tipo      ?? null,
+      categoria:   typeof p.categoria === 'object' ? p.categoria?.id : p.categoria ?? null,
+      peso_kg:     p.peso_kg,
+      alto_cm:     p.alto_cm,
+      ancho_cm:    p.ancho_cm,
+      largo_cm:    p.largo_cm,
+      colores:     p.colores?.map((c: any) => c.id) ?? [],
+      tallas:      p.tallas ?.map((t: any) => t.id) ?? [],
       productos_relacionados: p.productos_relacionados ?? []
     });
   
-    this.previewEditar = p.imagen_principal ?? null;
+    /* ─── Datos auxiliares de la vista ─── */
+    this.previewEditar      = p.imagen_principal ?? null;
     this.productoSeleccionado = p;
   
-    // 🎨 Mapeamos imágenes principales por color
+    /* 🎨 1. Colores del producto (todos los que tiene asociados) */
+    this.coloresProducto = p.colores ?? [];
+  
+    /* 🎨 2. Colores que realmente están en stock (opcional, para la tabla) */
+    const idsConStock       = new Set(p.stock_items?.map((s: any) => s.color.id));
+    this.coloresConStock    = p.colores?.filter((c: any) => idsConStock.has(c.id)) ?? [];
+  
+    /* 🖼️ 3. Imágenes principales por color */
     this.imagenesPorColor = {};
     (p.galeria || []).forEach((img: any) => {
-      const nombreColor = img.color?.nombre;
-      if (nombreColor) {
-        if (!this.imagenesPorColor[nombreColor]) {
-          this.imagenesPorColor[nombreColor] = [];
-        }
-        this.imagenesPorColor[nombreColor].push(img.imagen);
+      const nombre = img.color?.nombre;
+      if (nombre) {
+        this.imagenesPorColor[nombre] ??= [];
+        this.imagenesPorColor[nombre].push(img.imagen);
       }
     });
   
-    // ✅ Filtrar los colores que realmente están en stock
-    const idsConStock = new Set(p.stock_items?.map((s: any) => s.color.id));
-    this.colores = p.colores?.filter((c: any) => idsConStock.has(c.id)) ?? [];
-  
-    console.log('🎨 Imágenes por color:', this.imagenesPorColor);
-  
     this.cdr.detectChanges();
   }
+  
   
 
   

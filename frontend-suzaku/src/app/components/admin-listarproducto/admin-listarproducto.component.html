@@ -57,15 +57,14 @@
       </select>
 
       <!-- Colores (múltiples) -->
-      <label>Colores:</label>
+      <h5>Colores</h5>
       <div class="checkbox-group">
         <label *ngFor="let c of colores">
           <input
             type="checkbox"
             [value]="c.id"
-            (change)="onCheckboxChange($event, 'colores')"
-            [checked]="formCrear.value.colores?.includes(c.id)"
-          />
+            [checked]="formCrear.value.colores.includes(c.id)"
+            (change)="onCheckboxChangeCrear($event, 'colores')" />
           {{ c.nombre }}
         </label>
       </div>
@@ -248,28 +247,50 @@
               <!-- Galería por color -->
               <h5>Galería por color</h5>
               <div class="galeria-uploader-por-color">
-                <div *ngFor="let color of colores" class="galeria-color-bloque">
+                <!-- 👇 ANTES:  *ngFor="let color of colores" -->
+                <div *ngFor="let color of coloresProducto" class="galeria-color-bloque">
                   <p><strong>{{ color.nombre }}</strong></p>
 
-                  <input type="file" multiple (change)="onGaleriaFilesPorColor($event, color)" />
-                  <button
-                    type="button"
-                    (click)="subirGaleriaPorColor(color)"
-                    class="btn btn-success btn-sm"
-                  >
+                  <input type="file"
+                        multiple
+                        (change)="onGaleriaFilesPorColor($event, color)" />
+
+                  <button type="button"
+                          (click)="subirGaleriaPorColor(color)"
+                          class="btn btn-success btn-sm">
                     ⬆️ Subir imágenes para {{ color.nombre }}
                   </button>
 
                   <div class="miniaturas-por-color">
-                    <div *ngFor="let img of imagenesPorColor[color.nombre] || []" class="miniatura-con-borrar">
+                    <div *ngFor="let img of imagenesPorColor[color.nombre] || []"
+                        class="miniatura-con-borrar">
                       <img [src]="getFoto(img)" class="miniatura" />
-                      <button (click)="borrarImagenPorRuta(img)" class="btn btn-danger btn-sm">🗑️</button>
+                      <button (click)="borrarImagenPorRuta(img)"
+                              class="btn btn-danger btn-sm">🗑️</button>
                     </div>
                   </div>
                 </div>
+            </div>
+
+
+              <!-- Miniaturas de galería para ese color -->
+              <div class="miniaturas-admin mt-3">
+                <ng-container *ngFor="let p2 of productos">
+                  <ng-container *ngIf="p2.id === editId">
+                    <ng-container *ngFor="let img of p2.galeria">
+                      <ng-container *ngIf="img.color?.id === colorGaleriaSeleccionado">
+                        <div class="miniatura-contenedor">
+                          <img [src]="getFoto(img.imagen)" class="miniatura" />
+                          <small>{{ img.color?.nombre || '—' }}</small>
+                          <button (click)="borrarImagen(img.id)" class="btn btn-danger btn-sm">
+                            🗑️
+                          </button>
+                        </div>
+                      </ng-container>
+                    </ng-container>
+                  </ng-container>
+                </ng-container>
               </div>
-
-
 
               <!-- 🖼️ Sección de imágenes principales por color -->
               <div class="seccion">
@@ -521,11 +542,11 @@
           <thead>
             <tr>
               <th>Color / Talla</th>
-              <th *ngFor="let t of tallas">{{ t.nombre }}</th>
+              <th *ngFor="let t of getTallasDelProducto(p)">{{ t.nombre }}</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let c of colores">
+            <tr *ngFor="let c of getColoresDelProducto(p)">
               <td>
                 <span
                   class="badge-color"
@@ -601,4 +622,5 @@
       </div>
     </div>
   </section>
+
 </div>
