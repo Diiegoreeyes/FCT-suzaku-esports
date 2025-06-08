@@ -1,0 +1,84 @@
+.admin-valoraciones {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .valoracion-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .valoracion-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .user-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+  }
+  
+  .valoracion-img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 12px;
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    border: 1px solid #ccc;
+  }
+  
+  textarea {
+    width: 100%;
+    border-radius: 8px;
+    padding: 8px;
+    margin-top: 8px;
+    margin-bottom: 10px;
+    resize: vertical;
+  }
+  
+  button {
+    margin-right: 10px;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background-color: #4caf50;
+    color: white;
+  }
+  
+  button.danger {
+    background-color: #e74c3c;
+  }
+  
+  .valoracion-card p strong {
+    color: #2c7be5;
+  }
+  
+  .valoracion-card .admin-respuesta {
+    background-color: #eef5ff;
+    border-left: 4px solid #2c7be5;
+    padding: 10px;
+    border-radius: 6px;
+    margin-top: 10px;
+  }
+  .respuesta-admin {
+    background-color: #eef5ff;
+    border-left: 4px solid #2c7be5;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 14px;
+  }
+  

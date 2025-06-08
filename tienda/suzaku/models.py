@@ -7,7 +7,11 @@ from django.utils import timezone
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
 
-
+from django.db import models
+from PIL import Image
+import os
+from io import BytesIO
+from django.core.files.base import ContentFile
 ############################################################
 # MODELO USUARIOS
 ############################################################
@@ -162,14 +166,18 @@ class Valoracion(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.SET_NULL, null=True, blank=True)
     puntuacion = models.PositiveIntegerField()  # ⭐ 1 a 5 estrellas
     comentario = models.TextField(blank=True, null=True)  # 📝 Comentario opcional
+    imagen = models.ImageField(upload_to='valoraciones/', null=True, blank=True)  # 🖼️ Imagen opcional
     creado_en = models.DateTimeField(auto_now_add=True)
+    respuesta = models.TextField(null=True, blank=True) 
 
     def __str__(self):
         return f"{self.puntuacion}⭐ por {self.usuario}"
 
+
 ############################################################
 # MODELO PRODUCTO (AMPLIADO)
 ############################################################
+
 
 class Producto(models.Model):
     nombre = models.CharField(max_length=255)
@@ -177,19 +185,19 @@ class Producto(models.Model):
     precio = models.DecimalField(max_digits=10, decimal_places=2)
 
     # 🤝 Relaciones opcionales
-    sponsor = models.ForeignKey(Sponsor, on_delete=models.SET_NULL, null=True, blank=True)
-    tipo = models.ForeignKey(ProductoTipo, on_delete=models.SET_NULL, null=True, blank=True)
-    categoria = models.ForeignKey(CategoriaProducto, on_delete=models.SET_NULL, null=True, blank=True)  # 🏷️ Nueva categoría
-
-    colores = models.ManyToManyField(Color, blank=True)
-    tallas = models.ManyToManyField(Talla, blank=True)
+    sponsor = models.ForeignKey('Sponsor', on_delete=models.SET_NULL, null=True, blank=True)
+    tipo = models.ForeignKey('ProductoTipo', on_delete=models.SET_NULL, null=True, blank=True)
+    categoria = models.ForeignKey('CategoriaProducto', on_delete=models.SET_NULL, null=True, blank=True)
     
+    colores = models.ManyToManyField('Color', blank=True)
+    tallas = models.ManyToManyField('Talla', blank=True)
     productos_relacionados = models.ManyToManyField('self', blank=True)  # 🔁 Sugerencias cruzadas
 
     imagen_principal = models.ImageField(upload_to='productos/', null=True, blank=True)
+    imagen_miniatura = models.ImageField(upload_to='productos/miniaturas/', null=True, blank=True)  # 🖼️ Miniatura generada
 
     # ⚖️ Datos físicos del producto (útiles para envíos)
-    peso_kg = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)  # Peso en kilogramos
+    peso_kg = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     alto_cm = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     ancho_cm = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     largo_cm = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
@@ -199,6 +207,33 @@ class Producto(models.Model):
 
     def __str__(self):
         return self.nombre
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        # ✅ Si ya existe una miniatura o no hay imagen, salimos
+        if not self.imagen_principal or self.imagen_miniatura:
+            return
+
+        try:
+            img = Image.open(self.imagen_principal.path)
+            img = img.convert('RGB')  # Asegura compatibilidad JPEG
+
+            # Redimensionar manteniendo proporción
+            img.thumbnail((200, 200))  # 👉 Usa max 200x200 sin deformar
+
+            thumb_io = BytesIO()
+            img.save(thumb_io, format='JPEG', quality=85)
+
+            base, _ = os.path.splitext(os.path.basename(self.imagen_principal.name))
+            thumb_name = f"{base}_mini.jpg"
+
+            self.imagen_miniatura.save(thumb_name, ContentFile(thumb_io.getvalue()), save=False)
+            super().save(update_fields=['imagen_miniatura'])
+
+        except Exception as e:
+            print(f"⚠️ Error generando miniatura: {e}")
+
 
 
 ############################################################

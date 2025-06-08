@@ -131,3 +131,19 @@
   background-color: #e0e0e0;
   color: #333;
 }
+.color-circle {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1px solid #999;
+}
+
+.badge-talla {
+  display: inline-block;
+  background-color: #eee;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  border: 1px solid #ccc;
+}

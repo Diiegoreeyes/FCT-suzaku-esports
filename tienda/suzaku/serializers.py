@@ -116,10 +116,14 @@ class StockSerializer(serializers.ModelSerializer):
 # ⭐ Serializador para valoraciones de productos
 class ValoracionSerializer(serializers.ModelSerializer):
     usuario_nombre = serializers.CharField(source='usuario.nombre', read_only=True)
+    producto_nombre = serializers.CharField(source='producto.nombre', read_only=True)
 
     class Meta:
         model = Valoracion
-        fields = ['id', 'producto', 'usuario', 'usuario_nombre', 'puntuacion', 'comentario', 'creado_en']
+        fields = [
+            'id', 'producto', 'producto_nombre', 'usuario', 'usuario_nombre',
+            'puntuacion', 'comentario', 'imagen', 'creado_en', 'respuesta'  # 👈 Aquí la respuesta
+        ]
 
 # 🛍️ Serializador principal del producto
 class ProductoSerializer(serializers.ModelSerializer):

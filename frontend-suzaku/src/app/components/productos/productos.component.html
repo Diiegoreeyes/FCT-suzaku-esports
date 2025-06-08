@@ -28,10 +28,10 @@
     <button (click)="resetFiltros()" class="btn-reset">Reiniciar</button>
   </aside>
 
-  <!-- Productos a la derecha -->
   <div class="contenido-productos">
     <h2>Lista de Productos</h2>
-
+  
+    <!-- Contenedor grid -->
     <div class="productos-container">
       <a
         *ngFor="let p of productosFiltrados; trackBy: trackProducto"
@@ -40,42 +40,32 @@
         style="text-decoration: none; color: inherit;"
       >
         <h3 class="producto-titulo">{{ p.nombre }}</h3>
-
-        <div class="producto-card-content">
-          <!-- Imagen -->
+        <p class="precio">{{ p.precio }} €</p>
+  
+        <!-- Imagen con colores superpuestos -->
+        <div class="imagen-con-colores">
           <img
             [src]="getProductoFoto(p.imagen_principal)"
             alt="{{ p.nombre }}"
             class="producto-img"
             [attr.data-id]="p.id"
           />
-
-          <!-- Info derecha -->
-          <div class="producto-info-extra">
-            <p class="precio">{{ p.precio }} €</p>
-
-            <!-- Colores -->
-            <div class="color-group" *ngIf="p.colores?.length">
-              <span
-                class="circle-color"
-                *ngFor="let c of p.colores"
-                [style.backgroundColor]="c.codigo_hex || '#ccc'"
-              ></span>
-            </div>
-
-            <!-- Tallas -->
-            <div class="talla-group" *ngIf="p.tallas?.length">
-              <span class="badge-talla" *ngFor="let t of p.tallas">{{ t.nombre }}</span>
-            </div>
+          <div class="colores-sobre-imagen-vertical" *ngIf="p.colores?.length">
+            <span
+              class="circle-color"
+              *ngFor="let c of p.colores"
+              [style.backgroundColor]="c.codigo_hex || '#ccc'">
+            </span>
           </div>
         </div>
-
-        <p class="descripcion">{{ p.descripcion }}</p>
-
-        <button class="btn-agregar" (click)="$event.preventDefault(); agregarAlCarrito(p)">
-          Agregar al carrito
-        </button>
+  
+        <!-- Tallas -->
+        <div class="talla-group" *ngIf="p.tallas?.length">
+          <span class="badge-talla" *ngFor="let t of p.tallas">{{ t.nombre }}</span>
+        </div>
       </a>
     </div>
   </div>
+  
+
 </section>

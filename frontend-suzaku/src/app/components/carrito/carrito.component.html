@@ -1,53 +1,85 @@
 <section class="carrito">
+  <!-- Cabecera -->
   <div class="cabecera-carrito">
     <h2 class="carrito-titulo">🛒 Carrito de Compras</h2>
     <button (click)="vaciarCarrito()" class="btn-vaciar">🗑 Vaciar</button>
   </div>
 
-  <div *ngIf="productosEnCarrito.length > 0; else noProductos" class="productos-container">
-    <div class="producto-card" *ngFor="let producto of productosEnCarrito">
-      <div class="producto-img-wrapper">
-        <img [src]="getProductoFoto(producto.imagen_principal)" alt="{{ producto.nombre }}" class="producto-img" />
+  <!-- LISTADO DE PRODUCTOS -->
+  <div *ngIf="productosEnCarrito.length > 0; else noProductos"
+       class="productos-container">
 
-        <div class="producto-tags">
-          <!-- Mostrar colores -->
-          <div class="producto-colores" *ngIf="producto.colores?.length">
-            <span *ngFor="let c of producto.colores"
-                  class="color-circle"
-                  [style.backgroundColor]="c.codigo_hex || '#ddd'"
-                  [title]="c.nombre"></span>
-          </div>
-        
-          <!-- Mostrar tallas -->
-          <div class="producto-tallas" *ngIf="producto.tallas?.length">
-            <span class="badge-talla" *ngFor="let t of producto.tallas">{{ t.nombre }}</span>
-          </div>
-        </div>
-              </div>
+    <!-- ⬇️ Tarjeta de cada producto -->
+    <div class="producto-card" *ngFor="let producto of productosEnCarrito">
+
+      <!-- Imagen -->
+      <div class="producto-img-wrapper">
+        <img [src]="getProductoFoto(producto.imagen_principal)"
+        [alt]="producto.nombre"
+        class="producto-img" />
+   
+      </div>
+
+      <!-- Detalles -->
       <div class="producto-detalles">
         <h3>{{ producto.nombre }}</h3>
-        <p class="precio">Precio: {{ producto.precio | currency:'EUR':'symbol':'1.2-2' }}</p>
-        <div class="cantidad-control">
-          <button (click)="disminuirCantidad(producto.id)">−</button>
-          <span>{{ producto.cantidad }}</span>
-          <button (click)="aumentarCantidad(producto.id)">+</button>
+
+        <p class="precio">
+          Precio:
+          {{ producto.precio | currency:'EUR':'symbol':'1.2-2' }}
+        </p>
+
+        <!-- Color + Talla seleccionados -->
+        <div class="seleccionados">
+          <span
+            class="color-circle"
+            [style.backgroundColor]="producto.colorSeleccionado?.codigo_hex || '#ccc'"
+            [title]="producto.colorSeleccionado?.nombre">
+          </span>
+
+          <span class="badge-talla">
+            {{ producto.tallaSeleccionada?.nombre }}
+          </span>
         </div>
-        <p class="subtotal">Subtotal: {{ producto.precio * producto.cantidad | currency:'EUR':'symbol':'1.2-2' }}</p>
-        <button class="eliminar" (click)="eliminarProductoDelCarrito(producto.id)">Eliminar</button>
+
+        <!-- Cantidad -->
+        <div class="cantidad-control">
+          <button (click)="disminuirCantidad(producto)">−</button>
+          <span>{{ producto.cantidad }}</span>
+          <button (click)="aumentarCantidad(producto)">+</button>
+        </div>
+
+        <!-- Subtotal y eliminar -->
+        <p class="subtotal">
+          Subtotal:
+          {{ producto.precio * producto.cantidad | currency:'EUR':'symbol':'1.2-2' }}
+        </p>
+        <button (click)="eliminarProductoDelCarrito(producto)"
+                class="eliminar">
+          Eliminar
+        </button>
       </div>
     </div>
   </div>
 
+  <!-- Carrito vacío -->
   <ng-template #noProductos>
     <p class="mensaje-vacio">Tu carrito está vacío 😢</p>
   </ng-template>
 
+  <!-- Total -->
   <div class="total-carrito" *ngIf="productosEnCarrito.length > 0">
-    Total: <span>{{ total | currency:'EUR':'symbol':'1.2-2' }}</span>
+    Total:
+    <span>{{ total | currency:'EUR':'symbol':'1.2-2' }}</span>
   </div>
 
+  <!-- Acciones -->
   <div class="acciones-carrito" *ngIf="productosEnCarrito.length > 0">
-    <button routerLink="/productos" class="btn btn-secundario">↩️ Seguir comprando</button>
-    <button routerLink="/checkout" class="btn btn-primary">✅ Finalizar Compra</button>
+    <button routerLink="/productos" class="btn btn-secundario">
+      ↩️ Seguir comprando
+    </button>
+    <button routerLink="/checkout" class="btn btn-primary">
+      ✅ Finalizar Compra
+    </button>
   </div>
 </section>

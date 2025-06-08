@@ -16,15 +16,39 @@
   <!-- Lista de Productos -->
   <div *ngIf="productosEnCarrito.length > 0; else noProductos" class="productos-container">
     <div class="producto-card" *ngFor="let producto of productosEnCarrito">
-      <img [src]="getProductoFoto(producto.imagen_principal)" class="producto-img" alt="{{ producto.nombre }}" />
+      <!-- Imagen dinámica según color -->
+      <img [src]="getProductoFoto(
+        producto.colorSeleccionado?.nombre && producto.imagenes_por_color?.[producto.colorSeleccionado.nombre]?.[0]
+          ? producto.imagenes_por_color[producto.colorSeleccionado.nombre][0]
+          : producto.imagen_principal
+      )"
+      class="producto-img"
+      alt="{{ producto.nombre }}" />
+  
+  
       <div class="producto-detalles">
         <h3>{{ producto.nombre }}</h3>
         <p>Precio: {{ producto.precio }} €</p>
         <p>Cantidad: {{ producto.cantidad }}</p>
         <p>Subtotal: {{ producto.precio * producto.cantidad | number:'1.2-2' }} €</p>
+  
+        <!-- Color y talla -->
+        <div style="display: flex; align-items: center; gap: 0.8rem; margin-top: 0.5rem;">
+          <!-- Círculo de color -->
+          <span class="color-circle"
+                [style.backgroundColor]="producto.colorSeleccionado?.codigo_hex || '#ccc'"
+                [title]="producto.colorSeleccionado?.nombre">
+          </span>
+  
+          <!-- Talla -->
+          <span class="badge-talla">
+            {{ producto.tallaSeleccionada?.nombre }}
+          </span>
+        </div>
       </div>
     </div>
   </div>
+  
 
   <ng-template #noProductos>
     <p>Tu carrito está vacío.</p>

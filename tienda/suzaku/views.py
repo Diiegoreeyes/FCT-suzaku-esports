@@ -1,3 +1,16 @@
+# IA
+import pandas as pd
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework.decorators import action
+from rest_framework.response import Response
+import pandas as pd
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+
+
 # 📌 Django Imports (Funciones y Autenticación)
 from django.shortcuts import render, get_object_or_404, redirect  # Para renderizar plantillas y gestionar redirecciones
 from django.contrib import messages  # Para mensajes en la interfaz
@@ -446,18 +459,73 @@ class ProductoViewSet(viewsets.ModelViewSet):
     queryset = Producto.objects.all()
     permission_classes = [AllowAny]
 
-    # 👉 1.  Seleccionamos serializer según acción
     def get_serializer_class(self):
         if self.action in ['retrieve', 'detalle']:
             return ProductoDetalleSerializer
         return ProductoSerializer
-    # 👉 2.  (opcional) conserva la acción /detalle/ si la usas en otro sitio
+
     @action(detail=True, methods=['get'])
     def detalle(self, request, pk=None):
         producto = self.get_object()
-        serializer = self.get_serializer(producto, context={'request': request})  # 👈 este es clave
+        serializer = self.get_serializer(producto, context={'request': request})
         return Response(serializer.data)
 
+    @action(detail=True, methods=["get"])  # 👈 ESTO FUERA DEL OTRO MÉTODO
+    def recomendaciones(self, request, pk=None):
+        try:
+            producto_actual = self.get_object()
+        except:
+            return Response([])
+
+        productos = Producto.objects.exclude(id=producto_actual.id)
+
+        if not productos.exists():
+            return Response([])
+
+        data = []
+        for p in productos:
+            data.append({
+                "id": p.id,
+                "nombre": p.nombre,
+                "descripcion": p.descripcion or "",
+                "categoria": p.categoria.nombre if p.categoria else "",
+                "tipo": p.tipo.nombre if p.tipo else "",
+                "colores": " ".join([c.nombre for c in p.colores.all()]),
+                "precio": float(p.precio),
+            })
+
+        actual_data = {
+            "id": producto_actual.id,
+            "nombre": producto_actual.nombre,
+            "descripcion": producto_actual.descripcion or "",
+            "categoria": producto_actual.categoria.nombre if producto_actual.categoria else "",
+            "tipo": producto_actual.tipo.nombre if producto_actual.tipo else "",
+            "colores": " ".join([c.nombre for c in producto_actual.colores.all()]),
+            "precio": float(producto_actual.precio),
+        }
+
+        df = pd.concat([pd.DataFrame([actual_data]), pd.DataFrame(data)], ignore_index=True)
+
+        df["texto"] = (
+            df["nombre"] + " " +
+            df["descripcion"] + " " +
+            df["categoria"] + " " +
+            df["tipo"] + " " +
+            df["colores"]
+        )
+
+        tfidf = TfidfVectorizer()
+        tfidf_matrix = tfidf.fit_transform(df["texto"])
+
+        cosine_sim = cosine_similarity(tfidf_matrix[0:1], tfidf_matrix[1:])
+        similitudes = list(enumerate(cosine_sim[0]))
+        similitudes.sort(key=lambda x: x[1], reverse=True)
+
+        top_ids = [df.iloc[i + 1]["id"] for i, _ in similitudes[:4]]
+
+        recomendados = Producto.objects.filter(id__in=top_ids)
+        from .serializers import ProductoSerializer
+        return Response(ProductoSerializer(recomendados, many=True, context={"request": request}).data)
 
 
 class StockViewSet(viewsets.ModelViewSet):
@@ -778,7 +846,14 @@ class StockViewSet(viewsets.ModelViewSet):
     queryset = Stock.objects.all()
     serializer_class = StockSerializer
 
+# views.py
 class ValoracionViewSet(viewsets.ModelViewSet):
     queryset = Valoracion.objects.all()
     serializer_class = ValoracionSerializer
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        producto_id = self.request.query_params.get('producto')
+        if producto_id:
+            queryset = queryset.filter(producto_id=producto_id)
+        return queryset.order_by('-creado_en')  # 🔁 Aquí siempre devuelve
 

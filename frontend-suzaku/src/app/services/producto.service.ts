@@ -158,7 +158,21 @@ export class ProductoService {
     return this.http.delete(`http://127.0.0.1:8000/api/productoimagen/${id}/`);
   }
 
+  // IA
+  obtenerRecomendaciones(id: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}${id}/recomendaciones/`);
+  }
 
+  // producto.service.ts
+  obtenerValoraciones(productoId: number): Observable<any[]> {
+    return this.http.get<any[]>(`http://127.0.0.1:8000/api/valoraciones/?producto=${productoId}`);
+  }
+
+  crearValoracion(data: any): Observable<any> {
+    return this.http.post<any>('http://127.0.0.1:8000/api/valoraciones/', data);
+  }
+
+  
   
  }
 

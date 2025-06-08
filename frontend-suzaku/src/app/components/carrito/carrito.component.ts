@@ -41,25 +41,34 @@ export class CarritoComponent implements OnInit {
     this.cargarCarrito();
   }
 
-  eliminarProductoDelCarrito(productoId: number): void {
-    this.carritoService.eliminarProducto(productoId);
+  aumentarCantidad(producto: any): void {
+    this.carritoService.aumentarCantidad(producto.id, producto.colorSeleccionado?.id, producto.tallaSeleccionada?.id);
     this.cargarCarrito();
   }
-
-  aumentarCantidad(productoId: number): void {
-    this.carritoService.aumentarCantidad(productoId);
+  
+  disminuirCantidad(producto: any): void {
+    this.carritoService.disminuirCantidad(producto.id, producto.colorSeleccionado?.id, producto.tallaSeleccionada?.id);
     this.cargarCarrito();
   }
-
-  disminuirCantidad(productoId: number): void {
-    this.carritoService.disminuirCantidad(productoId);
+  
+  eliminarProductoDelCarrito(producto: any): void {
+    this.carritoService.eliminarProducto(producto.id, producto.colorSeleccionado?.id, producto.tallaSeleccionada?.id);
     this.cargarCarrito();
   }
+  
 
   getProductoFoto(foto: string): string {
     if (!foto) return 'assets/default-producto.jpg';
     if (foto.startsWith('http')) return foto;
     return `http://127.0.0.1:8000${foto}`;
   }
-  
+  getColorHex(nombreColor: string): string {
+  // Busca en el array de colores del producto el código hex correspondiente
+  for (const producto of this.productosEnCarrito) {
+    const color = producto.colores?.find((c: any) => c.nombre === nombreColor);
+    if (color) return color.codigo_hex || '#ccc';
+  }
+  return '#ccc';
+}
+
 }

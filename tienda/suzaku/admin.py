@@ -15,6 +15,7 @@ admin.site.register(EquipoParticipante)
 admin.site.register(Partido)
 admin.site.register(EquipoCompetitivo)
 admin.site.register(Stock)
+admin.site.register(Valoracion)
 
 
 

@@ -18,17 +18,27 @@ export class CarritoService {
   }
 
   agregarProducto(producto: any): void {
-    const index = this.carrito.findIndex(p => p.id === producto.id);
+    const index = this.carrito.findIndex(p =>
+      p.id === producto.id &&
+      p.colorSeleccionado?.id === producto.colorSeleccionado?.id &&
+      p.tallaSeleccionada?.id === producto.tallaSeleccionada?.id
+    );
+  
     if (index !== -1) {
-      this.carrito[index].cantidad += 1;
+      this.carrito[index].cantidad += producto.cantidad;
     } else {
-      this.carrito.push({ ...producto, cantidad: 1 });
+      this.carrito.push({ ...producto });
     }
     this.guardarCarrito();
   }
+  
 
-  eliminarProducto(productoId: number): void {
-    this.carrito = this.carrito.filter(p => p.id !== productoId);
+  eliminarProducto(productoId: number, colorId?: number, tallaId?: number): void {
+    this.carrito = this.carrito.filter(p =>
+      !(p.id === productoId &&
+        p.colorSeleccionado?.id === colorId &&
+        p.tallaSeleccionada?.id === tallaId)
+    );
     this.guardarCarrito();
   }
 
@@ -43,25 +53,34 @@ export class CarritoService {
     }
   }
 
-  aumentarCantidad(productoId: number): void {
-    const producto = this.carrito.find(p => p.id === productoId);
+  aumentarCantidad(productoId: number, colorId?: number, tallaId?: number): void {
+    const producto = this.carrito.find(p =>
+      p.id === productoId &&
+      p.colorSeleccionado?.id === colorId &&
+      p.tallaSeleccionada?.id === tallaId
+    );
     if (producto) {
       producto.cantidad += 1;
       this.guardarCarrito();
     }
   }
   
-  disminuirCantidad(productoId: number): void {
-    const producto = this.carrito.find(p => p.id === productoId);
+  disminuirCantidad(productoId: number, colorId?: number, tallaId?: number): void {
+    const producto = this.carrito.find(p =>
+      p.id === productoId &&
+      p.colorSeleccionado?.id === colorId &&
+      p.tallaSeleccionada?.id === tallaId
+    );
     if (producto) {
       if (producto.cantidad > 1) {
         producto.cantidad -= 1;
       } else {
-        this.eliminarProducto(productoId);
+        this.eliminarProducto(productoId, colorId, tallaId);
       }
       this.guardarCarrito();
     }
   }
+
 
   vaciarCarrito(): void {
     this.carrito = [];
@@ -81,5 +100,6 @@ export class CarritoService {
         this.carrito = JSON.parse(carritoGuardado);
       }
     }
+
   }
 }

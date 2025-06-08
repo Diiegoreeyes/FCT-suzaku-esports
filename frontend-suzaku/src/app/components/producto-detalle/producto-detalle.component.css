@@ -195,4 +195,170 @@
     cursor: not-allowed;
     opacity: 0.6;
   }
+
+
   
+
+
+
+  .recomendaciones {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+    text-align: center;
+  }
+  
+  .titulo-recomendaciones {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 24px;
+    color: #222;
+  }
+  
+  .recomendaciones-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 24px;
+  }
+  
+  .recomendacion-card {
+    display: block;
+    width: 220px;
+    padding: 16px;
+    background: #f9f9f9;
+    border-radius: 12px;
+    text-align: center;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .recomendacion-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .recomendacion-img {
+    width: 100%;
+    height: 200px;
+    object-fit: contain;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    background-color: #fff;
+  }
+  
+  .recomendacion-nombre {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 6px 0;
+  }
+  
+  .recomendacion-precio {
+    font-size: 0.95rem;
+    color: #444;
+  }
+  
+
+  .filled-star {
+    color: gold;
+    font-size: 20px;
+  }
+  
+  .empty-star {
+    color: lightgray;
+    font-size: 20px;
+  }
+  
+  .valoraciones {
+    margin: 40px auto;
+    padding: 20px;
+    max-width: 700px; /* ✅ Centrado y con buen ancho para legibilidad */
+    background-color: #fdfdfd;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+  }
+  
+  .valoracion {
+    padding: 16px;
+    border-bottom: 1px solid #ddd;
+    transition: background 0.2s ease-in-out;
+  }
+  
+  .valoracion:hover {
+    background-color: #fafafa;
+  }
+  
+  .valoracion img {
+    object-fit: cover;
+  }
+  
+  .valoracion strong {
+    font-size: 16px;
+    color: #333;
+  }
+  
+  .valoracion p {
+    margin-top: 6px;
+    font-size: 14px;
+    color: #444;
+  }
+  
+  .filled-star {
+    color: #ffc107;
+    font-size: 18px;
+  }
+  
+  .empty-star {
+    color: #ccc;
+    font-size: 18px;
+  }
+  
+  .nueva-valoracion {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px dashed #ccc;
+  }
+  
+  .nueva-valoracion textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    resize: vertical;
+    font-size: 14px;
+    font-family: inherit;
+  }
+  
+  .nueva-valoracion button {
+    margin-top: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    font-size: 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .nueva-valoracion button:hover {
+    background-color: #0056b3;
+  }
+  .btn-naranja {
+    padding: 0.5rem 1.2rem;
+    background-color: #ffa726; /* Naranja principal */
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .btn-naranja:hover {
+    background-color: #fb8c00; /* Naranja más oscuro al pasar el ratón */
+  }

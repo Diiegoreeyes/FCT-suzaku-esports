@@ -1,0 +1,40 @@
+<div class="admin-valoraciones">
+    <h2>📝 Valoraciones de los clientes</h2>
+  
+    <div *ngFor="let val of valoraciones" class="valoracion-card">
+      <div class="valoracion-header">
+        <img [src]="val.usuario?.foto || '/default-user.png'" class="user-img" />
+        <div>
+          <strong>{{ val.usuario_nombre || 'Usuario' }}</strong><br />
+          <small>{{ val.creado_en | date:'short' }}</small>
+        </div>
+      </div>
+  
+      <div class="contenido">
+        <p><strong>Producto:</strong> {{ val.producto_nombre }}</p>
+        <p><strong>⭐ {{ val.puntuacion }}</strong></p>
+        <p>{{ val.comentario }}</p>
+  
+        <img *ngIf="val.imagen" [src]="val.imagen" class="valoracion-img" />
+  
+        <div *ngIf="val.respuesta && !modoEdicion[val.id]; else editarRespuestaForm">
+            <p class="admin-respuesta"><strong>Respuesta del admin:</strong> {{ val.respuesta }}</p>
+            <button (click)="editarRespuesta(val)">✏️ Editar</button>
+          </div>
+          
+          <ng-template #editarRespuestaForm>
+            <label>Editar respuesta:</label>
+            <textarea [(ngModel)]="respuestasEscritas[val.id]" rows="2" placeholder="Editar respuesta..."></textarea>
+            <button (click)="responderValoracion(val)">Guardar</button>
+            <button (click)="cancelarEdicion(val)">Cancelar</button>
+          </ng-template>
+          
+          <!-- Siempre visible -->
+          <button class="danger" (click)="eliminarValoracion(val.id)">🗑️ Eliminar</button>
+          
+
+          
+      </div>
+    </div>
+  </div>
+  
