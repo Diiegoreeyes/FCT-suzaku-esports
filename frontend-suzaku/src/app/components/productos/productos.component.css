@@ -48,6 +48,36 @@
   background-color: #e0e0e0;
   color: #333;
 }
+/* ─── Grupo de checks en vertical ───────────────────────── */
+.grupo-checks {
+  display: flex;
+  flex-direction: column;    /* uno debajo de otro */
+  gap: 0.5rem;               /* espacio entre filas */
+  margin-bottom: 1rem;
+}
+
+/* ─── Etiquetas con bordes suaves ───────────────────────── */
+.grupo-checks label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+.grupo-checks label:hover {
+  background: rgba(45, 125, 255, 0.05);
+}
+
+/* ─── Círculo de color un poco más suave ───────────────── */
+.circle-color {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1px solid #bbb;
+  box-shadow: inset 0 0 2px rgba(0,0,0,0.1);
+}
 
 /* Contenido de productos */
 .contenido-productos {

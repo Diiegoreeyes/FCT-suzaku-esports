@@ -2,31 +2,75 @@
   <!-- Filtros a la izquierda -->
   <aside class="sidebar-filtros">
     <h3>Filtrar Productos</h3>
-
+  
+    <!-- Buscar por nombre -->
     <input
       type="text"
       [(ngModel)]="filtroNombre"
       placeholder="Buscar por nombre"
       class="input-filtro"
     />
-
+  
+    <!-- Precio -->
     <input
       type="number"
       [(ngModel)]="precioMin"
       placeholder="Precio mínimo"
       class="input-filtro"
     />
-
     <input
       type="number"
       [(ngModel)]="precioMax"
       placeholder="Precio máximo"
       class="input-filtro"
     />
-
+  
+    <!-- Tipo -->
+    <select [(ngModel)]="filtroTipo" class="input-filtro">
+      <option value="">Todos los tipos</option>
+      <option *ngFor="let t of tiposDisponibles" [value]="t">
+        {{ t }}
+      </option>
+    </select>
+  
+    <!-- Categoría -->
+    <select [(ngModel)]="filtroCategoria" class="input-filtro">
+      <option value="">Todas las categorías</option>
+      <option *ngFor="let c of categoriasDisponibles" [value]="c">
+        {{ c }}
+      </option>
+    </select>
+  
+    <!-- Tallas -->
+    <div class="grupo-checks">
+      <label *ngFor="let t of tallasDisponibles">
+        <input
+          type="checkbox"
+          (change)="onTallaToggle(t, $any($event.target).checked)"
+        />
+        {{ t }}
+      </label>
+    </div>
+  
+    <!-- Colores -->
+    <div class="grupo-checks">
+      <label *ngFor="let c of coloresDisponibles">
+        <input
+          type="checkbox"
+          (change)="onColorToggle(c.nombre, $any($event.target).checked)"
+        />
+        <span
+          class="circle-color"
+          [style.backgroundColor]="c.codigo_hex"
+        ></span>
+        {{ c.nombre }}
+      </label>
+    </div>
+  
     <button (click)="aplicarFiltros()" class="btn-filtrar">Aplicar Filtros</button>
     <button (click)="resetFiltros()" class="btn-reset">Reiniciar</button>
   </aside>
+  
 
   <div class="contenido-productos">
     <h2>Lista de Productos</h2>
