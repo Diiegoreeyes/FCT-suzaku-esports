@@ -1,7 +1,7 @@
 <div class="mis-pedidos">
   <h2>Mis Pedidos</h2>
 
-  <div *ngIf="pedidos && pedidos.length > 0; else noPedidos">
+  <div *ngIf="pedidos.length > 0; else noPedidos">
     <!-- Iteración de cada pedido -->
     <div class="pedido-card" *ngFor="let pedido of pedidos">
       <div class="pedido-header">
@@ -9,14 +9,16 @@
         <p class="estado">{{ pedido.estado }}</p>
       </div>
 
-      <p class="fecha">Fecha: {{ pedido.fecha_creacion | date:'short' }}</p>
+      <p class="fecha">
+        Fecha: {{ pedido.fecha_creacion | date:'short' }}
+      </p>
 
       <p class="codigo-descuento" *ngIf="pedido.codigo_descuento_str">
         Código utilizado: {{ pedido.codigo_descuento_str }}
       </p>
 
       <div class="pedido-totales">
-        <ng-container *ngIf="pedido.descuento_aplicado && pedido.descuento_aplicado > 0; else sinDescuento">
+        <ng-container *ngIf="pedido.descuento_aplicado > 0; else sinDescuento">
           <p>
             <span class="precio-rojo-tachado">
               {{ pedido.total | currency:'EUR':'symbol':'1.2-2' }}
@@ -26,7 +28,8 @@
             </span>
           </p>
           <p class="descuento">
-            Descuento aplicado: {{ pedido.descuento_aplicado | currency:'EUR':'symbol':'1.2-2' }}
+            Descuento aplicado:
+            {{ pedido.descuento_aplicado | currency:'EUR':'symbol':'1.2-2' }}
           </p>
         </ng-container>
         <ng-template #sinDescuento>
@@ -36,32 +39,46 @@
         </ng-template>
       </div>
 
-      <!-- 🔁 Productos dentro de este pedido -->
+      <!-- Productos dentro de este pedido -->
       <div class="pedido-productos">
         <div class="producto-item" *ngFor="let item of pedido.productos">
+
+          <!-- Ajustamos el src para que use siempre getProductoFoto -->
           <img
-            [src]="getProductoFoto(item.imagen_principal)"
+            [src]="getProductoFoto(
+              item.color
+                ? (item.imagenes_por_color[item.color.nombre]?.[0] || item.imagen_principal)
+                : item.imagen_principal
+            )"
             alt="{{ item.nombre }}"
             class="producto-img"
           />
+
           <div class="producto-info">
-            <p class="producto-nombre"><strong>{{ item.nombre }}</strong></p>
+            <p class="producto-nombre">
+              <strong>{{ item.nombre }}</strong>
+            </p>
             <p>Cantidad: {{ item.cantidad }}</p>
-            <p>Precio unitario: {{ item.precio | currency:'EUR' }}</p>
+            <p>
+              Precio unitario:
+              {{ item.precio | currency:'EUR':'symbol':'1.2-2' }}
+            </p>
 
-            <p *ngIf="item.tipo">🧥 Tipo: <strong>{{ item.tipo.nombre }}</strong></p>
-            <p *ngIf="item.categoria">🏷️ Categoría: <strong>{{ item.categoria.nombre }}</strong></p>
+            <!-- Color y Talla -->
+            <div class="seleccionados">
+              <span
+                *ngIf="item.color"
+                class="color-circle"
+                [style.backgroundColor]="item.color.codigo_hex || '#ccc'"
+                [title]="item.color.nombre"
+              ></span>
 
-            <div *ngIf="item.colores?.length">
-              🎨 Colores:
-              <span *ngFor="let c of item.colores" class="badge-color" [style.backgroundColor]="c.codigo_hex || '#ddd'">
-                {{ c.nombre }}
+              <span
+                *ngIf="item.talla"
+                class="badge-talla"
+              >
+                {{ item.talla.nombre }}
               </span>
-            </div>
-
-            <div *ngIf="item.tallas?.length">
-              📏 Tallas:
-              <span *ngFor="let t of item.tallas" class="badge-talla">{{ t.nombre }}</span>
             </div>
           </div>
         </div>

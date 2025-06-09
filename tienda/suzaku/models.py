@@ -278,11 +278,14 @@ class Pedido(models.Model):
 ############################################################
 
 class ProductoPedido(models.Model):
-    """ Relaciona los productos con los pedidos realizados """
     pedido = models.ForeignKey(Pedido, related_name='productos', on_delete=models.CASCADE)
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
     cantidad = models.PositiveIntegerField()
-    precio = models.DecimalField(max_digits=10, decimal_places=2)  # Precio con descuento aplicado
+    precio = models.DecimalField(max_digits=10, decimal_places=2)
+
+    # NUEVO: talla y color seleccionados
+    talla = models.ForeignKey(Talla, null=True, blank=True, on_delete=models.SET_NULL)
+    color = models.ForeignKey(Color, null=True, blank=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         return f"{self.producto.nombre} - {self.cantidad} unidades en Pedido {self.pedido.id}"

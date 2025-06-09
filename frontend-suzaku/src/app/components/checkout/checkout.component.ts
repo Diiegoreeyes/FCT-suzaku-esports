@@ -8,6 +8,8 @@ import { UsuarioService } from '../../services/usuario.service';
 import { AuthService } from '../../services/auth.service';
 import { DireccionesService } from '../../services/direcciones.service';
 
+declare var paypal: any;
+
 @Component({
   selector: 'app-checkout',
   standalone: true,
@@ -15,6 +17,7 @@ import { DireccionesService } from '../../services/direcciones.service';
   templateUrl: './checkout.component.html',
   styleUrls: ['./checkout.component.css']
 })
+
 export class CheckoutComponent implements OnInit {
   productosEnCarrito: any[] = [];
   total: number = 0;
@@ -39,7 +42,8 @@ export class CheckoutComponent implements OnInit {
     private authService: AuthService,
     private direccionesService: DireccionesService,
     private router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+
   ) {}
 
   ngOnInit(): void {
@@ -51,8 +55,58 @@ export class CheckoutComponent implements OnInit {
     }
     this.cargarCarrito();
     this.inicializarFormularioDireccion(); // ✅ Inicializar formulario
-  }
+    this.renderizarBotonPayPal();
 
+  }
+  
+
+  renderizarBotonPayPal(reintentos: number = 0): void {
+    const totalValido = this.totalConDescuento && !isNaN(this.totalConDescuento);
+  
+    if (!totalValido) {
+      console.error('❌ totalConDescuento no es válido:', this.totalConDescuento);
+      return;
+    }
+  
+    const paypalContainer = document.getElementById('paypal-button-container');
+    if (paypalContainer) {
+      paypalContainer.innerHTML = ''; // Limpia posibles botones anteriores
+    }
+  
+    if ((window as any).paypal) {
+      (window as any).paypal.Buttons({
+        createOrder: (_data: any, actions: any) =>
+          actions.order.create({
+            purchase_units: [{
+              amount: { value: this.totalConDescuento.toFixed(2) },
+              description: 'Compra en Suzaku Esports'
+            }]
+          }),
+  
+        onApprove: (_data: any, actions: any) =>
+          actions.order.capture().then((details: any) => {
+            console.log('✅ Pago completado:', details);
+            this.confirmarPedido();
+          }),
+  
+        onError: (err: any) => {
+          console.error('❌ Error PayPal:', err);
+          alert('Ha habido un error en el pago con PayPal.');
+        }
+      }).render('#paypal-button-container');
+  
+      return;
+    }
+  
+    if (reintentos < 10) {
+      setTimeout(() => this.renderizarBotonPayPal(reintentos + 1), 300);
+    } else {
+      console.error('SDK de PayPal no cargado tras varios intentos');
+    }
+  }
+  
+  
+  
   cargarDireccionActiva(): void {
     this.direccionesService.getDireccionActiva().subscribe({
       next: (dir) => {
@@ -111,7 +165,11 @@ export class CheckoutComponent implements OnInit {
     }, 0);
     this.total = subtotal;
     this.totalConDescuento = this.total - this.descuento;
+  
+    // ⬇️ AÑADIR ESTO SI AÚN NO LO TENÍAS
+    setTimeout(() => this.renderizarBotonPayPal(), 0);
   }
+  
   
 
   aplicarDescuento(): void {
@@ -157,8 +215,11 @@ export class CheckoutComponent implements OnInit {
       codigo_descuento: this.codigoDescuento,
       items: this.productosEnCarrito.map(item => ({
         id: item.id,
-        cantidad: item.cantidad
+        cantidad: item.cantidad,
+        color_id: item.colorSeleccionado?.id || null,
+        talla_id: item.tallaSeleccionada?.id || null
       }))
+      
     };
     
     this.checkoutService.confirmarPedido(pedidoData).subscribe({

@@ -174,20 +174,75 @@ class ProductoSerializer(serializers.ModelSerializer):
         if relacionados is not None:
             producto.productos_relacionados.set(relacionados)
         return producto
-
-
-class ProductoPedidoSerializer(serializers.ModelSerializer):
-    imagen_principal = serializers.ImageField(source='producto.imagen_principal', read_only=True)
-    nombre = serializers.CharField(source='producto.nombre', read_only=True)
-    precio = serializers.DecimalField(source='producto.precio', max_digits=10, decimal_places=2, read_only=True)
-    tipo = ProductoTipoSerializer(source='producto.tipo', read_only=True)
-    categoria = CategoriaProductoSerializer(source='producto.categoria', read_only=True)
-    colores = ColorSerializer(source='producto.colores', many=True, read_only=True)
-    tallas = TallaSerializer(source='producto.tallas', many=True, read_only=True)
+    
+class ProductoPedidoCrearSerializer(serializers.ModelSerializer):
+    color_id = serializers.IntegerField(required=False, allow_null=True)
+    talla_id = serializers.IntegerField(required=False, allow_null=True)
 
     class Meta:
         model = ProductoPedido
-        fields = ['id', 'producto', 'cantidad', 'imagen_principal', 'nombre', 'precio', 'tipo', 'categoria', 'colores', 'tallas']
+        fields = ['producto', 'cantidad', 'precio', 'color_id', 'talla_id']
+
+class PedidoCrearSerializer(serializers.ModelSerializer):
+    productos = ProductoPedidoCrearSerializer(many=True)
+
+    class Meta:
+        model = Pedido
+        fields = ['usuario', 'direccion_envio', 'total', 'total_con_descuento', 'descuento_aplicado', 'codigo_descuento', 'productos']
+
+    def create(self, validated_data):
+        productos_data = validated_data.pop('productos')
+        pedido = Pedido.objects.create(**validated_data)
+
+        for p in productos_data:
+            ProductoPedido.objects.create(
+                pedido=pedido,
+                producto=p['producto'],
+                cantidad=p['cantidad'],
+                precio=p['precio'],
+                color_id=p.get('color_id'),
+                talla_id=p.get('talla_id')
+            )
+
+        return pedido
+
+from rest_framework.request import Request
+
+class ProductoPedidoSerializer(serializers.ModelSerializer):
+    imagen_principal = serializers.ImageField(source='producto.imagen_principal', read_only=True)
+    nombre           = serializers.CharField(source='producto.nombre',       read_only=True)
+    precio           = serializers.DecimalField(source='producto.precio',    max_digits=10, decimal_places=2, read_only=True)
+    tipo             = ProductoTipoSerializer(source='producto.tipo',         read_only=True)
+    categoria        = CategoriaProductoSerializer(source='producto.categoria', read_only=True)
+    colores          = ColorSerializer(source='producto.colores', many=True,   read_only=True)
+    tallas           = TallaSerializer(source='producto.tallas', many=True,    read_only=True)
+    color            = ColorSerializer(read_only=True)
+    talla            = TallaSerializer(read_only=True)
+
+    # Nuevo campo
+    imagenes_por_color = serializers.SerializerMethodField()
+
+    class Meta:
+        model  = ProductoPedido
+        fields = [
+          'id','producto','cantidad','imagen_principal','nombre','precio',
+          'tipo','categoria','colores','tallas','color','talla',
+          'imagenes_por_color'
+        ]
+
+    def get_imagenes_por_color(self, obj):
+        """
+        Construye un dict { color_nombre: [url1, url2, …], … }
+        """
+        request: Request = self.context.get('request')
+        resultado = {}
+        for img in obj.producto.galeria.all():
+            if img.color:
+                nm = img.color.nombre
+                url = (request.build_absolute_uri(img.imagen.url)
+                       if request else img.imagen.url)
+                resultado.setdefault(nm, []).append(url)
+        return resultado
 
 
 class StockSerializer(serializers.ModelSerializer):

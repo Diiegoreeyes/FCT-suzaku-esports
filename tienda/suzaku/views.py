@@ -299,21 +299,6 @@ from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from .models import Usuario, Pedido, Producto, ProductoPedido, CodigoDescuento
 
-from decimal import Decimal
-from django.http import JsonResponse
-from rest_framework.decorators import api_view
-from .models import Usuario, Pedido, Producto, ProductoPedido, CodigoDescuento
-
-from decimal import Decimal
-from django.http import JsonResponse
-from rest_framework.decorators import api_view
-from .models import Usuario, Pedido, Producto, ProductoPedido, CodigoDescuento
-
-from decimal import Decimal
-from django.http import JsonResponse
-from rest_framework.decorators import api_view
-from .models import Usuario, Pedido, Producto, ProductoPedido, CodigoDescuento
-
 @api_view(['POST'])
 def confirmar_pedido_view(request):
     """
@@ -321,87 +306,91 @@ def confirmar_pedido_view(request):
     Espera en request.data:
     {
       "user_id": 1,
-      "items": [{"id": 12, "cantidad": 1}, ...],
+      "items": [
+        {
+          "id": <producto_id>,
+          "cantidad": 1,
+          "color_id": 3,     # Opcional
+          "talla_id": 5      # Opcional
+        },
+        ...
+      ],
       "direccion": "Nueva dirección ...",
-      "descuento": 0.00,           // Opcional
-      "codigo_descuento": "szkfumo"  // Opcional, código de descuento (cadena)
+      "descuento": 0.00,           # Opcional
+      "codigo_descuento": "szkfumo"  # Opcional
     }
     """
-    user_id = request.data.get('user_id')
-    items = request.data.get('items', [])
-    direccion = request.data.get('direccion')
-    descuento = request.data.get('descuento', 0)
+    user_id            = request.data.get('user_id')
+    items              = request.data.get('items', [])
+    direccion          = request.data.get('direccion', '').strip()
+    descuento          = request.data.get('descuento', 0)
     codigo_descuento_str = request.data.get('codigo_descuento')
 
     if not user_id or not items:
         return JsonResponse({"error": "Faltan user_id o items"}, status=400)
 
+    # 1️⃣ Obtener el usuario
     try:
         user = Usuario.objects.get(id=user_id)
     except Usuario.DoesNotExist:
         return JsonResponse({"error": "Usuario no existe"}, status=404)
 
-    # Procesar el código de descuento recibido (si existe)
+    # 2️⃣ Procesar código de descuento
     codigo_descuento_obj = None
     if codigo_descuento_str:
-        codigo_descuento_str = codigo_descuento_str.strip()
-        print("Código descuento recibido:", codigo_descuento_str)
         try:
-            codigo_descuento_obj = CodigoDescuento.objects.get(codigo=codigo_descuento_str)
-            print("Código descuento encontrado:", codigo_descuento_obj.codigo)
+            codigo_descuento_obj = CodigoDescuento.objects.get(codigo=codigo_descuento_str.strip())
         except CodigoDescuento.DoesNotExist:
-            print("No se encontró un código de descuento para:", codigo_descuento_str)
             codigo_descuento_obj = None
 
-    # Crear el pedido asignando la instancia de descuento (si existe)
+    # 3️⃣ Crear el Pedido (sin totales aún)
     pedido = Pedido.objects.create(
-        usuario=user,
-        direccion_envio=direccion,
-        total=Decimal('0.00'),
-        total_con_descuento=Decimal('0.00'),
-        descuento_aplicado=Decimal(descuento),
-        codigo_descuento=codigo_descuento_obj
+        usuario            = user,
+        direccion_envio    = direccion,
+        total              = Decimal('0.00'),
+        total_con_descuento= Decimal('0.00'),
+        descuento_aplicado = Decimal(descuento),
+        codigo_descuento   = codigo_descuento_obj
     )
 
+    # 4️⃣ Recorrer items y crear ProductoPedido incluyendo color_id y talla_id
     total_calculado = Decimal('0.00')
     for item in items:
         producto_id = item.get('id')
-        cantidad = item.get('cantidad', 1)
+        cantidad    = item.get('cantidad', 1)
+        color_id    = item.get('color_id')
+        talla_id    = item.get('talla_id')
+
         try:
             prod = Producto.objects.get(id=producto_id)
         except Producto.DoesNotExist:
             return JsonResponse({"error": f"Producto {producto_id} no encontrado"}, status=404)
 
+        # Sumar al total
         subtotal = prod.precio * cantidad
         total_calculado += subtotal
 
+        # Aquí es donde antes no incluías color_id ni talla_id
         ProductoPedido.objects.create(
-            pedido=pedido,
-            producto=prod,
-            cantidad=cantidad,
-            precio=prod.precio
+            pedido     = pedido,
+            producto   = prod,
+            cantidad   = cantidad,
+            precio     = prod.precio,
+            color_id   = color_id,   # ← Nuevo
+            talla_id   = talla_id    # ← Nuevo
         )
 
-        #if prod.stock >= cantidad:
-        #    prod.stock -= cantidad
-        #    prod.save()
-        #else:
-        #    return JsonResponse({"error": f"Stock insuficiente para {prod.nombre}"}, status=400)
-
-    pedido.total = total_calculado
+    # 5️⃣ Actualizar totales y devolver respuesta
+    pedido.total               = total_calculado
     pedido.total_con_descuento = total_calculado - Decimal(descuento)
     if pedido.total_con_descuento < 0:
         pedido.total_con_descuento = Decimal('0.00')
-    
     pedido.save()
-    pedido.refresh_from_db()  # Asegurarse de que el pedido tenga los datos actualizados
-
-    print("Pedido final - código descuento:", pedido.codigo_descuento)  # Debería mostrar la instancia o None
 
     return JsonResponse({
-        "message": "Pedido creado con éxito",
-        "pedido_id": pedido.id,
-        "total": float(pedido.total),
+        "message":           "Pedido creado con éxito",
+        "pedido_id":         pedido.id,
+        "total":             float(pedido.total),
         "total_con_descuento": float(pedido.total_con_descuento),
     }, status=201)
 
@@ -815,9 +804,37 @@ def lista_productos(request):
     return render(request, 'suzaku/lista_productos.html', {'productos': productos})
 
 
+
+from rest_framework import status
+from rest_framework.response import Response
+
 class PedidoViewSet(viewsets.ModelViewSet):
     queryset = Pedido.objects.all()
     serializer_class = PedidoSerializer
+
+    def create(self, request, *args, **kwargs):
+        data = request.data.copy()
+        # 1️⃣ Saca los items que vienen bajo "items" (no "productos")
+        productos_data = data.pop('items', [])
+
+        # 2️⃣ Crea el pedido con los datos restantes
+        pedido_serializer = PedidoCrearSerializer(data=data)
+        pedido_serializer.is_valid(raise_exception=True)
+        pedido = pedido_serializer.save()
+
+        # 3️⃣ Añade cada producto con color y talla
+        for p in productos_data:
+            ProductoPedido.objects.create(
+                pedido=pedido,
+                producto_id = p['id'],           # coincide con tu payload
+                cantidad     = p['cantidad'],
+                precio       = p.get('precio', 0),
+                color_id     = p.get('color_id'),  # ahora sí lee color_id
+                talla_id     = p.get('talla_id')   # y talla_id
+            )
+
+        # 4️⃣ Devuelve el pedido ya serializado
+        return Response(PedidoSerializer(pedido).data, status=status.HTTP_201_CREATED)
 
 
 # Vistas tipo ViewSet para cada modelo

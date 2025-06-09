@@ -98,13 +98,6 @@ export class ProductosComponent implements OnInit {
   }, 900);
 }
 
-
-
-
-
-
-
-
  trackProducto(index: number, producto: any): number {
    return producto.id;
  }
