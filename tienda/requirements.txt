@@ -6,14 +6,18 @@ djangorestframework-simplejwt==5.3.1
 # 🖼️ Para manejo de imágenes
 Pillow==10.2.0
 
-# ⚙️ Soporte para CORS si lo usas en local con frontend separado
+# ⚙️ CORS (para conexión con frontend Angular)
 django-cors-headers==4.3.1
 
-# 📦 Otras utilidades comunes en proyectos Django
+# 🔐 Variables de entorno
 python-dotenv==1.0.1
 
-# 🗃️ Si usas PostgreSQL en lugar de SQLite
+# 🗃️ PostgreSQL
 psycopg2-binary==2.9.9
 
-# 🧪 (Opcional) Testing o herramientas adicionales
+# 📊 Ciencia de datos y machine learning
+pandas==2.2.2
+scikit-learn==1.4.2
+
+# 🧪 Testing y herramientas opcionales
 # coverage==7.4.4

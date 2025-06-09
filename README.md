@@ -33,6 +33,11 @@
 
 ## ⚙️ Instalación Local (Modo Desarrollo)
 
+**Instalar Python 3 y configurarlo**
+    ```bash
+    sudo apt update
+    sudo apt install python3 python3-pip python-is-python3 -y
+
 1. **Clonar el repositorio**
    ```bash
    git clone https://github.com/Diiegoreeyes/FCT-suzaku-esports
