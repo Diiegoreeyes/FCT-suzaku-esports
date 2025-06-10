@@ -73,26 +73,25 @@ ssh -i suzaku-key.pem ubuntu@TU_IP_PUBLICA
 ```
 python3.10-venv
 
-### 2. Clonar y preparar entorno
+### 2. Instaslaciones previa
 ```bash
 sudo apt update
 sudo apt install python3 python3-pip python3.10-venv python-is-python3 -y
 sudo apt install postgresql postgresql-contrib -y
+```
+
+### 3. Configurar Django para producción
+```bash
 git clone https://github.com/Diiegoreeyes/FCT-suzaku-esports
 cd FCT-suzaku-esports
 python -m venv venv
 source venv/bin/activate
-```
-
-### 3. Configurar Django para producción (temporal)
-```bash
 cd tienda
 pip install -r requirements.txt
 ```
 
 ### 4. Crear base de datos en PostgreSQL
 ```bash
-sudo apt install postgresql postgresql-contrib -y
 sudo -u postgres psql
 CREATE DATABASE bd_suzaku;
 CREATE USER diego WITH PASSWORD 'diego';
@@ -104,7 +103,7 @@ GRANT ALL PRIVILEGES ON DATABASE bd_suzaku TO diego;
 ```
 
 ✅ **NOTA IMPORTANTE:** 
-# Recuerda editar `ALLOWED_HOSTS` en `settings.py` y permitir el tráfico (Django):
+### Recuerda editar `ALLOWED_HOSTS` en `settings.py` y permitir el tráfico (Django):
 ```bash
 nano settings
 
@@ -112,15 +111,7 @@ ALLOWED_HOSTS = ['*']
 
 Ctrl+o y Ctrl+x
 ```
-
-# Sustituye localhost por tu IP pública en Angular (solo para pruebas)
-```bash
-grep -rl '127.0.0.1:8000' src/app | xargs sed -i 's|127.0.0.1:8000|TU_IP_PUBLICA:8000|g'
-ng build --configuration production
-http-server dist/frontend-suzaku --host 0.0.0.0 --port 4200
-```
-
-# Y si quieres mantener compatibilidad con desarrollo local:
+### Y si quieres mantener compatibilidad con desarrollo local:
 ```python
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'TU_IP_PUBLICA']
 ```
@@ -134,14 +125,18 @@ python manage.py loaddata backup.json
 python manage.py runserver 0.0.0.0:8000
 ```
 
+
+
 ### 6. Iniciar el Frontend (Angular)
 ```bash
 cd ../frontend-suzaku
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt install -y nodejs
-npm install
-ng serve --host 0.0.0.0 --port 4200
-```
+sudo npm install -g http-server 
+sudo npm install -g @angular/cli
+grep -rl '127.0.0.1:8000' src/app | xargs sed -i 's|127.0.0.1:8000|TU_IP_PUBLICA:8000|g'
+ng build --configuration production
+http-server dist/frontend-suzaku --host 0.0.0.0 --port 4200```
 
 ### 7. Accede desde otro dispositivo
 En tu navegador:  
