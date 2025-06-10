@@ -57,7 +57,7 @@ python manage.py runserver
 cd frontend-suzaku
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt install -y nodejs
-npm install
+sudo npm install -g @angular/cli
 ng serve --open
 ```
 
@@ -71,11 +71,12 @@ ng serve --open
 ```bash
 ssh -i suzaku-key.pem ubuntu@TU_IP_PUBLICA
 ```
+python3.10-venv
 
 ### 2. Clonar y preparar entorno
 ```bash
 sudo apt update
-sudo apt install python3 python3-pip python-is-python3 -y
+sudo apt install python3 python3-pip python3.10-venv python-is-python3 -y
 sudo apt install postgresql postgresql-contrib -y
 git clone https://github.com/Diiegoreeyes/FCT-suzaku-esports
 cd FCT-suzaku-esports
@@ -87,12 +88,11 @@ source venv/bin/activate
 ```bash
 cd tienda
 pip install -r requirements.txt
-# Sustituye localhost por tu IP pública (solo para pruebas)
-grep -rl "127.0.0.1" ./ | xargs sed -i 's/127.0.0.1/TU_IP_PUBLICA/g'
 ```
 
 ### 4. Crear base de datos en PostgreSQL
 ```bash
+sudo apt install postgresql postgresql-contrib -y
 sudo -u postgres psql
 CREATE DATABASE bd_suzaku;
 CREATE USER diego WITH PASSWORD 'diego';
@@ -102,6 +102,30 @@ ALTER ROLE diego SET timezone TO 'UTC';
 GRANT ALL PRIVILEGES ON DATABASE bd_suzaku TO diego;
 \q
 ```
+
+✅ **NOTA IMPORTANTE:** 
+# Recuerda editar `ALLOWED_HOSTS` en `settings.py` y permitir el tráfico (Django):
+```bash
+nano settings
+
+ALLOWED_HOSTS = ['*']
+
+Ctrl+o y Ctrl+x
+```
+
+# Sustituye localhost por tu IP pública en Angular (solo para pruebas)
+```bash
+grep -rl '127.0.0.1:8000' src/app | xargs sed -i 's|127.0.0.1:8000|TU_IP_PUBLICA:8000|g'
+ng build --configuration production
+http-server dist/frontend-suzaku --host 0.0.0.0 --port 4200
+```
+
+# Y si quieres mantener compatibilidad con desarrollo local:
+```python
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'TU_IP_PUBLICA']
+```
+
+
 
 ### 5. Cargar datos y ejecutar servidor
 ```bash
@@ -127,12 +151,3 @@ http://TU_IP_PUBLICA:4200
 
 ---
 
-✅ **NOTA IMPORTANTE:** Recuerda editar `ALLOWED_HOSTS` en `settings.py` y poner tu IP pública:
-```python
-ALLOWED_HOSTS = ['TU_IP_PUBLICA']
-```
-
-Y si quieres mantener compatibilidad con desarrollo local:
-```python
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'TU_IP_PUBLICA']
-```
