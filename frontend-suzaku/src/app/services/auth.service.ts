@@ -73,9 +73,20 @@ export class AuthService {
   }
   
   getUserFoto(): string {
-    const user = this.obtenerUsuarioActual(); // <- asegúrate de tener este método o ajusta según lo tengas
-    return user?.foto || '/default-user.png';
+    const user = this.obtenerUsuarioActual();
+    
+    if (user?.foto) {
+      // Si ya es una URL absoluta (empieza por http), devuélvela tal cual
+      if (user.foto.startsWith('http')) {
+        return user.foto;
+      }
+      // Si es una ruta relativa, prepend con la URL base del backend
+      return 'http://127.0.0.1:8000' + user.foto;
+    }
+
+    return '/default-user.png';
   }
+
   
   
   

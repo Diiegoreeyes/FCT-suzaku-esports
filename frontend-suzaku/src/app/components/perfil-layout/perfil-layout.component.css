@@ -1,22 +1,35 @@
-.perfil-container {
+/* CONTENEDOR PRINCIPAL DEL LAYOUT */
+.layout-container {
   display: flex;
   flex-direction: row;
+  flex-wrap: nowrap; /* evita que el contenido baje */
   gap: 20px;
   padding: 20px;
+  min-height: 100vh;
+  background-color: #fafafa;
+  box-sizing: border-box;
+  width: 100vw;
+  overflow-x: auto;
 }
 
+/* SIDEBAR */
 .sidebar {
-  width: 250px; /* Ajusta el ancho según prefieras */
-  background-color: #f5f5f5;
-  padding: 15px;
-  border-radius: 4px;
+  width: 220px;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  flex-shrink: 0; /* no se reduce */
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
 }
 
+/* NAV DEL SIDEBAR */
 .sidebar nav ul {
   list-style: none;
   padding: 0;
   margin: 0;
-  display: block; /* Forzamos el layout vertical */
 }
 
 .sidebar nav ul li {
@@ -24,20 +37,118 @@
 }
 
 .sidebar nav ul li a {
-  display: block;  /* Cada enlace ocupa toda la línea */
+  display: block;
   text-decoration: none;
   color: #333;
   font-weight: 500;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.sidebar nav ul li a:hover {
+  background-color: #FFE0B2; /* naranja suave al hover */
 }
 
 .sidebar nav ul li a.active {
-  color: #007bff;
+  background-color: #FF6D00; /* naranja Suzaku */
+  color: white;
 }
 
+/* CONTENIDO PRINCIPAL */
 .content {
-  flex: 1;
+  flex: 1 1 auto;
   background-color: #fff;
-  padding: 20px;
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 25px 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  min-height: 80vh;
+  box-sizing: border-box;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* TITULOS */
+.content h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #FF6D00; /* naranja Suzaku para los títulos */
+}
+
+/* FORMULARIOS Y GRUPOS DE FORMULARIO */
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #333;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px 12px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  transition: border-color 0.3s;
+}
+
+.form-group input:focus {
+  border-color: #FF6D00;
+  outline: none;
+}
+
+/* BOTONES */
+button[type="submit"],
+button {
+  background-color: transparent;
+  color: #FF6D00;
+  border: 2px solid #FF6D00;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+  user-select: none;
+}
+
+button[type="submit"]:hover,
+button:hover {
+  background-color: #FF6D00;
+  color: white;
+}
+
+/* ESTILOS PARA FORMULARIOS Y OTROS BOTONES */
+button:disabled,
+button[disabled] {
+  border-color: #e0e0e0;
+  color: #a0a0a0;
+  background-color: transparent;
+  cursor: not-allowed;
+}
+
+/* PARA IMÁGENES Y OTROS ELEMENTOS */
+img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+/* AJUSTES PARA MÓVILES */
+@media (max-width: 768px) {
+  .layout-container {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+  }
+
+  .content {
+    width: 100%;
+    min-height: auto;
+  }
 }

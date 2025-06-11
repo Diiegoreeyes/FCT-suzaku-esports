@@ -10,4 +10,10 @@ import { RouterModule } from '@angular/router';
   templateUrl: './perfil-layout.component.html',
   styleUrls: ['./perfil-layout.component.css']
 })
-export class PerfilLayoutComponent {}
+export class PerfilLayoutComponent {
+  mostrarSidebar: boolean = true;
+
+  toggleSidebar() {
+    this.mostrarSidebar = !this.mostrarSidebar;
+  }
+}

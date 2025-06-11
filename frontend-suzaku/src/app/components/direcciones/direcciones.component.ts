@@ -15,6 +15,7 @@ export class DireccionesComponent implements OnInit {
   direcciones: any[] = [];
   direccionForm!: FormGroup;
   mensaje: string = '';
+  direccionEditando: any = null;
 
   mostrarFormulario: boolean = false; // Control de visibilidad para "Agregar Nueva Dirección"
 
@@ -53,40 +54,77 @@ export class DireccionesComponent implements OnInit {
     });
   }
 
+  // Método para preparar edición
+  editarDireccion(dir: any): void {
+    this.direccionEditando = dir;
+    this.mostrarFormulario = true;
+
+    this.direccionForm.patchValue({
+      alias: dir.alias,
+      direccion: dir.direccion,
+      ciudad: dir.ciudad,
+      provincia: dir.provincia,
+      codigo_postal: dir.codigo_postal,
+      pais: dir.pais
+    });
+
+    this.mensaje = '';
+  }
   // Toggle para mostrar/ocultar el formulario de nueva dirección
   toggleFormulario(): void {
-    this.mostrarFormulario = !this.mostrarFormulario;
-    if (this.mostrarFormulario) {
+    if (this.mostrarFormulario && this.direccionEditando) {
+      this.direccionEditando = null; // cancelar edición
       this.direccionForm.reset();
       this.mensaje = '';
+      this.mostrarFormulario = false;
+    } else {
+      this.mostrarFormulario = !this.mostrarFormulario;
+      if (this.mostrarFormulario) {
+        this.direccionForm.reset();
+        this.mensaje = '';
+      }
     }
   }
 
-  // Enviar el formulario para crear una nueva dirección
   agregarDireccion(): void {
     if (this.direccionForm.invalid) {
       return;
     }
 
-    const data = {
-      alias: this.direccionForm.get('alias')?.value,
-      direccion: this.direccionForm.get('direccion')?.value,
-      ciudad: this.direccionForm.get('ciudad')?.value,
-      provincia: this.direccionForm.get('provincia')?.value,
-      codigo_postal: this.direccionForm.get('codigo_postal')?.value,
-      pais: this.direccionForm.get('pais')?.value
-    };
+    const data = this.direccionForm.value;
 
-    this.direccionesService.crearDireccion(data).subscribe({
-      next: (res) => {
-        this.mensaje = "Dirección creada exitosamente";
+    if (this.direccionEditando) {
+      // Actualizar
+      this.actualizarDireccion(this.direccionEditando.id, data);
+    } else {
+      // Crear nueva
+      this.direccionesService.crearDireccion(data).subscribe({
+        next: (res) => {
+          this.mensaje = "Dirección creada exitosamente";
+          this.direccionForm.reset();
+          this.mostrarFormulario = false;
+          this.cargarDirecciones();
+        },
+        error: (err) => {
+          console.error('Error al crear la dirección', err);
+          this.mensaje = "Error al crear la dirección";
+        }
+      });
+    }
+  }
+
+  actualizarDireccion(id: number, data: any): void {
+    this.direccionesService.actualizarDireccion(id, data).subscribe({
+      next: () => {
+        this.mensaje = "Dirección actualizada correctamente";
         this.direccionForm.reset();
-        this.mostrarFormulario = false; // Ocultamos el formulario tras crear
-        this.cargarDirecciones(); // Recargar direcciones para ver la nueva
+        this.mostrarFormulario = false;
+        this.direccionEditando = null;
+        this.cargarDirecciones();
       },
       error: (err) => {
-        console.error('Error al crear la dirección', err);
-        this.mensaje = "Error al crear la dirección";
+        console.error('Error al actualizar dirección', err);
+        this.mensaje = "Error al actualizar la dirección";
       }
     });
   }

@@ -4,47 +4,120 @@
   padding: 20px;
 }
 
+h2 {
+  font-weight: 700;
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+h3 {
+  color: #FF6F00; /* naranja Suzaku */
+  font-weight: 700;
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+}
+
 .direccion-card {
   background-color: #fff;
   border: 1px solid #ddd;
-  border-radius: 6px;
+  border-radius: 12px; /* bordes suaves */
   padding: 15px;
   margin-bottom: 15px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  transition: box-shadow 0.3s ease;
+}
+
+.direccion-card:hover {
+  box-shadow: 0 4px 12px rgba(255, 111, 0, 0.15); /* sombra naranja */
 }
 
 form {
   background-color: #f7f7f7;
-  padding: 15px;
-  border-radius: 6px;
+  padding: 20px;
+  border-radius: 12px; /* bordes suaves */
   margin-top: 20px;
+  box-shadow: inset 0 0 6px rgba(0,0,0,0.05);
 }
 
 form div {
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 }
 
 form label {
   display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #333;
 }
 
 form input {
   width: 100%;
-  padding: 8px;
+  padding: 10px;
   box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 10px; /* bordes suaves */
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
 }
 
+form input:focus {
+  border-color: #FF6F00;
+  outline: none;
+  box-shadow: 0 0 6px rgba(255, 111, 0, 0.3);
+}
+
+/* Botones minimalistas */
+
 button {
-  padding: 10px 15px;
-  background-color: #28a745;
-  border: none;
-  color: #fff;
-  border-radius: 4px;
+  padding: 12px 24px;
+  margin-right: 12px;
+  background-color: #fff;         /* fondo blanco */
+  color: #FF6F00;                 /* texto naranja */
+  border: 2px solid #FF6F00;     /* borde naranja */
+  border-radius: 12px;            /* bordes suaves */
+  font-weight: 700;
+  font-size: 1rem;
   cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+  user-select: none;
+  box-shadow: none;
 }
 
 button:hover {
-  background-color: #218838;
+  background-color: #FF6F00;      /* fondo naranja al hover */
+  color: #fff;                    /* texto blanco al hover */
+  box-shadow: 0 4px 8px rgba(255, 111, 0, 0.4);
+}
+
+button:disabled {
+  background-color: #FFF3E0;      /* fondo muy suave naranja */
+  color: #FFB74D;                 /* texto naranja claro */
+  border-color: #FFB74D;          /* borde naranja claro */
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Botones dentro de las tarjetas de dirección */
+
+.direccion-card button {
+  background-color: #fff;
+  color: #FF6F00;
+  border: 2px solid #FF6F00;
+  padding: 8px 18px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-top: 10px;
+  border-radius: 10px;
+  box-shadow: none;
+  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.direccion-card button:hover {
+  background-color: #FF6F00;
+  color: #fff;
+  box-shadow: 0 4px 8px rgba(255, 111, 0, 0.4);
+}
+
+.direccion-card button + button {
+  margin-left: 10px;
 }

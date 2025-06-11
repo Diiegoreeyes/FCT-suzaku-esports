@@ -44,7 +44,8 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     # ❌ NO tengas password = models.CharField(...) 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-
+    foto = models.ImageField(upload_to='usuarios/',default='usuarios/default-user.png',null=True,blank=True)
+    
     objects = UsuarioManager()
 
     USERNAME_FIELD = "email"

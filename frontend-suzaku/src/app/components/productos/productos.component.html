@@ -10,54 +10,29 @@
 </nav>
 
 <section class="productos-layout">
-  <!-- 📦 CONTENEDOR para filtros y botón -->
-  <div class="filtros-container" style="position: relative; display: flex;">
-    <!-- 🧰 Botón para mostrar filtros -->
-    <div
-      *ngIf="!mostrarFiltros"
-      class="btn-toggle-filtros"
-      (click)="mostrarFiltros = true"
-      style="
-        position: absolute;
-        left: 0;
-        height: 120px;
-        width: 30px;
-        background-color: #f5f5f5;
-        border: none;
-        border-radius: 0 10px 10px 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        top: 0;
-        z-index: 10;
-      ">
-      &gt;
-    </div>
+  <!-- Botón fijo para mostrar filtros cuando están ocultos -->
+  <button
+    *ngIf="!mostrarFiltros"
+    class="btn-toggle-filtros"
+    (click)="mostrarFiltros = true"
+    aria-label="Mostrar filtros"
+    title="Mostrar filtros"
+  >
+    ❯
+  </button>
 
-    <!-- 🧰 Panel de filtros (solo si están visibles) -->
-    <aside class="sidebar-filtros" *ngIf="mostrarFiltros" style="position: relative;">
-      <!-- ❌ Botón para ocultar filtros -->
-      <div
-        class="btn-toggle-filtros"
+  <!-- Contenedor para filtros -->
+  <div class="filtros-container" *ngIf="mostrarFiltros">
+    <aside class="sidebar-filtros">
+      <!-- Botón para ocultar filtros, dentro del panel -->
+      <button
+        class="btn-toggle-filtros cerrar"
         (click)="mostrarFiltros = false"
-        style="
-          position: absolute;
-          right: -15px;
-          height: 120px;
-          width: 30px;
-          background-color: #f5f5f5;
-          border: none;
-          border-radius: 0 10px 10px 0;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          top: 0;
-          z-index: 10;
-        ">
-        &lt;
-      </div>
+        aria-label="Ocultar filtros"
+        title="Ocultar filtros"
+      >
+        ❮
+      </button>
 
       <h3>Filtrar Productos</h3>
 
@@ -70,7 +45,8 @@
         <option *ngFor="let t of tiposDisponibles" [value]="t">{{ t }}</option>
       </select>
 
-      <!-- 🔽 FILTRO: Tallas -->
+      <!-- Resto de filtros (tallas, colores, etc.) -->
+
       <div class="filtro-desplegable">
         <div class="filtro-header" (click)="toggleTallas()">Tallas <span [class.rotado]="mostrarTallas">▼</span></div>
         <div class="filtro-body" *ngIf="mostrarTallas">
@@ -81,7 +57,6 @@
         </div>
       </div>
 
-      <!-- 🎨 FILTRO: Colores -->
       <div class="filtro-desplegable">
         <div class="filtro-header" (click)="toggleColores()">Colores <span [class.rotado]="mostrarColores">▼</span></div>
         <div class="filtro-body" *ngIf="mostrarColores">
@@ -97,7 +72,7 @@
     </aside>
   </div>
 
-  <!-- 🛍️ Productos -->
+  <!-- Aquí sigue tu contenido de productos -->
   <div class="contenido-productos">
     <h2>Lista de Productos</h2>
     <div class="productos-container">

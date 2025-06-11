@@ -24,32 +24,26 @@ class UsuarioSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Usuario
-        exclude = ['groups', 'user_permissions','is_active']  
-        
+        fields = ['id', 'nombre', 'apellidos', 'email', 'foto']  # ✅ SOLO esto
+
     def create(self, validated_data):
-            # Extrae la contraseña y el resto de campos
-            password = validated_data.pop('password', None)
-            # Llama a create_user() para cifrar la contraseña
-            user = Usuario.objects.create_user(**validated_data)
-            if password:
-                user.set_password(password)
-            user.save()
-            return user
-    
+        password = validated_data.pop('password', None)
+        user = Usuario.objects.create_user(**validated_data)
+        if password:
+            user.set_password(password)
+        user.save()
+        return user
+
     def update(self, instance, validated_data):
-        # Actualiza los campos de texto
         instance.nombre = validated_data.get('nombre', instance.nombre)
         instance.apellidos = validated_data.get('apellidos', instance.apellidos)
         instance.email = validated_data.get('email', instance.email)
-        instance.direccion = validated_data.get('direccion', instance.direccion)
-        
-        # Actualiza la foto si se envía
-        if 'foto' in validated_data:
-            instance.foto = validated_data.get('foto')
-        
+
+        nueva_foto = validated_data.get('foto', None)
+        if nueva_foto:
+            instance.foto = nueva_foto
+
         instance.save()
-        # Para depurar, imprime el valor actualizado de la foto
-        print("Foto actualizada:", instance.foto.url if instance.foto else "Sin foto")
         return instance
 
 class DireccionSerializer(serializers.ModelSerializer):

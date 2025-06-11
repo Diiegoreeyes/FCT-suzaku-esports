@@ -1,334 +1,192 @@
+/* Layout principal */
 .productos-layout {
   display: flex;
-  gap: 2rem;
+  gap: 1.5rem;
   padding: 1rem;
 }
 
-/* Filtros en columna lateral */
+/* Contenedor relativo para filtros y contenido */
+.filtros-container {
+  display: flex;
+  flex-shrink: 0; /* No se contrae */
+}
+
+/* Panel filtros */
 .sidebar-filtros {
   width: 250px;
-  background: #f8f8f8;
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 0 4px rgba(0,0,0,0.1);
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  position: relative;
 }
 
+/* Título filtros */
 .sidebar-filtros h3 {
-  margin-bottom: 1rem;
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #FF6D00; /* Naranja Suzaku */
+  font-weight: bold;
+  font-size: 1.25rem;
 }
 
+.btn-toggle-filtros{
+  background-color: transparent;
+  color: #FF6D00;
+  border: 2px solid #FF6D00;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+  user-select: none;
+}
+.btn-toggle-filtros:hover{
+  background-color: #FF6D00;
+  color: white;
+}
+
+/* BOTÓN CERRAR filtros (dentro del panel, arriba derecha) */
+.btn-toggle-filtros.cerrar {
+  background-color: transparent;
+  color: #FF6D00;
+  border: 2px solid #FF6D00;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+  user-select: none;
+}
+
+.btn-toggle-filtros.cerrar:hover {
+  background-color: #FF6D00;
+  color: white;
+}
+
+/* BOTÓN ABRIR filtros (cuando están ocultos) */
+.btn-toggle-filtros.abrir {
+  position: fixed;
+  top: 100px;
+  left: 0;
+  width: 40px;             /* ancho pequeño */
+  height: 120px;           /* alto estirado vertical */
+  background-color: #FF6D00; /* naranja Suzaku */
+  color: white;
+  border: none;
+  border-radius: 0 12px 12px 0;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.15);
+  transition: background-color 0.3s ease;
+  z-index: 1000;
+  user-select: none;
+}
+
+.btn-toggle-filtros.abrir:hover {
+  background-color: #cc5800; /* naranja más oscuro */
+}
+
+/* Inputs filtros */
 .input-filtro {
   width: 100%;
-  padding: 0.4rem 0.6rem;
-  margin-bottom: 0.6rem;
-  font-size: 0.95rem;
+  padding: 0.6rem 0.8rem;
+  margin-bottom: 1rem;
+  font-size: 1rem;
   border: 1px solid #ccc;
-  border-radius: 10px;
+  border-radius: 8px;
   background-color: #fdfdfd;
   box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
   box-sizing: border-box;
-  height: 38px;
+  transition: border-color 0.3s;
+  height: 40px;
 }
+
 .input-filtro:focus {
-  border-color: #2d7fff;
-  outline: none;
-}
-.input-filtro:focus {
-  border-color: #2d7fff;
+  border-color: #FF6D00; /* naranja Suzaku */
   outline: none;
 }
 
-.btn-filtrar,
+/* Botones reset y filtrar */
 .btn-reset {
   width: 100%;
-  padding: 0.6rem;
-  border-radius: 10px;
-  background-color: #f44336;
-  color: white;
-  font-weight: bold;
-  border: none;
+  padding: 0.8rem;
+  border-radius: 8px;
+  background-color: #f0f0f0;
+  color: #666;
+  font-weight: 600;
+  border: 2px solid #ccc;
   cursor: pointer;
-  margin-top: 1rem;
+  margin-top: 1.2rem;
+  transition: background-color 0.3s, color 0.3s;
+}
 
-}
-.btn-filtrar:hover {
-  background-color: #fb8c00;
-}
 .btn-reset:hover {
-  background-color: #d32f2f;
-}
-.btn-filtrar {
-  background-color: #2d7fff;
+  background-color: #FF6D00; /* naranja Suzaku */
   color: white;
+  border-color: #FF6D00;
 }
 
-.btn-reset {
-  background-color: #e0e0e0;
-  color: #333;
-}
-/* ─── Grupo de checks en vertical ───────────────────────── */
+/* Grupo checks vertical */
 .grupo-checks {
   display: flex;
-  flex-direction: column;    /* uno debajo de otro */
-  gap: 0.5rem;               /* espacio entre filas */
+  flex-direction: column;
+  gap: 0.6rem;
   margin-bottom: 1rem;
 }
 
-/* ─── Etiquetas con bordes suaves ───────────────────────── */
+/* Etiquetas check con bordes suaves */
 .grupo-checks label {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.4rem 0.6rem;
+  gap: 0.6rem;
+  padding: 0.5rem 0.8rem;
   border: 1px solid #ddd;
-  border-radius: 6px;
-  transition: background 0.2s;
+  border-radius: 10px;
+  transition: background 0.2s ease;
+  cursor: pointer;
 }
 .grupo-checks label:hover {
-  background: rgba(45, 125, 255, 0.05);
+  background-color: rgba(255, 109, 0, 0.1); /* naranja suave hover */
 }
 
-/* ─── Círculo de color un poco más suave ───────────────── */
-.circle-color {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  border: 1px solid #bbb;
-  box-shadow: inset 0 0 2px rgba(0,0,0,0.1);
-}
-
-/* Contenido de productos */
-.contenido-productos {
-  flex: 1;
-  margin-bottom: 4rem; /* Espacio respecto al footer */
-}
-
-.productos-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1.5rem;
-}
-
-
-
-.producto-card-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 1rem;
-}
-
-
-.producto-info-izquierda {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  justify-content: flex-start;
-}
-
-
-/* Imagen del producto */
-.producto-img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  border-radius: 10px;
-  border: 1px solid #eee;
-}
-
-.producto-img:hover {
-  transform: scale(1.05);
-}
-
-/* Precio debajo de la imagen */
-
-
-.precio {
-  font-size: 1rem;
-  font-weight: bold;
-  color: #4CAF50;
+/* Checkbox inline */
+.checkbox-linea {
   margin: 0;
-}
-
-/* Descripción */
-.descripcion {
-  font-size: 0.85rem;
-  color: #555;
-  margin-bottom: 0.75rem;
-  text-align: center;
-  min-height: 2.4em;
-}
-
-/* Extra info: colores y tallas */
-.producto-info-extra {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-}
-
-.color-group {
-  display: flex;
-  gap: 0.4rem;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.circle-color {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  border: 1px solid #999;
-  display: inline-block;
-}
-
-.talla-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.3rem;
-}
-
-.badge-talla {
-  background: #f3f3f3;
-  padding: 0.3rem 0.7rem;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  border: 1px solid #ccc;
-}
-
-/* Botón Agregar */
-.btn-agregar {
-  margin-top: auto;
-  padding: 0.5rem 1rem;
-  background: linear-gradient(to right, #4CAF50, #2E7D32);
-  color: white;
-  font-weight: bold;
-  border: none;
-  border-radius: 30px;
   cursor: pointer;
-  transition: background 0.3s, transform 0.2s;
 }
 
-.btn-agregar:hover {
-  background: linear-gradient(to right, #66BB6A, #388E3C);
-  transform: scale(1.05);
-}
-
-.producto-img {
-  width: 90%;
-  height: 180px;
-  object-fit: contain;
-  border-radius: 10px;
-  margin-bottom: 0.4rem;
-  border: 1px solid #eee;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.carrito-link {
-  position: relative;
-  z-index: 1;
-}
-
-.producto-img-clon {
-  transition: all 0.8s ease-in-out;
-  position: fixed;
-  z-index: 9999;
-  border-radius: 8px;
-  pointer-events: none;
-}
-.producto-titulo {
-  font-size: 1.2rem;
-  font-weight: bold;
-  margin: 0 0 4px 0; /* menos espacio debajo */
-  text-align: center;
-}
-
-/* Contenedor que organiza imagen + info a la derecha */
-.producto-card-content {
-  display: flex;
-  gap: 1rem;
-  align-items: flex-start;
-  justify-content: center;
-}
-
-/* Ajusta imagen */
-.producto-img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;        /* ✅ Escala sin recortar ni deformar */
-  border-radius: 12px;
-  border: 1px solid #eee;
-  background-color: white;    /* 🧼 Para uniformar fondo si la imagen no ocupa todo */
-}
-
-
-/* Colores y tallas */
-.producto-info-extra {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  justify-content: flex-start;
-}
-
-/* Círculos de color */
-.color-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-}
+/* Círculo color filtro */
 .circle-color {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  border: 1px solid #ccc;
-  box-shadow: inset 0 0 2px rgba(0,0,0,0.15);
+  border: 1px solid #ff6d00;
+  box-shadow: inset 0 0 3px rgba(255, 109, 0, 0.4);
 }
 
-
-
-
-.producto-info-extra {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  margin-top: 1rem;
-}
-.producto-card-content {
-  display: flex;
-  gap: 1rem;
-  align-items: flex-start;
-  justify-content: center;
+/* Contenedor productos para crecer */
+.contenido-productos {
+  flex: 1 1 0;
+  min-width: 0;
+  transition: margin-left 0.3s ease;
 }
 
-
-.producto-card-content {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-}
-.circle-color {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  border: 1px solid #999;
-  box-shadow: inset 0 0 2px rgba(0,0,0,0.2);
-}
-
-
-
-
+/* Contenedor productos en grid */
 .productos-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 1.5rem;
 }
 
+/* Tarjeta producto */
 .producto-card {
   background: #fff;
   border-radius: 10px;
@@ -343,7 +201,7 @@
   box-sizing: border-box;
 }
 
-
+/* Título producto */
 .producto-titulo {
   font-size: 1.2rem;
   font-weight: bold;
@@ -351,6 +209,7 @@
   text-align: center;
 }
 
+/* Precio */
 .precio {
   font-size: 1rem;
   font-weight: bold;
@@ -359,6 +218,7 @@
   text-align: center;
 }
 
+/* Imagen con colores */
 .imagen-con-colores {
   position: relative;
   width: 100%;
@@ -371,6 +231,7 @@
   background: white;
 }
 
+/* Imagen producto */
 .producto-img {
   width: 100%;
   height: 100%;
@@ -380,7 +241,7 @@
   background-color: white;
 }
 
-/* Colores en vertical, abajo a la derecha dentro de la imagen */
+/* Colores sobre imagen */
 .colores-sobre-imagen-vertical {
   position: absolute;
   bottom: 8px;
@@ -393,6 +254,7 @@
   border-radius: 8px;
 }
 
+/* Círculo color */
 .circle-color {
   width: 18px;
   height: 18px;
@@ -401,7 +263,7 @@
   box-shadow: inset 0 0 2px rgba(0,0,0,0.2);
 }
 
-/* Tallas más grandes y centradas */
+/* Grupo tallas */
 .talla-group {
   display: flex;
   flex-wrap: wrap;
@@ -410,6 +272,7 @@
   margin-top: 0.3rem;
 }
 
+/* Badge talla */
 .badge-talla {
   background: #f3f3f3;
   padding: 0.3rem 0.8rem;
@@ -417,9 +280,11 @@
   font-size: 0.95rem;
   border: 1px solid #ccc;
 }
+
+/* Navegación categorías */
 .nav-categorias {
   display: flex;
-  justify-content: center; /* 🟢 Centrado horizontal */
+  justify-content: center; /* Centrado horizontal */
   flex-wrap: wrap;
   gap: 10px;
   padding: 1rem 2rem 0.5rem;
@@ -428,7 +293,7 @@
   background-color: #fff;
 }
 
-
+/* Botones categorías */
 .btn-categoria {
   border: none;
   background-color: #f2f2f2;
@@ -448,15 +313,17 @@
   color: white;
 }
 
+/* Filtros desplegables */
 .filtro-desplegable {
   border: 1px solid #ccc;
   border-radius: 10px;
   margin-bottom: 0.8rem;
-  background-color: #fdfdfd; /* Mismo color que los inputs */
+  background-color: #fdfdfd;
   overflow: hidden;
   box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
 }
 
+/* Header filtro desplegable */
 .filtro-header {
   padding: 0.6rem 0.8rem;
   font-weight: bold;
@@ -468,6 +335,7 @@
   background-color: transparent;
 }
 
+/* Flecha rotada */
 .filtro-header span {
   transition: transform 0.3s ease;
 }
@@ -475,13 +343,18 @@
   transform: rotate(180deg);
 }
 
+/* Cuerpo filtro */
 .filtro-body {
   padding: 0.4rem 0.8rem 0.6rem;
   background-color: transparent;
 }
+
+/* Box sizing */
 .filtro-desplegable * {
   box-sizing: border-box;
 }
+
+/* Checkbox línea */
 .checkbox-linea {
   display: flex;
   align-items: center;
@@ -492,105 +365,4 @@
   background-color: #fdfdfd;
   margin-bottom: 0.5rem;
   cursor: pointer;
-}
-
-.filtros-toggle-container {
-  display: flex;
-  justify-content: flex-start;
-  padding: 0.5rem 1rem;
-}
-
-.btn-toggle-filtros {
-  width: 30px;
-  height: 40px;
-  padding: 0;
-  background-color: #2d7fff;
-  color: black; /* ✅ Ahora el texto ( < ó > ) será negro */
-  font-weight: bold;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 100px; /* ✅ Lo empuja 100px hacia abajo */
-}
-
-
-.btn-toggle-filtros:hover {
-  background-color: #1a5fd1;
-}
-
-/* Estilo especial para cuando la sidebar está oculta */
-.contenido-productos.expandido {
-  flex: 1 1 100%;
-  width: 100%;
-}
-.boton-lateral-filtros {
-  position: fixed;
-  top: 200px; /* Ajusta según el diseño */
-  left: 0;
-  z-index: 9999;
-  background-color: #2d7fff;
-  color: white;
-  padding: 0.6rem 0.7rem;
-  border-top-right-radius: 10px;
-  border-bottom-right-radius: 10px;
-  font-size: 1.2rem;
-  cursor: pointer;
-  box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
-  transition: background-color 0.3s;
-}
-
-.boton-lateral-filtros:hover {
-  background-color: #1b5edc;
-}
-/* 🔲 Contenedor relativo para mantener posición del botón incluso cuando el filtro no esté */
-.filtros-container {
-  position: relative;
-  display: flex;
-}
-
-/* 🔘 Botón para mostrar filtros (cuando están ocultos) */
-.toggle-btn-show {
-  position: absolute;
-  top: 10px; /* misma altura que el botón de cerrar */
-  left: 0;
-  background-color: #2d7fff;
-  color: white;
-  width: 36px;
-  height: 36px;
-  border-top-right-radius: 8px;
-  border-bottom-right-radius: 8px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  z-index: 10;
-  box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
-}
-
-/* 🔘 Botón para cerrar filtros */
-.toggle-btn {
-  position: absolute;
-  top: 10px;
-  right: -18px;
-  background-color: #2d7fff;
-  color: white;
-  width: 36px;
-  height: 36px;
-  border-top-right-radius: 8px;
-  border-bottom-right-radius: 8px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  z-index: 10;
-  box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
-}
-
-/* 🧱 Asegura posición relativa para los botones */
-.sidebar-filtros {
-  position: relative;
 }

@@ -1,7 +1,9 @@
-<!-- perfil-layout.component.html -->
-<div class="perfil-container">
-  <!-- Menú de navegación lateral -->
-  <div class="sidebar">
+<div class="layout-container">
+  <!-- Sidebar con botón incluido -->
+  <div class="sidebar" *ngIf="mostrarSidebar">
+    <!-- Botón para ocultar -->
+    <button class="btn-toggle-sidebar" (click)="mostrarSidebar = false">❮</button>
+
     <nav>
       <ul>
         <li><a routerLink="/perfil" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Mi Perfil</a></li>
@@ -13,7 +15,10 @@
       </ul>
     </nav>
   </div>
-  
+
+  <!-- Botón flotante para mostrar sidebar -->
+  <button *ngIf="!mostrarSidebar" class="btn-toggle-sidebar-flotante" (click)="mostrarSidebar = true">❯</button>
+
   <!-- Contenido principal -->
   <div class="content">
     <router-outlet></router-outlet>

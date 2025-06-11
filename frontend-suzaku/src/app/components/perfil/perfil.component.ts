@@ -44,8 +44,7 @@ export class PerfilComponent implements OnInit {
     this.perfilForm = this.fb.group({
       nombre: ['', Validators.required],
       apellidos: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      direccion: ['', Validators.required]
+      email: ['', [Validators.required, Validators.email]]
     });
     
     // Cargar datos del usuario
@@ -54,16 +53,21 @@ export class PerfilComponent implements OnInit {
         this.perfilForm.patchValue({
           nombre: user.nombre || '',
           apellidos: user.apellidos || '',
-          email: user.email || '',
+          email: user.email || ''
         });
+
         if (user.foto) {
           this.fotoUrl = user.foto;
         }
+
+        // 🔄 Refrescar localStorage actualizado
+        localStorage.setItem('usuario', JSON.stringify(user));
       },
       error: (err) => {
-        console.error('Error al obtener usuario', err);
+        console.error('Error al refrescar datos del usuario', err);
       }
     });
+
   }
   
   
@@ -76,50 +80,56 @@ export class PerfilComponent implements OnInit {
     }
   }
 
-  guardar(): void {
-    console.log('Método guardar iniciado');
-    if (this.perfilForm.invalid) {
-      console.log('Formulario inválido');
-      return;
-    }
-  
-    const formData = new FormData();
-    // Agregar todos los campos al FormData
-    formData.append('nombre', this.perfilForm.get('nombre')?.value);
-    formData.append('apellidos', this.perfilForm.get('apellidos')?.value);
-    formData.append('email', this.perfilForm.get('email')?.value);
-    if (this.fotoSeleccionada) {
-      formData.append('foto', this.fotoSeleccionada, this.fotoSeleccionada.name);
-    }
-  
-    if (!this.usuarioId) {
-      console.error('No se encontró usuario logueado para actualizar');
-      return;
-    }
-  
-    console.log('Enviando datos de actualización:', formData);
-  
-    this.usuarioService.updateUsuario(this.usuarioId, formData).subscribe({
-      next: (res) => {
-        console.log('Respuesta de actualización:', res);
-        alert('Perfil actualizado exitosamente');
-        // Forzar una nueva carga de los datos del usuario para refrescar la foto
-        this.usuarioService.getUsuario(this.usuarioId!).subscribe({
-          next: (user) => {
-            console.log('Datos actualizados del usuario:', user);
-            if (user.foto) {
-              this.fotoUrl = user.foto;
-            }
-          },
-          error: (err) => {
-            console.error('Error al refrescar datos del usuario', err);
-          }
-        });
-      },
-      error: (err) => {
-        console.error('Error al actualizar perfil', err);
-      }
-    });
+guardar(): void {
+  console.log('Método guardar iniciado');
+  if (this.perfilForm.invalid) {
+    console.log('Formulario inválido');
+    return;
   }
+
+  const formData = new FormData();
+  formData.append('nombre', this.perfilForm.get('nombre')?.value);
+  formData.append('apellidos', this.perfilForm.get('apellidos')?.value);
+  formData.append('email', this.perfilForm.get('email')?.value);
+
+  if (this.fotoSeleccionada) {
+    formData.append('foto', this.fotoSeleccionada, this.fotoSeleccionada.name);
+  }
+
+  if (!this.usuarioId) {
+    console.error('No se encontró usuario logueado para actualizar');
+    return;
+  }
+
+  console.log('Enviando datos de actualización:', formData);
+
+  this.usuarioService.updateUsuario(this.usuarioId, formData).subscribe({
+    next: (res) => {
+      console.log('Respuesta de actualización:', res);
+      alert('Perfil actualizado exitosamente');
+
+      // ✅ Refrescar los datos del usuario y actualizar el localStorage
+      this.usuarioService.getUsuario(this.usuarioId!).subscribe({
+        next: (user) => {
+          console.log('Datos actualizados del usuario:', user);
+          localStorage.setItem('usuario', JSON.stringify(user));  // ✅ actualiza el localStorage
+          if (user.foto) {
+            this.fotoUrl = user.foto;
+          }
+
+          // ✅ ACTUALIZAR localStorage para que el navbar muestre la foto nueva
+          localStorage.setItem('usuario', JSON.stringify(user));
+        },
+        error: (err) => {
+          console.error('Error al refrescar datos del usuario', err);
+        }
+      });
+    },
+    error: (err) => {
+      console.error('Error al actualizar perfil', err);
+    }
+  });
+}
+
   
 }
