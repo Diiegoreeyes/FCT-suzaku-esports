@@ -55,9 +55,7 @@ python manage.py runserver
 ### 3. Iniciar Proyecto - Frontend (Angular)
 ```bash
 cd frontend-suzaku
-curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-sudo apt install -y nodejs
-sudo npm install -g @angular/cli
+npm install
 ng serve --open
 ```
 
@@ -123,20 +121,36 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'TU_IP_PUBLICA']
 python manage.py migrate
 python manage.py loaddata backup.json
 python manage.py runserver 0.0.0.0:8000
+Si quieres permanentemente: nohup python manage.py runserver 0.0.0.0:8000 > django.log 2>&1 &
+
 ```
 
 
 
 ### 6. Iniciar el Frontend (Angular)
 ```bash
-cd ../frontend-suzaku
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt install -y nodejs
-sudo npm install -g http-server 
-sudo npm install -g @angular/cli
+sudo npm install -g lite-server
+npm install
 grep -rl '127.0.0.1:8000' src/app | xargs sed -i 's|127.0.0.1:8000|TU_IP_PUBLICA:8000|g'
 ng build --configuration production
-http-server dist/frontend-suzaku --host 0.0.0.0 --port 4200```
+cat > bs-config.js << 'EOF'
+module.exports = {
+  port: 4200,
+  server: {
+    baseDir: "dist/frontend-suzaku/browser",
+    middleware: {
+      1: require('connect-history-api-fallback')({
+        index: '/index.html',
+        verbose: true
+      })
+    }
+  }
+};
+EOF
+http-server dist/frontend-suzaku --host 0.0.0.0 --port 4200
+Si quieres permanentemente: nohup lite-server > lite.log 2>&1 &```
 
 ### 7. Accede desde otro dispositivo
 En tu navegador:  

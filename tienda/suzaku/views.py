@@ -299,6 +299,11 @@ from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from .models import Usuario, Pedido, Producto, ProductoPedido, CodigoDescuento
 
+from decimal import Decimal
+from django.http import JsonResponse
+from rest_framework.decorators import api_view
+from .models import Usuario, Pedido, Producto, ProductoPedido, CodigoDescuento, Stock
+
 @api_view(['POST'])
 def confirmar_pedido_view(request):
     """
@@ -310,20 +315,20 @@ def confirmar_pedido_view(request):
         {
           "id": <producto_id>,
           "cantidad": 1,
-          "color_id": 3,     # Opcional
-          "talla_id": 5      # Opcional
+          "color_id": 3,
+          "talla_id": 5
         },
         ...
       ],
       "direccion": "Nueva dirección ...",
-      "descuento": 0.00,           # Opcional
-      "codigo_descuento": "szkfumo"  # Opcional
+      "descuento": 0.00,
+      "codigo_descuento": "szkfumo"
     }
     """
-    user_id            = request.data.get('user_id')
-    items              = request.data.get('items', [])
-    direccion          = request.data.get('direccion', '').strip()
-    descuento          = request.data.get('descuento', 0)
+    user_id = request.data.get('user_id')
+    items = request.data.get('items', [])
+    direccion = request.data.get('direccion', '').strip()
+    descuento = Decimal(request.data.get('descuento', 0))
     codigo_descuento_str = request.data.get('codigo_descuento')
 
     if not user_id or not items:
@@ -345,55 +350,69 @@ def confirmar_pedido_view(request):
 
     # 3️⃣ Crear el Pedido (sin totales aún)
     pedido = Pedido.objects.create(
-        usuario            = user,
-        direccion_envio    = direccion,
-        total              = Decimal('0.00'),
-        total_con_descuento= Decimal('0.00'),
-        descuento_aplicado = Decimal(descuento),
-        codigo_descuento   = codigo_descuento_obj
+        usuario=user,
+        direccion_envio=direccion,
+        total=Decimal('0.00'),
+        total_con_descuento=Decimal('0.00'),
+        descuento_aplicado=descuento,
+        codigo_descuento=codigo_descuento_obj
     )
 
-    # 4️⃣ Recorrer items y crear ProductoPedido incluyendo color_id y talla_id
+    # 4️⃣ Recorrer items y procesar cada uno
     total_calculado = Decimal('0.00')
     for item in items:
         producto_id = item.get('id')
-        cantidad    = item.get('cantidad', 1)
-        color_id    = item.get('color_id')
-        talla_id    = item.get('talla_id')
+        cantidad = item.get('cantidad', 1)
+        color_id = item.get('color_id')
+        talla_id = item.get('talla_id')
 
         try:
             prod = Producto.objects.get(id=producto_id)
         except Producto.DoesNotExist:
             return JsonResponse({"error": f"Producto {producto_id} no encontrado"}, status=404)
 
-        # Sumar al total
-        subtotal = prod.precio * cantidad
-        total_calculado += subtotal
+        # 🔍 Buscar stock correspondiente
+        try:
+            stock_obj = Stock.objects.get(producto=prod, color_id=color_id, talla_id=talla_id)
+        except Stock.DoesNotExist:
+            return JsonResponse({
+                "error": f"Sin stock para {prod.nombre} (color ID {color_id}, talla ID {talla_id})"
+            }, status=400)
 
-        # Aquí es donde antes no incluías color_id ni talla_id
+        # ❌ Verificar disponibilidad
+        if stock_obj.cantidad < cantidad:
+            return JsonResponse({
+                "error": f"Stock insuficiente para {prod.nombre} (disponible: {stock_obj.cantidad}, solicitado: {cantidad})"
+            }, status=400)
+
+        # 🛍️ Crear ProductoPedido
         ProductoPedido.objects.create(
-            pedido     = pedido,
-            producto   = prod,
-            cantidad   = cantidad,
-            precio     = prod.precio,
-            color_id   = color_id,   # ← Nuevo
-            talla_id   = talla_id    # ← Nuevo
+            pedido=pedido,
+            producto=prod,
+            cantidad=cantidad,
+            precio=prod.precio,
+            color_id=color_id,
+            talla_id=talla_id
         )
 
-    # 5️⃣ Actualizar totales y devolver respuesta
-    pedido.total               = total_calculado
-    pedido.total_con_descuento = total_calculado - Decimal(descuento)
-    if pedido.total_con_descuento < 0:
-        pedido.total_con_descuento = Decimal('0.00')
+        # ✅ Restar stock
+        stock_obj.cantidad -= cantidad
+        stock_obj.save()
+
+        # ➕ Sumar al total
+        total_calculado += prod.precio * cantidad
+
+    # 5️⃣ Guardar totales y finalizar
+    pedido.total = total_calculado
+    pedido.total_con_descuento = max(Decimal('0.00'), total_calculado - descuento)
     pedido.save()
 
     return JsonResponse({
-        "message":           "Pedido creado con éxito",
-        "pedido_id":         pedido.id,
-        "total":             float(pedido.total),
+        "message": "Pedido creado con éxito",
+        "pedido_id": pedido.id,
+        "total": float(pedido.total),
         "total_con_descuento": float(pedido.total_con_descuento),
     }, status=201)
-
 
 
 ############################################################

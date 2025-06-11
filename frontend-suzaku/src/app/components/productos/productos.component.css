@@ -19,25 +19,43 @@
 
 .input-filtro {
   width: 100%;
-  margin-bottom: 0.8rem;
-  padding: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  margin-bottom: 0.6rem;
+  font-size: 0.95rem;
   border: 1px solid #ccc;
-  border-radius: 6px;
+  border-radius: 10px;
+  background-color: #fdfdfd;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+  box-sizing: border-box;
+  height: 38px;
+}
+.input-filtro:focus {
+  border-color: #2d7fff;
+  outline: none;
+}
+.input-filtro:focus {
+  border-color: #2d7fff;
+  outline: none;
 }
 
 .btn-filtrar,
 .btn-reset {
   width: 100%;
-  margin-bottom: 0.5rem;
-  padding: 0.5rem;
+  padding: 0.6rem;
+  border-radius: 10px;
+  background-color: #f44336;
+  color: white;
+  font-weight: bold;
   border: none;
-  border-radius: 6px;
   cursor: pointer;
-  background-color: #ffa726;
+  margin-top: 1rem;
 
 }
 .btn-filtrar:hover {
   background-color: #fb8c00;
+}
+.btn-reset:hover {
+  background-color: #d32f2f;
 }
 .btn-filtrar {
   background-color: #2d7fff;
@@ -398,4 +416,181 @@
   border-radius: 6px;
   font-size: 0.95rem;
   border: 1px solid #ccc;
+}
+.nav-categorias {
+  display: flex;
+  justify-content: center; /* 🟢 Centrado horizontal */
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 1rem 2rem 0.5rem;
+  border-bottom: 2px solid #eee;
+  margin-bottom: 1rem;
+  background-color: #fff;
+}
+
+
+.btn-categoria {
+  border: none;
+  background-color: #f2f2f2;
+  padding: 0.5rem 1rem;
+  border-radius: 1.5rem;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.btn-categoria:hover {
+  background-color: #e0e0e0;
+}
+
+.btn-categoria.activa {
+  background-color: #222;
+  color: white;
+}
+
+.filtro-desplegable {
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  margin-bottom: 0.8rem;
+  background-color: #fdfdfd; /* Mismo color que los inputs */
+  overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.filtro-header {
+  padding: 0.6rem 0.8rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95rem;
+  background-color: transparent;
+}
+
+.filtro-header span {
+  transition: transform 0.3s ease;
+}
+.filtro-header span.rotado {
+  transform: rotate(180deg);
+}
+
+.filtro-body {
+  padding: 0.4rem 0.8rem 0.6rem;
+  background-color: transparent;
+}
+.filtro-desplegable * {
+  box-sizing: border-box;
+}
+.checkbox-linea {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: #fdfdfd;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+}
+
+.filtros-toggle-container {
+  display: flex;
+  justify-content: flex-start;
+  padding: 0.5rem 1rem;
+}
+
+.btn-toggle-filtros {
+  width: 30px;
+  height: 40px;
+  padding: 0;
+  background-color: #2d7fff;
+  color: black; /* ✅ Ahora el texto ( < ó > ) será negro */
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 100px; /* ✅ Lo empuja 100px hacia abajo */
+}
+
+
+.btn-toggle-filtros:hover {
+  background-color: #1a5fd1;
+}
+
+/* Estilo especial para cuando la sidebar está oculta */
+.contenido-productos.expandido {
+  flex: 1 1 100%;
+  width: 100%;
+}
+.boton-lateral-filtros {
+  position: fixed;
+  top: 200px; /* Ajusta según el diseño */
+  left: 0;
+  z-index: 9999;
+  background-color: #2d7fff;
+  color: white;
+  padding: 0.6rem 0.7rem;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+  transition: background-color 0.3s;
+}
+
+.boton-lateral-filtros:hover {
+  background-color: #1b5edc;
+}
+/* 🔲 Contenedor relativo para mantener posición del botón incluso cuando el filtro no esté */
+.filtros-container {
+  position: relative;
+  display: flex;
+}
+
+/* 🔘 Botón para mostrar filtros (cuando están ocultos) */
+.toggle-btn-show {
+  position: absolute;
+  top: 10px; /* misma altura que el botón de cerrar */
+  left: 0;
+  background-color: #2d7fff;
+  color: white;
+  width: 36px;
+  height: 36px;
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+}
+
+/* 🔘 Botón para cerrar filtros */
+.toggle-btn {
+  position: absolute;
+  top: 10px;
+  right: -18px;
+  background-color: #2d7fff;
+  color: white;
+  width: 36px;
+  height: 36px;
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+}
+
+/* 🧱 Asegura posición relativa para los botones */
+.sidebar-filtros {
+  position: relative;
 }

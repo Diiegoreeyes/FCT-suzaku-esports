@@ -23,6 +23,13 @@ export class ProductosComponent implements OnInit {
   precioMax: number | null = null;
   filtroTipo: string = '';
   filtroCategoria: string = '';
+  categoriaSeleccionada: string = '';
+  mostrarTallas: boolean = false;
+  mostrarColores: boolean = false;
+  tallasEstado: { [nombre: string]: boolean } = {};
+  coloresEstado: { [nombre: string]: boolean } = {};
+  mostrarFiltros: boolean = true;
+  alturaBoton: number = 100; // valor por defecto
 
   // ✅ Chequeados de multi‐selección
   filtroTallasSelected: string[] = [];
@@ -68,6 +75,10 @@ export class ProductosComponent implements OnInit {
         console.error('Error al cargar productos:', error);
       }
     });
+    this.tallasEstado = {};
+    this.coloresEstado = {};
+    this.tallasDisponibles.forEach(t => this.tallasEstado[t] = false);
+    this.coloresDisponibles.forEach(c => this.coloresEstado[c.nombre] = false);
   }
 
   // 🆕 Marca o desmarca una talla en el filtro
@@ -86,6 +97,29 @@ export class ProductosComponent implements OnInit {
     } else {
       this.filtroColoresSelected = this.filtroColoresSelected.filter(c => c !== colorName);
     }
+  }
+  // 🧭 Selecciona una categoría desde el nav superior
+  seleccionarCategoria(categoria: string): void {
+    this.categoriaSeleccionada = categoria;
+    this.filtroCategoria = categoria;
+    this.aplicarFiltros();
+  }
+  toggleTallas(): void {
+    this.mostrarTallas = !this.mostrarTallas;
+  }
+  toggleFiltros() {
+    this.mostrarFiltros = !this.mostrarFiltros;
+
+    if (!this.mostrarFiltros) {
+      // 🧮 Guarda la altura vertical actual del aside
+      const aside = document.querySelector('.sidebar-filtros') as HTMLElement;
+      if (aside) {
+        this.alturaBoton = aside.offsetTop;
+      }
+    }
+  }
+  toggleColores(): void {
+    this.mostrarColores = !this.mostrarColores;
   }
 
   // 🔍 Aplica todos los filtros de forma combinada
@@ -114,16 +148,21 @@ export class ProductosComponent implements OnInit {
   }
 
   // 🔄 Resetea todos los filtros
-  resetFiltros(): void {
-    this.filtroNombre = '';
-    this.precioMin = null;
-    this.precioMax = null;
-    this.filtroTipo = '';
-    this.filtroCategoria = '';
-    this.filtroTallasSelected = [];
-    this.filtroColoresSelected = [];
-    this.productosFiltrados = [...this.productos];
-  }
+resetFiltros(): void {
+  this.filtroNombre = '';
+  this.precioMin = null;
+  this.precioMax = null;
+  this.filtroTipo = '';
+  this.filtroCategoria = '';
+  this.filtroTallasSelected = [];
+  this.filtroColoresSelected = [];
+
+  Object.keys(this.tallasEstado).forEach(k => this.tallasEstado[k] = false);
+  Object.keys(this.coloresEstado).forEach(k => this.coloresEstado[k] = false);
+
+  this.productosFiltrados = [...this.productos];
+}
+
 
   // 🛒 Agrega un producto al carrito con animación (ya existente)
   agregarAlCarrito(producto: any): void {

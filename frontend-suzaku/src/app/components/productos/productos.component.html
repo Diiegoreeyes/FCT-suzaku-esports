@@ -1,115 +1,119 @@
-<section class="productos-layout">
-  <!-- Filtros a la izquierda -->
-  <aside class="sidebar-filtros">
-    <h3>Filtrar Productos</h3>
-  
-    <!-- Buscar por nombre -->
-    <input
-      type="text"
-      [(ngModel)]="filtroNombre"
-      placeholder="Buscar por nombre"
-      class="input-filtro"
-    />
-  
-    <!-- Precio -->
-    <input
-      type="number"
-      [(ngModel)]="precioMin"
-      placeholder="Precio mínimo"
-      class="input-filtro"
-    />
-    <input
-      type="number"
-      [(ngModel)]="precioMax"
-      placeholder="Precio máximo"
-      class="input-filtro"
-    />
-  
-    <!-- Tipo -->
-    <select [(ngModel)]="filtroTipo" class="input-filtro">
-      <option value="">Todos los tipos</option>
-      <option *ngFor="let t of tiposDisponibles" [value]="t">
-        {{ t }}
-      </option>
-    </select>
-  
-    <!-- Categoría -->
-    <select [(ngModel)]="filtroCategoria" class="input-filtro">
-      <option value="">Todas las categorías</option>
-      <option *ngFor="let c of categoriasDisponibles" [value]="c">
-        {{ c }}
-      </option>
-    </select>
-  
-    <!-- Tallas -->
-    <div class="grupo-checks">
-      <label *ngFor="let t of tallasDisponibles">
-        <input
-          type="checkbox"
-          (change)="onTallaToggle(t, $any($event.target).checked)"
-        />
-        {{ t }}
-      </label>
-    </div>
-  
-    <!-- Colores -->
-    <div class="grupo-checks">
-      <label *ngFor="let c of coloresDisponibles">
-        <input
-          type="checkbox"
-          (change)="onColorToggle(c.nombre, $any($event.target).checked)"
-        />
-        <span
-          class="circle-color"
-          [style.backgroundColor]="c.codigo_hex"
-        ></span>
-        {{ c.nombre }}
-      </label>
-    </div>
-  
-    <button (click)="aplicarFiltros()" class="btn-filtrar">Aplicar Filtros</button>
-    <button (click)="resetFiltros()" class="btn-reset">Reiniciar</button>
-  </aside>
-  
+<nav class="nav-categorias">
+  <button class="btn-categoria" [class.activa]="!categoriaSeleccionada" (click)="seleccionarCategoria('')">Todas</button>
+  <button
+    class="btn-categoria"
+    *ngFor="let c of categoriasDisponibles"
+    [class.activa]="categoriaSeleccionada === c"
+    (click)="seleccionarCategoria(c)">
+    {{ c }}
+  </button>
+</nav>
 
+<section class="productos-layout">
+  <!-- 📦 CONTENEDOR para filtros y botón -->
+  <div class="filtros-container" style="position: relative; display: flex;">
+    <!-- 🧰 Botón para mostrar filtros -->
+    <div
+      *ngIf="!mostrarFiltros"
+      class="btn-toggle-filtros"
+      (click)="mostrarFiltros = true"
+      style="
+        position: absolute;
+        left: 0;
+        height: 120px;
+        width: 30px;
+        background-color: #f5f5f5;
+        border: none;
+        border-radius: 0 10px 10px 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        top: 0;
+        z-index: 10;
+      ">
+      &gt;
+    </div>
+
+    <!-- 🧰 Panel de filtros (solo si están visibles) -->
+    <aside class="sidebar-filtros" *ngIf="mostrarFiltros" style="position: relative;">
+      <!-- ❌ Botón para ocultar filtros -->
+      <div
+        class="btn-toggle-filtros"
+        (click)="mostrarFiltros = false"
+        style="
+          position: absolute;
+          right: -15px;
+          height: 120px;
+          width: 30px;
+          background-color: #f5f5f5;
+          border: none;
+          border-radius: 0 10px 10px 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          top: 0;
+          z-index: 10;
+        ">
+        &lt;
+      </div>
+
+      <h3>Filtrar Productos</h3>
+
+      <input type="text" [(ngModel)]="filtroNombre" (ngModelChange)="aplicarFiltros()" placeholder="Buscar por nombre" class="input-filtro" />
+      <input type="number" [(ngModel)]="precioMin" (ngModelChange)="aplicarFiltros()" placeholder="Precio mínimo" class="input-filtro" />
+      <input type="number" [(ngModel)]="precioMax" (ngModelChange)="aplicarFiltros()" placeholder="Precio máximo" class="input-filtro" />
+
+      <select [(ngModel)]="filtroTipo" (ngModelChange)="aplicarFiltros()" class="input-filtro">
+        <option value="">Todos los tipos</option>
+        <option *ngFor="let t of tiposDisponibles" [value]="t">{{ t }}</option>
+      </select>
+
+      <!-- 🔽 FILTRO: Tallas -->
+      <div class="filtro-desplegable">
+        <div class="filtro-header" (click)="toggleTallas()">Tallas <span [class.rotado]="mostrarTallas">▼</span></div>
+        <div class="filtro-body" *ngIf="mostrarTallas">
+          <label *ngFor="let t of tallasDisponibles" class="checkbox-linea">
+            <input type="checkbox" [(ngModel)]="tallasEstado[t]" (change)="onTallaToggle(t, tallasEstado[t]); aplicarFiltros()" />
+            {{ t }}
+          </label>
+        </div>
+      </div>
+
+      <!-- 🎨 FILTRO: Colores -->
+      <div class="filtro-desplegable">
+        <div class="filtro-header" (click)="toggleColores()">Colores <span [class.rotado]="mostrarColores">▼</span></div>
+        <div class="filtro-body" *ngIf="mostrarColores">
+          <label *ngFor="let c of coloresDisponibles" class="checkbox-linea">
+            <input type="checkbox" [(ngModel)]="coloresEstado[c.nombre]" (change)="onColorToggle(c.nombre, coloresEstado[c.nombre]); aplicarFiltros()" />
+            <span class="circle-color" [style.backgroundColor]="c.codigo_hex"></span>
+            {{ c.nombre }}
+          </label>
+        </div>
+      </div>
+
+      <button (click)="resetFiltros()" class="btn-reset">Reiniciar</button>
+    </aside>
+  </div>
+
+  <!-- 🛍️ Productos -->
   <div class="contenido-productos">
     <h2>Lista de Productos</h2>
-  
-    <!-- Contenedor grid -->
     <div class="productos-container">
-      <a
-        *ngFor="let p of productosFiltrados; trackBy: trackProducto"
-        [routerLink]="['/producto', p.id]"
-        class="producto-card"
-        style="text-decoration: none; color: inherit;"
-      >
+      <a *ngFor="let p of productosFiltrados; trackBy: trackProducto" [routerLink]="['/producto', p.id]" class="producto-card" style="text-decoration: none; color: inherit;">
         <h3 class="producto-titulo">{{ p.nombre }}</h3>
         <p class="precio">{{ p.precio }} €</p>
-  
-        <!-- Imagen con colores superpuestos -->
         <div class="imagen-con-colores">
-          <img
-            [src]="getProductoFoto(p.imagen_principal)"
-            alt="{{ p.nombre }}"
-            class="producto-img"
-            [attr.data-id]="p.id"
-          />
+          <img [src]="getProductoFoto(p.imagen_principal)" alt="{{ p.nombre }}" class="producto-img" [attr.data-id]="p.id" />
           <div class="colores-sobre-imagen-vertical" *ngIf="p.colores?.length">
-            <span
-              class="circle-color"
-              *ngFor="let c of p.colores"
-              [style.backgroundColor]="c.codigo_hex || '#ccc'">
-            </span>
+            <span class="circle-color" *ngFor="let c of p.colores" [style.backgroundColor]="c.codigo_hex || '#ccc'"></span>
           </div>
         </div>
-  
-        <!-- Tallas -->
         <div class="talla-group" *ngIf="p.tallas?.length">
           <span class="badge-talla" *ngFor="let t of p.tallas">{{ t.nombre }}</span>
         </div>
       </a>
     </div>
   </div>
-  
-
 </section>
