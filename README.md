@@ -69,7 +69,6 @@ ng serve --open
 ```bash
 ssh -i suzaku-key.pem ubuntu@TU_IP_PUBLICA
 ```
-python3.10-venv
 
 ### 2. Instaslaciones previa
 ```bash
@@ -100,21 +99,6 @@ GRANT ALL PRIVILEGES ON DATABASE bd_suzaku TO diego;
 \q
 ```
 
-✅ **NOTA IMPORTANTE:** 
-### Recuerda editar `ALLOWED_HOSTS` en `settings.py` y permitir el tráfico (Django):
-```bash
-nano settings
-
-ALLOWED_HOSTS = ['*']
-
-Ctrl+o y Ctrl+x
-```
-### Y si quieres mantener compatibilidad con desarrollo local:
-```python
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'TU_IP_PUBLICA']
-```
-
-
 
 ### 5. Cargar datos y ejecutar servidor
 ```bash
@@ -129,7 +113,7 @@ Si quieres permanentemente: nohup python manage.py runserver 0.0.0.0:8000 > djan
 
 ### 6. Iniciar el Frontend (Angular)
 ```bash
-curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+curl -sS https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt install -y nodejs
 sudo npm install -g lite-server
 npm install
