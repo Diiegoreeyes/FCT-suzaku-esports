@@ -1,7 +1,10 @@
 .equipopublic-container { 
-  max-width: 800px;
+  max-width: 900px;
   margin: 1rem auto;
-  padding: 1rem;
+  padding: 1.5rem;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
 /* Posts zigzag */
@@ -9,12 +12,12 @@
   display: flex;
   gap: 1rem;
   align-items: center;
-  background-color: #f9f9f9;
+  background-color: #fdfdfd;
   border: 1px solid #eee;
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 1rem;
   margin-bottom: 1rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
 }
 
 .post-zigzag.reverse {
@@ -26,11 +29,14 @@
 }
 
 .post-imagen img {
-  max-width: 300px;
-  border-radius: 6px;
-  object-fit: cover;
+  width: 400px;
+  height: 400px;
+  object-fit: contain;
+  border-radius: 12px;
   border: 1px solid #ccc;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
+
 
 /* Menú de equipo (jugador / creador) */
 .equipo-menu {
@@ -40,11 +46,12 @@
 }
 
 .equipo-menu button {
-  padding: 0.4rem 0.8rem;
+  padding: 0.5rem 1rem;
   border: 1px solid #ccc;
   background-color: #f9f9f9;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 8px;
+  transition: background 0.2s;
 }
 
 .equipo-menu button:hover {
@@ -64,41 +71,31 @@
   gap: 1rem;
 }
 
-/* 
-   ANTES: .integrante-card { ... } 
-   Lo sustituimos por un layout zigzag: 
-   integrant-zigzag + integrant-text + integrant-foto
-*/
-
-/* NUEVO: zigzag para integrantes */
+/* Integrantes en zigzag */
 .integrant-zigzag {
   display: flex;
   gap: 1.5rem;
   align-items: center;
-  padding: 1rem;
+  padding: 1.2rem;
   margin-bottom: 1rem;
-  background-color: #fdfdfd;
-  border: 1px solid #eee;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  background-color: #fefefe;
+  border: 1px solid #eaeaea;
+  border-radius: 14px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.04);
 }
 
-/* inversa si es impar */
 .integrant-zigzag.reverse {
   flex-direction: row-reverse;
 }
 
-/* sección de la foto del integrante */
 .integrant-foto img {
   width: 400px;
   height: 400px;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: 12px;
   border: 1px solid #ccc;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
-
-/* sección de texto */
 .integrant-text {
   flex: 1;
   display: flex;
@@ -106,15 +103,13 @@
   gap: 0.5rem;
 }
 
-/* Nickname grande y uppercase */
 .nickname-titulo {
   font-size: 1.8rem;
   margin: 0;
-  text-transform: uppercase; /* Por si no usas el pipe uppercase */
-  color: #333;
+  text-transform: uppercase;
+  color: #222;
 }
 
-/* Nombre y apellidos */
 .nombre-apellido {
   font-size: 1.2rem;
   margin: 0;
@@ -122,14 +117,13 @@
   color: #555;
 }
 
-/* estilo descripción */
 .integrant-text p {
   color: #666;
   margin: 0.5rem 0 0;
   line-height: 1.5;
 }
 
-/* Responsivo en pantallas pequeñas */
+/* Responsive */
 @media (max-width: 600px) {
   .integrant-zigzag,
   .integrant-zigzag.reverse {
@@ -141,18 +135,20 @@
   }
 }
 
-/* Contenedor general de la sección de clasificación */
-
+/* Clasificación */
 .clasificacion-container {
   margin: 2rem auto;
   max-width: 900px;
   padding: 1rem;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
 .seccion-titulo {
   text-align: center;
-  font-size: 2.5rem;
-  margin-bottom: 3rem;
+  font-size: 2.2rem;
+  margin-bottom: 2.5rem;
   color: #333;
   font-weight: bold;
 }
@@ -160,23 +156,21 @@
 .nombre-torneo {
   text-align: center;
   margin: 2rem 0 1rem;
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   color: #444;
   font-weight: 600;
 }
 
-/* Estructura de la tabla */
 .tabla-clasificacion {
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
   background: #fff;
   border-radius: 12px;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
   padding: 1rem;
 }
 
-/* Fila genérica */
 .fila {
   display: flex;
   justify-content: space-between;
@@ -185,21 +179,18 @@
   border-bottom: 1px solid #eee;
 }
 
-/* Encabezado */
 .fila.encabezado {
   font-weight: bold;
-  background-color: #f2f2f2;
+  background-color: #f5f5f5;
   border-radius: 8px;
   text-align: center;
 }
 
-/* Columnas uniformes */
 .fila > div {
   flex: 1;
   text-align: center;
 }
 
-/* Logo redondo */
 .logo-equipo.grande {
   width: 60px;
   height: 60px;
@@ -208,7 +199,6 @@
   margin: 0 auto;
 }
 
-/* Espacio visual si Suzaku está fuera del top */
 .fila.espacio {
   justify-content: center;
   color: #aaa;
@@ -219,7 +209,6 @@
   border-bottom: none;
 }
 
-/* Estilo para Suzaku */
 .fila.suzaku {
   background-color: #f0f0f0 !important;
   font-weight: bold;
@@ -250,9 +239,148 @@
   transform: scale(1.05);
   color: #000;
 }
+.img-cuadrada {
+  width: 400px;
+  height: 400px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+/* 📱 Responsive para móviles (<=768px) */
+@media (max-width: 768px) {
+  .equipopublic-container {
+    padding: 1rem;
+  }
 
+  .post-imagen img,
+  .integrant-foto img,
+  .img-cuadrada {
+    width: 100%;
+    max-width: 400px;
+    aspect-ratio: 1 / 1;
+    height: auto;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    display: block;
+    margin: 0 auto;
+    background-color: #eee; /* Fondo gris claro si la imagen es más pequeña */
+  }
 
-/* Transición suave (por si agregas animaciones en el futuro) */
-html {
-  scroll-behavior: smooth;
+  .post-zigzag,
+  .post-zigzag.reverse,
+  .integrant-zigzag,
+  .integrant-zigzag.reverse {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .post-texto,
+  .integrant-text {
+    text-align: center;
+  }
+
+  .equipo-menu {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .equipo-menu button {
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .tabla-clasificacion {
+    padding: 0.5rem;
+  }
+
+  .fila {
+    flex-direction: column;
+    padding: 1rem 0.5rem;
+  }
+
+  .fila > div {
+    width: 100%;
+    padding: 0.3rem 0;
+  }
+
+  .logo-equipo.grande {
+    width: 50px;
+    height: 50px;
+  }
+
+  .seccion-titulo {
+    font-size: 1.8rem;
+  }
+
+  .nombre-torneo {
+    font-size: 1.4rem;
+  }
+
+  .ver-mas-container button {
+    width: 100%;
+    max-width: 300px;
+  }
+  .post-zigzag.reverse,
+.integrant-zigzag.reverse {
+  flex-direction: column !important;
+}
+  .tabla-clasificacion .fila > div:nth-child(5),
+  .tabla-clasificacion .fila > div:nth-child(6) {
+    display: none;
+  }
+
+  /* Oculta toda la fila de encabezado en móviles */
+  .tabla-clasificacion .fila.encabezado {
+    display: none;
+  }
+
+  /* Ajustes visuales para filas */
+  .tabla-clasificacion .fila > div {
+    font-size: 0.85rem;
+    padding: 0.4rem 0;
+  }
+
+  .logo-equipo.grande {
+    width: 40px;
+    height: 40px;
+  }
+
+  .fila {
+    flex-wrap: wrap;
+    justify-content: center;
+    text-align: center;
+  }
+
+  /* Botón ver más compacto */
+  .ver-mas-container {
+    text-align: center;
+    margin-top: 0.5rem;
+  }
+
+  .ver-mas-container button {
+    font-size: 13px;
+    padding: 6px 14px;
+    border-radius: 20px;
+  }
+
+  /* Títulos más pequeños */
+  .nombre-torneo {
+    font-size: 1.3rem;
+  }
+
+  .seccion-titulo {
+    font-size: 1.6rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .clasificacion-container {
+    padding: 0.5rem;
+  }
+
+  .tabla-clasificacion {
+    padding: 0.5rem;
+  }
 }

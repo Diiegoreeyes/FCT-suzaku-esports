@@ -12,7 +12,7 @@
       <p>{{ post.descripcion }}</p>
     </div>
     <div class="post-imagen">
-      <img *ngIf="post.imagen" [src]="post.imagen" alt="Imagen del Post" />
+    <img *ngIf="post.imagen" [src]="post.imagen" alt="Imagen del Post" class="img-cuadrada" />
     </div>
   </div>
 
@@ -45,13 +45,8 @@
       [class.reverse]="i % 2 !== 0"
     >
       <!-- Foto en un lado -->
-      <div class="integrant-foto">
-        <img
-          *ngIf="integrante.foto"
-          [src]="integrante.foto"
-          alt="Foto integrante"
-        />
-      </div>
+      <img *ngIf="integrante.foto" [src]="integrante.foto" alt="Foto integrante" class="img-cuadrada" />
+
 
       <!-- Texto al otro lado -->
       <div class="integrant-text">
