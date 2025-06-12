@@ -21,10 +21,11 @@ class CodigoDescuentoSerializer(serializers.ModelSerializer):
 
 class UsuarioSerializer(serializers.ModelSerializer):
     foto = serializers.ImageField(required=False)
+    is_staff = serializers.BooleanField(read_only=True)  # ✅ Añadido
 
     class Meta:
         model = Usuario
-        fields = ['id', 'nombre', 'apellidos', 'email', 'foto']  # ✅ SOLO esto
+        fields = ['id', 'nombre', 'apellidos', 'email', 'foto', 'is_staff']  # ✅ Añadido
 
     def create(self, validated_data):
         password = validated_data.pop('password', None)
@@ -45,6 +46,7 @@ class UsuarioSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
+
 
 class DireccionSerializer(serializers.ModelSerializer):
     class Meta:
