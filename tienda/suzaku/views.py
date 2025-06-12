@@ -242,6 +242,39 @@ def crear_usuario(request):
 
 
 
+
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
+from rest_framework import status
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def cambiar_password_view(request):
+    user = request.user
+    password_actual = request.data.get('passwordActual')
+    nueva_password = request.data.get('nuevaPassword')
+    confirmar_password = request.data.get('confirmarPassword')
+
+    if not user.check_password(password_actual):
+        return Response({"error": "La contraseña actual no es correcta."}, status=status.HTTP_400_BAD_REQUEST)
+
+    if nueva_password != confirmar_password:
+        return Response({"error": "Las nuevas contraseñas no coinciden."}, status=status.HTTP_400_BAD_REQUEST)
+
+    if len(nueva_password) < 6:
+        return Response({"error": "La nueva contraseña debe tener al menos 6 caracteres."}, status=status.HTTP_400_BAD_REQUEST)
+
+    user.set_password(nueva_password)
+    user.save()
+
+    return Response({"mensaje": "Contraseña actualizada correctamente."}, status=status.HTTP_200_OK)
+
+
 ############################################################
 # 🛒 CHECKOUT Y PROCESO DE PEDIDOS
 ############################################################

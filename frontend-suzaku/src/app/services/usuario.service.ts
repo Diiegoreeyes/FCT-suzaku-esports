@@ -25,4 +25,10 @@ export class UsuarioService {
   updateUsuario(id: number, formData: FormData): Observable<any> {
     return this.http.patch<any>(`${this.apiUrl}${id}/`, formData);
   }
+
+  cambiarPassword(data: any): Observable<any> {
+    return this.http.post('http://127.0.0.1:8000/api/cambiar_password/', data);
+  }
+
+
 }

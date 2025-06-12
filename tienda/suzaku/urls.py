@@ -51,6 +51,7 @@ urlpatterns = [
     path('api/checkout/', checkout, name='checkout'),
     path('api/confirmar_pedido/', confirmar_pedido_view, name='confirmar_pedido'),
     path('api/mis-pedidos/', listar_mis_pedidos, name='listar_mis_pedidos'),
+    path('api/cambiar_password/', cambiar_password_view, name='cambiar_password'),
 
     # 🎟️ VERIFICACIÓN DE DESCUENTO
     path('api/verificar_descuento/', verificar_descuento, name='verificar_descuento'),
