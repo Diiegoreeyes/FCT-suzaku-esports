@@ -32,12 +32,26 @@ import { AdminValoracionesComponent } from './components/admin-valoraciones/admi
 const AuthGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
-  if (!authService.estaAutenticado()) {
+  const isLoggedIn = authService.estaAutenticado();
+
+  if (!isLoggedIn) {
     router.navigate(['/login']);
     return false;
   }
+
+  // Si la ruta contiene 'administrador', comprobamos si es staff
+  if (state.url.startsWith('/administrador')) {
+    const usuario = authService.obtenerUsuarioActual();
+
+    if (!usuario || !usuario.is_staff) {
+      router.navigate(['/']);
+      return false;
+    }
+  }
+
   return true;
 };
+
 
 export const routes: Routes = [
 

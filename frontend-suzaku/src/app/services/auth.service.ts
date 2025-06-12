@@ -72,22 +72,20 @@ export class AuthService {
     return usuario ? JSON.parse(usuario) : null;
   }
   
-  getUserFoto(): string {
-    const user = this.obtenerUsuarioActual();
-    
-    if (user?.foto) {
-      // Si ya es una URL absoluta (empieza por http), devuélvela tal cual
-      if (user.foto.startsWith('http')) {
-        return user.foto;
-      }
-      // Si es una ruta relativa, prepend con la URL base del backend
-      return 'http://127.0.0.1:8000' + user.foto;
-    }
+getUserFoto(): string {
+  const user = this.obtenerUsuarioActual();
 
-    return '/default-user.png';
+  if (user?.foto) {
+    if (user.foto.startsWith('http')) {
+      return user.foto;
+    }
+    return 'http://127.0.0.1:8000' + user.foto;
   }
 
-  
+  // ⛑️ Imagen por defecto servida desde el backend (en /media/usuarios/default-user.png)
+  return 'http://127.0.0.1:8000/media/usuarios/default-user.png';
+}
+
   
   
 }

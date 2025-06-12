@@ -1,20 +1,22 @@
-<!-- seguridad.component.html -->
 <div>
-    <h2>Seguridad</h2>
-    <form [formGroup]="seguridadForm" (ngSubmit)="cambiarPassword()">
-      <div class="form-group">
-        <label for="passwordActual">Contraseña actual:</label>
-        <input formControlName="passwordActual" id="passwordActual" type="password" />
-      </div>
-      <div class="form-group">
-        <label for="nuevaPassword">Nueva contraseña:</label>
-        <input formControlName="nuevaPassword" id="nuevaPassword" type="password" />
-      </div>
-      <div class="form-group">
-        <label for="confirmarPassword">Confirmar contraseña:</label>
-        <input formControlName="confirmarPassword" id="confirmarPassword" type="password" />
-      </div>
-      <button type="submit" [disabled]="seguridadForm.invalid">Cambiar Contraseña</button>
-    </form>
-  </div>
-  
+  <h2>Seguridad</h2>
+
+  <form [formGroup]="seguridadForm" (ngSubmit)="cambiarPassword()">
+    <div *ngIf="mensaje" class="mensaje-ok">{{ mensaje }}</div>
+    <div *ngIf="error" class="mensaje-error">{{ error }}</div>
+
+    <div class="form-group">
+      <label for="passwordActual">Contraseña actual:</label>
+      <input formControlName="passwordActual" id="passwordActual" type="password" />
+    </div>
+    <div class="form-group">
+      <label for="nuevaPassword">Nueva contraseña:</label>
+      <input formControlName="nuevaPassword" id="nuevaPassword" type="password" />
+    </div>
+    <div class="form-group">
+      <label for="confirmarPassword">Confirmar contraseña:</label>
+      <input formControlName="confirmarPassword" id="confirmarPassword" type="password" />
+    </div>
+    <button type="submit" [disabled]="seguridadForm.invalid">Cambiar Contraseña</button>
+  </form>
+</div>
