@@ -36,11 +36,16 @@
             [style.backgroundColor]="producto.colorSeleccionado?.codigo_hex || '#ccc'"
             [title]="producto.colorSeleccionado?.nombre">
           </span>
-
           <span class="badge-talla">
             {{ producto.tallaSeleccionada?.nombre }}
           </span>
         </div>
+
+        <!-- Mostrar el nombre personalizado si existe -->
+        <p *ngIf="producto.nombre_personalizado">
+          🧵 Personalización: <strong>{{ producto.nombre_personalizado }}</strong>
+        </p>
+
 
         <!-- Cantidad -->
         <div class="cantidad-control">

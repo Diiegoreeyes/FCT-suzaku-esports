@@ -205,6 +205,8 @@ class Producto(models.Model):
 
     activo = models.BooleanField(default=True)
     creado_en = models.DateTimeField(auto_now_add=True)
+    personalizacion = models.BooleanField(default=False, help_text="¿Permite personalización con nombre?")
+
 
     def __str__(self):
         return self.nombre
@@ -283,6 +285,8 @@ class ProductoPedido(models.Model):
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
     cantidad = models.PositiveIntegerField()
     precio = models.DecimalField(max_digits=10, decimal_places=2)
+    nombre_personalizado = models.CharField(max_length=100,blank=True,null=True,help_text="Nombre personalizado si el producto lo permite")
+
 
     # NUEVO: talla y color seleccionados
     talla = models.ForeignKey(Talla, null=True, blank=True, on_delete=models.SET_NULL)
@@ -349,6 +353,7 @@ class Juego(models.Model):
 # ------------------------
 # MODELO COMPETICIÓN
 # ------------------------
+
 class Competicion(models.Model):
     nombre = models.CharField(max_length=200)
     juego = models.ForeignKey(Juego, on_delete=models.CASCADE, related_name='competiciones')

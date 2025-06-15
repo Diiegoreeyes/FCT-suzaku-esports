@@ -113,11 +113,12 @@ Si quieres permanentemente: nohup python manage.py runserver 0.0.0.0:8000 > djan
 
 ### 6. Iniciar el Frontend (Angular)
 ```bash
-curl -sS https://deb.nodesource.com/setup_20.x | sudo -E bash -
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt install -y nodejs
-sudo npm install -g lite-server
+sudo npm install -g @angular/cli http-server
+cd frontend-suzaku
 npm install
-grep -rl '127.0.0.1:8000' src/app | xargs sed -i 's|127.0.0.1:8000|TU_IP_PUBLICA:8000|g'
+grep -rl '127.0.0.1:8000' src/app | xargs sed -i 's|127.0.0.1:8000|TU_IP:8000|g'
 ng build --configuration production
 cat > bs-config.js << 'EOF'
 module.exports = {
@@ -132,8 +133,9 @@ module.exports = {
     }
   }
 };
-EOF
-http-server dist/frontend-suzaku --host 0.0.0.0 --port 4200
+
+lite-server
+
 Si quieres permanentemente: nohup lite-server > lite.log 2>&1 &```
 
 ### 7. Accede desde otro dispositivo

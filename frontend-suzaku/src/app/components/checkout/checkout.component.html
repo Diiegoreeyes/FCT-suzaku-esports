@@ -45,6 +45,9 @@
             {{ producto.tallaSeleccionada?.nombre }}
           </span>
         </div>
+        <p *ngIf="producto.nombre_personalizado" class="nombre-personalizado">
+          Personalizado: <strong>{{ producto.nombre_personalizado }}</strong>
+        </p>
       </div>
     </div>
   </div>

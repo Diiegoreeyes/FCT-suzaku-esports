@@ -80,6 +80,13 @@
                 {{ item.talla.nombre }}
               </span>
             </div>
+            <!-- Nombre personalizado -->
+            <p *ngIf="item.nombre_personalizado" class="personalizado">
+              Personalizado: "{{ item.nombre_personalizado }}"
+            </p>
+
+
+
           </div>
         </div>
       </div>

@@ -172,12 +172,14 @@ class ProductoSerializer(serializers.ModelSerializer):
         return producto
     
 class ProductoPedidoCrearSerializer(serializers.ModelSerializer):
+    producto = serializers.PrimaryKeyRelatedField(queryset=Producto.objects.all())
     color_id = serializers.IntegerField(required=False, allow_null=True)
     talla_id = serializers.IntegerField(required=False, allow_null=True)
+    nombre_personalizado = serializers.CharField(required=False, allow_blank=True, allow_null=True)
 
     class Meta:
         model = ProductoPedido
-        fields = ['producto', 'cantidad', 'precio', 'color_id', 'talla_id']
+        fields = ['producto', 'cantidad', 'precio', 'color_id', 'talla_id', 'nombre_personalizado']
 
 class PedidoCrearSerializer(serializers.ModelSerializer):
     productos = ProductoPedidoCrearSerializer(many=True)
@@ -193,14 +195,16 @@ class PedidoCrearSerializer(serializers.ModelSerializer):
         for p in productos_data:
             ProductoPedido.objects.create(
                 pedido=pedido,
-                producto=p['producto'],
+                producto=p['producto'],  # ✅ esto ya es un objeto Producto
                 cantidad=p['cantidad'],
-                precio=p['precio'],
+                precio=p.get('precio', 0),
                 color_id=p.get('color_id'),
-                talla_id=p.get('talla_id')
+                talla_id=p.get('talla_id'),
+                nombre_personalizado=p.get('nombre_personalizado')  # ✅ ahora se guarda correctamente
             )
 
         return pedido
+
 
 from rest_framework.request import Request
 
@@ -223,7 +227,7 @@ class ProductoPedidoSerializer(serializers.ModelSerializer):
         fields = [
           'id','producto','cantidad','imagen_principal','nombre','precio',
           'tipo','categoria','colores','tallas','color','talla',
-          'imagenes_por_color'
+          'imagenes_por_color','nombre_personalizado'
         ]
 
     def get_imagenes_por_color(self, obj):

@@ -24,7 +24,7 @@ export class CarritoComponent implements OnInit {
     this.productosEnCarrito = this.carritoService.obtenerCarrito();
     this.calcularTotal();
   }
-  
+
   calcularTotal(): void {
     this.total = this.productosEnCarrito.reduce((acc, producto) => {
       return acc + producto.precio * producto.cantidad;
@@ -36,39 +36,49 @@ export class CarritoComponent implements OnInit {
     this.cargarCarrito();
   }
 
-  agregarProductoAlCarrito(producto: any): void {
-    this.carritoService.agregarProducto(producto);
+  // No hace falta llamar a agregarProducto aquí,
+  // los cambios se gestionan con aumentar/disminuir/eliminar.
+
+  aumentarCantidad(producto: any): void {
+    this.carritoService.aumentarCantidad(
+      producto.id,
+      producto.colorSeleccionado?.id,
+      producto.tallaSeleccionada?.id,
+      producto.nombre_personalizado || ''
+    );
     this.cargarCarrito();
   }
 
-  aumentarCantidad(producto: any): void {
-    this.carritoService.aumentarCantidad(producto.id, producto.colorSeleccionado?.id, producto.tallaSeleccionada?.id);
-    this.cargarCarrito();
-  }
-  
   disminuirCantidad(producto: any): void {
-    this.carritoService.disminuirCantidad(producto.id, producto.colorSeleccionado?.id, producto.tallaSeleccionada?.id);
+    this.carritoService.disminuirCantidad(
+      producto.id,
+      producto.colorSeleccionado?.id,
+      producto.tallaSeleccionada?.id,
+      producto.nombre_personalizado || ''
+    );
     this.cargarCarrito();
   }
-  
+
   eliminarProductoDelCarrito(producto: any): void {
-    this.carritoService.eliminarProducto(producto.id, producto.colorSeleccionado?.id, producto.tallaSeleccionada?.id);
+    this.carritoService.eliminarProducto(
+      producto.id,
+      producto.colorSeleccionado?.id,
+      producto.tallaSeleccionada?.id,
+      producto.nombre_personalizado || ''
+    );
     this.cargarCarrito();
   }
-  
 
   getProductoFoto(foto: string): string {
     if (!foto) return 'assets/default-producto.jpg';
     if (foto.startsWith('http')) return foto;
-    return `http://127.0.0.1:8000${foto}`;
+    return `http://127.0.0.1:8000${foto.startsWith('/') ? '' : '/'}${foto}`;
   }
-  getColorHex(nombreColor: string): string {
-  // Busca en el array de colores del producto el código hex correspondiente
-  for (const producto of this.productosEnCarrito) {
-    const color = producto.colores?.find((c: any) => c.nombre === nombreColor);
-    if (color) return color.codigo_hex || '#ccc';
-  }
-  return '#ccc';
-}
 
+  getColorHex(nombreColor: string): string {
+    // Si necesitas mostrar un círculo de color basado en nombre
+    // asumimos que cada producto tiene producto.colorSeleccionado
+    const anyProd = this.productosEnCarrito.find(p => p.colorSeleccionado?.nombre === nombreColor);
+    return anyProd?.colorSeleccionado?.codigo_hex || '#ccc';
+  }
 }

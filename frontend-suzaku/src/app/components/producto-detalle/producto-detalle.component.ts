@@ -30,6 +30,7 @@ export class ProductoDetalleComponent implements OnInit {
   imagenesPorColor: { [color: string]: string[] } = {};
   valoraciones: any[] = [];
   usuarioActual: any = null;
+  nombrePersonalizado: string = '';
 
   actualizarGaleria(): void {
     const imagenesColor = this.imagenesPorColor[this.colorSeleccionado] || [];
@@ -158,18 +159,18 @@ export class ProductoDetalleComponent implements OnInit {
   agregarAlCarrito(): void {
     // Si no hay combinación válida, no hacemos nada
     if (!this.stockSeleccionado) { return; }
-  
+
     /* ───── 1. Localizar objetos completos de color y talla ───── */
     const colorObj = this.producto.colores
       ?.find((c: any) => c.nombre === this.colorSeleccionado);
     const tallaObj = this.producto.tallas
       ?.find((t: any) => t.nombre === this.tallaSeleccionada);
-  
+
     /* ───── 2. Escoger la miniatura correcta según el color ───── */
     const imgColor =
       this.imagenesPorColor?.[this.colorSeleccionado]?.[0]   // primera imagen del color
       ?? this.producto.imagen_principal;                    // fallback a la foto genérica
-  
+
     /* ───── 3. Construir el objeto para el carrito ───── */
     const productoCarrito = {
       id:                 this.producto.id,
@@ -177,19 +178,17 @@ export class ProductoDetalleComponent implements OnInit {
       precio:             +this.producto.precio,
       imagen_principal:   imgColor,          // 👈 miniatura del color
       stockId:            this.stockSeleccionado.id,
-  
       colorSeleccionado:  colorObj,          // { id, nombre, codigo_hex }
       tallaSeleccionada:  tallaObj,          // { id, nombre }
-      cantidad:           1
+      cantidad:           1,
+      nombrePersonalizado: this.nombrePersonalizado?.trim() || null
     };
-  
+
     /* ───── 4. Guardar y navegar al carrito ───── */
     this.carritoService.agregarProducto(productoCarrito);
     this.router.navigate(['/carrito']);
   }
-  
-  
-  
+
 
   cambiarImagen(img: string): void {
     this.imagenActual = img;

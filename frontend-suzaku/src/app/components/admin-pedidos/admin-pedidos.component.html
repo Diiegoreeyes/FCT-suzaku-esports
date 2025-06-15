@@ -22,27 +22,40 @@
     <!-- Listado de productos en el pedido -->
     <div class="productos-en-pedido">
       <div class="producto-pedido" *ngFor="let prod of pedido.productos">
+        <!-- 1) Imagen -->
         <img
-          [src]="getFotoUrl(prod.foto)"
-          alt="{{ prod.nombre }}"
+          [src]="getFotoUrl(prod.imagen_principal)"
+          [alt]="prod.nombre"
           class="img-producto"
         />
+
         <div class="detalles">
           <strong>{{ prod.nombre }}</strong>
           <p>Cantidad: {{ prod.cantidad }}</p>
-          <p>Precio unitario: {{ prod.price | currency:'EUR' }}</p>
-          <!-- Ojo: asumiendo que en tu serializer se llama 'precio', probablemente sea: prod.precio -->
+
+          <!-- 2) Precio unitario -->
           <p>Precio unitario: {{ prod.precio | currency:'EUR' }}</p>
+
+          <!-- 3) Nombre personalizado -->
+          <p *ngIf="prod.nombre_personalizado; else sinPers">
+            🧵 Personalizado: "{{ prod.nombre_personalizado }}"
+          </p>
+          <ng-template #sinPers>
+            <p>🧵 Personalizado: —</p>
+          </ng-template>
         </div>
       </div>
     </div>
 
     <!-- Actualizar estado del pedido -->
-    <select class="estado-select" [(ngModel)]="pedido.estado" (change)="actualizarEstado(pedido)">
+    <select
+      class="estado-select"
+      [(ngModel)]="pedido.estado"
+      (change)="actualizarEstado(pedido)"
+    >
       <option value="pendiente">Pendiente</option>
       <option value="procesado">Procesado</option>
       <option value="enviado">Enviado</option>
     </select>
-    
   </div>
 </div>

@@ -339,25 +339,6 @@ from .models import Usuario, Pedido, Producto, ProductoPedido, CodigoDescuento, 
 
 @api_view(['POST'])
 def confirmar_pedido_view(request):
-    """
-    Confirma un pedido y lo guarda en la base de datos.
-    Espera en request.data:
-    {
-      "user_id": 1,
-      "items": [
-        {
-          "id": <producto_id>,
-          "cantidad": 1,
-          "color_id": 3,
-          "talla_id": 5
-        },
-        ...
-      ],
-      "direccion": "Nueva dirección ...",
-      "descuento": 0.00,
-      "codigo_descuento": "szkfumo"
-    }
-    """
     user_id = request.data.get('user_id')
     items = request.data.get('items', [])
     direccion = request.data.get('direccion', '').strip()
@@ -398,6 +379,7 @@ def confirmar_pedido_view(request):
         cantidad = item.get('cantidad', 1)
         color_id = item.get('color_id')
         talla_id = item.get('talla_id')
+        nombre_per  = item.get('nombre_personalizado')  # 📌 toma el nombre
 
         try:
             prod = Producto.objects.get(id=producto_id)
@@ -425,7 +407,9 @@ def confirmar_pedido_view(request):
             cantidad=cantidad,
             precio=prod.precio,
             color_id=color_id,
-            talla_id=talla_id
+            talla_id=talla_id,
+            nombre_personalizado=nombre_per
+
         )
 
         # ✅ Restar stock
@@ -692,28 +676,34 @@ def api_vaciar_carrito(request):
 class PostEquipoViewSet(viewsets.ModelViewSet):
     queryset = PostEquipo.objects.all().order_by('orden')
     serializer_class = PostEquipoSerializer
+    permission_classes = [AllowAny]
 
 class EquipoViewSet(viewsets.ModelViewSet):
     queryset = Equipo.objects.all()
     serializer_class = EquipoSerializer
+    permission_classes = [AllowAny]
 
 class JuegoViewSet(viewsets.ModelViewSet):
     queryset = Juego.objects.all()
     serializer_class = JuegoSerializer
+    permission_classes = [AllowAny]
 
 
 class CompeticionViewSet(viewsets.ModelViewSet):
     queryset = Competicion.objects.all()
     serializer_class = CompeticionSerializer
+    permission_classes = [AllowAny]
 
 class EquipoCompetitivoViewSet(viewsets.ModelViewSet):
     queryset = EquipoCompetitivo.objects.all()
     serializer_class = EquipoCompetitivoSerializer
+    permission_classes = [AllowAny]
 
 
 class EquipoParticipanteViewSet(viewsets.ModelViewSet):
     queryset = EquipoParticipante.objects.all()
     serializer_class = EquipoParticipanteSerializer
+    permission_classes = [AllowAny]
 
 
 from rest_framework import status
@@ -775,11 +765,13 @@ class PartidoViewSet(viewsets.ModelViewSet):
 class SponsorViewSet(viewsets.ModelViewSet):
     queryset = Sponsor.objects.all().order_by('-creado_en')  # Puedes ajustar orden si lo deseas
     serializer_class = SponsorSerializer
+    permission_classes = [AllowAny]
 
 # 🖼️ ViewSet para las imágenes de producto asociadas a un Sponsor
 class SponsorImageViewSet(viewsets.ModelViewSet):
     queryset = SponsorImage.objects.all()
     serializer_class = SponsorImageSerializer
+    permission_classes = [AllowAny]
 
 ############################################################
 # 🔐 CRUD PRODUCTOS (Solo Administradores)
@@ -882,7 +874,8 @@ class PedidoViewSet(viewsets.ModelViewSet):
                 cantidad     = p['cantidad'],
                 precio       = p.get('precio', 0),
                 color_id     = p.get('color_id'),  # ahora sí lee color_id
-                talla_id     = p.get('talla_id')   # y talla_id
+                talla_id     = p.get('talla_id'),   # y talla_id
+                nombre_personalizado=p.get('nombre_personalizado')
             )
 
         # 4️⃣ Devuelve el pedido ya serializado

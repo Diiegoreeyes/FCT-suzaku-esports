@@ -130,7 +130,13 @@
       <!-- Imagen principal -->
       <input type="file" (change)="onFileCreate($event)" />
       <img *ngIf="previewCrear" [src]="previewCrear" class="preview-img" />
-
+      <!-- Dentro del <form [formGroup]="formCrear"> -->
+      <div class="form-group">
+        <label>
+          <input type="checkbox" formControlName="personalizacion" />
+          Permitir personalización con nombre
+        </label>
+      </div>
       <!-- Botones de acción -->
       <div class="acciones-card">
         <button
@@ -230,7 +236,13 @@
                 formControlName="precio"
                 placeholder="Precio (€)"
               />
-
+              <!-- Dentro del <form [formGroup]="formEditar"> -->
+              <div class="form-group">
+                <label>
+                  <input type="checkbox" formControlName="personalizacion" />
+                  Permitir personalización con nombre
+                </label>
+              </div>
               <!-- Categoría y tipo -->
               <h5>Categoría y tipo</h5>
               <select class="input" formControlName="tipo">

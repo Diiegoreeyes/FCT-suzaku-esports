@@ -370,7 +370,8 @@ onGaleriaChange(event: any) {
       imagen_principal: [null],
       colores: [[]],
       tallas: [[]],
-      productos_relacionados: [[]]
+      productos_relacionados: [[]],
+      personalizacion: [false]   
     });
   
     this.formEditar = this.fb.group({
@@ -388,6 +389,7 @@ onGaleriaChange(event: any) {
       tallas: [[]],
       productos_relacionados: [[]],
       color_galeria: [null],
+      personalizacion: [false]
     });
   }
 
@@ -464,6 +466,8 @@ onGaleriaChange(event: any) {
       fd.append('categoria_id', this.formCrear.value.categoria.toString());
     }
   
+    fd.append('personalizacion', this.formCrear.value.personalizacion ? 'true' : 'false');
+
     // Datos físicos
     fd.append('peso_kg', this.formCrear.value.peso_kg);
     fd.append('alto_cm', this.formCrear.value.alto_cm);
@@ -565,7 +569,9 @@ onGaleriaChange(event: any) {
       largo_cm:    p.largo_cm,
       colores:     p.colores?.map((c: any) => c.id) ?? [],
       tallas:      p.tallas ?.map((t: any) => t.id) ?? [],
-      productos_relacionados: p.productos_relacionados ?? []
+      productos_relacionados: p.productos_relacionados ?? [],
+      personalizacion: p.personalizacion 
+
     });
   
     /* ─── Datos auxiliares de la vista ─── */
@@ -611,6 +617,7 @@ onGaleriaChange(event: any) {
     const fd = new FormData();
     fd.append('nombre', this.formEditar.value.nombre);
     fd.append('descripcion', this.formEditar.value.descripcion);
+    fd.append('personalizacion',this.formEditar.value.personalizacion ? 'true' : 'false');
     fd.append('precio', this.formEditar.value.precio);
     fd.append('peso_kg', this.formEditar.value.peso_kg);
     fd.append('alto_cm', this.formEditar.value.alto_cm);

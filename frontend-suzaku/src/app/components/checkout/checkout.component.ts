@@ -202,40 +202,43 @@ export class CheckoutComponent implements OnInit {
       alert('No se ha detectado un usuario logueado.');
       return;
     }
-  
-    if (!this.direccionActivaStr || !this.direccionActivaId) {
+
+    if (!this.direccionActivaStr) {
       alert('Debes seleccionar una dirección de envío antes de confirmar el pedido.');
       return;
     }
-  
-    const pedidoData = {
+
+    // 🤜 Mapear exactamente los campos que tu API espera
+    const items = this.productosEnCarrito.map(item => ({
+      id: item.id,
+      cantidad: item.cantidad,
+      color_id: item.colorSeleccionado?.id ?? null,
+      talla_id: item.tallaSeleccionada?.id ?? null,
+      nombre_personalizado: item.nombre_personalizado?.trim() || null
+    }));
+
+
+    const payload = {
       user_id: this.usuarioId,
       direccion: this.direccionActivaStr,
       descuento: this.descuento,
-      codigo_descuento: this.codigoDescuento,
-      items: this.productosEnCarrito.map(item => ({
-        id: item.id,
-        cantidad: item.cantidad,
-        color_id: item.colorSeleccionado?.id || null,
-        talla_id: item.tallaSeleccionada?.id || null
-      }))
-      
+      codigo_descuento: this.codigoDescuento || null,
+      items
     };
-    
-    this.checkoutService.confirmarPedido(pedidoData).subscribe({
-      next: (res) => {
+
+    this.checkoutService.confirmarPedido(payload).subscribe({
+      next: res => {
         alert(`✅ Pedido #${res.pedido_id} creado con total: ${res.total_con_descuento} €`);
         this.carritoService.vaciarCarrito();
         this.router.navigate(['/perfil/mis-pedidos']);
       },
-      error: (err) => {
+      error: err => {
         console.error('❌ Error al confirmar pedido:', err);
         alert('Error al confirmar el pedido. Intenta nuevamente.');
       }
     });
   }
-  
-  
+
 
   cambiarDireccion(): void {
     this.mostrarSelectorDirecciones = !this.mostrarSelectorDirecciones;

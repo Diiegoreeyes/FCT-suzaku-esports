@@ -47,6 +47,12 @@
         {{ talla }} <span *ngIf="!hayStockPara(talla)">❌</span>
       </span>
     </div>
+    
+    <!-- Campo de personalización -->
+    <div *ngIf="producto.personalizacion">
+      <label>Nombre personalizado:</label>
+      <input type="text" [(ngModel)]="nombrePersonalizado" placeholder="Ej: fumokanute" maxlength="30" />
+    </div>
 
 
     <!-- Stock -->

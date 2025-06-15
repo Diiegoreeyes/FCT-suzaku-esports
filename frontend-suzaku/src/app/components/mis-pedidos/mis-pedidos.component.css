@@ -128,4 +128,9 @@
   color: #333333;
   border: 1px solid #ddd;
   }
-  
+  .personalizado {
+  font-style: italic;
+  color: #555;
+  margin: 0.2rem 0 0.6rem;
+  font-size: 0.95rem;
+}

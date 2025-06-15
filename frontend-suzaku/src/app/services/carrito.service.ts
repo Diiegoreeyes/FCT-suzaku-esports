@@ -7,7 +7,6 @@ export class CarritoService {
   private carrito: any[] = [];
 
   constructor() {
-    // Carga el carrito desde localStorage al iniciar
     if (typeof window !== 'undefined' && window.localStorage) {
       this.cargarCarrito();
     }
@@ -21,66 +20,66 @@ export class CarritoService {
     const index = this.carrito.findIndex(p =>
       p.id === producto.id &&
       p.colorSeleccionado?.id === producto.colorSeleccionado?.id &&
-      p.tallaSeleccionada?.id === producto.tallaSeleccionada?.id
+      p.tallaSeleccionada?.id === producto.tallaSeleccionada?.id &&
+      p.nombre_personalizado === (producto.nombrePersonalizado || null)
     );
-  
+
+    const productoFormateado = {
+      ...producto,
+      nombre_personalizado: producto.nombrePersonalizado || null
+    };
+
+    delete productoFormateado.nombrePersonalizado;
+
     if (index !== -1) {
       this.carrito[index].cantidad += producto.cantidad;
     } else {
-      this.carrito.push({ ...producto });
+      this.carrito.push(productoFormateado);
     }
-    this.guardarCarrito();
-  }
-  
 
-  eliminarProducto(productoId: number, colorId?: number, tallaId?: number): void {
-    this.carrito = this.carrito.filter(p =>
-      !(p.id === productoId &&
-        p.colorSeleccionado?.id === colorId &&
-        p.tallaSeleccionada?.id === tallaId)
-    );
     this.guardarCarrito();
   }
 
-  modificarCantidad(productoId: number, nuevaCantidad: number): void {
-    const producto = this.carrito.find(p => p.id === productoId);
-    if (producto) {
-      producto.cantidad = nuevaCantidad;
-      if (producto.cantidad <= 0) {
-        this.eliminarProducto(productoId);
-      }
-      this.guardarCarrito();
-    }
-  }
 
-  aumentarCantidad(productoId: number, colorId?: number, tallaId?: number): void {
+  aumentarCantidad(productoId: number, colorId?: number, tallaId?: number, nombre_personalizado: string = ''): void {
     const producto = this.carrito.find(p =>
       p.id === productoId &&
       p.colorSeleccionado?.id === colorId &&
-      p.tallaSeleccionada?.id === tallaId
+      p.tallaSeleccionada?.id === tallaId &&
+      p.nombre_personalizado === nombre_personalizado
     );
     if (producto) {
       producto.cantidad += 1;
       this.guardarCarrito();
     }
   }
-  
-  disminuirCantidad(productoId: number, colorId?: number, tallaId?: number): void {
+
+  disminuirCantidad(productoId: number, colorId?: number, tallaId?: number, nombre_personalizado: string = ''): void {
     const producto = this.carrito.find(p =>
       p.id === productoId &&
       p.colorSeleccionado?.id === colorId &&
-      p.tallaSeleccionada?.id === tallaId
+      p.tallaSeleccionada?.id === tallaId &&
+      p.nombre_personalizado === nombre_personalizado
     );
     if (producto) {
       if (producto.cantidad > 1) {
         producto.cantidad -= 1;
       } else {
-        this.eliminarProducto(productoId, colorId, tallaId);
+        this.eliminarProducto(productoId, colorId, tallaId, nombre_personalizado);
       }
       this.guardarCarrito();
     }
   }
 
+  eliminarProducto(productoId: number, colorId?: number, tallaId?: number, nombre_personalizado: string = ''): void {
+    this.carrito = this.carrito.filter(p =>
+      !(p.id === productoId &&
+        p.colorSeleccionado?.id === colorId &&
+        p.tallaSeleccionada?.id === tallaId &&
+        p.nombre_personalizado === nombre_personalizado)
+    );
+    this.guardarCarrito();
+  }
 
   vaciarCarrito(): void {
     this.carrito = [];
@@ -100,6 +99,5 @@ export class CarritoService {
         this.carrito = JSON.parse(carritoGuardado);
       }
     }
-
   }
 }

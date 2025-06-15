@@ -362,3 +362,27 @@
   .btn-naranja:hover {
     background-color: #fb8c00; /* Naranja más oscuro al pasar el ratón */
   }
+
+/* Campo de personalización */
+input[type="text"] {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  transition: border 0.2s ease;
+}
+
+input[type="text"]:focus {
+  border-color: #ff9800;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 152, 0, 0.2);
+}
+
+label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  display: block;
+}
